@@ -35,8 +35,10 @@ export default function ProjectListContent({
               <th className="text-left py-2">Nome</th>
               <th className="text-left py-2">Bairro</th>
               <th className="text-left py-2">Empresa</th>
-              <th className="text-left py-2">Status</th>
+              <th className="text-left py-2">Fiscais</th>
+              <th className="text-left py-2">Vereador</th>
               <th className="text-left py-2">Andamento</th>
+              <th className="text-left py-2">Status</th>
               <th className="text-left py-2">Ações</th>
             </tr>
           </thead>
@@ -44,11 +46,15 @@ export default function ProjectListContent({
             {projects.length > 0 ? (
               projects.map((project) => (
                 <tr key={project.id} className="border-b hover:bg-gray-50">
-                  <td className="py-2">{project.name}</td>
-                  <td className="py-2">{project.bairro}</td>
-                  <td className="py-2">{project.empresa}</td>
-                  <td className="py-2">{project.status}</td>
-                  <td className="py-2">{project.andamento_do_projeto}</td>
+                  <td className="py-2">{project.name || "--"}</td>
+                  <td className="py-2">{project.bairro || "--"}</td>
+                  <td className="py-2">{project.empresa || "--"}</td>
+                  <td className="py-2">{project.fiscal || "--"}</td>
+                  <td className="py-2">{project.user || "--"}</td>
+                  <td className="py-2">
+                    {project.andamento_do_projeto || "--"}
+                  </td>
+                  <td className="py-2">{project.status || "--"}</td>
                   <td className="py-2">
                     <div className="flex gap-2">
                       <button

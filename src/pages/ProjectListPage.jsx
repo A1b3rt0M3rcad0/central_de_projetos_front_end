@@ -15,6 +15,8 @@ export default function ProjectListPage() {
       empresa: "Construtora Alpha",
       status: "Ativo",
       andamento_do_projeto: "Em andamento",
+      fiscal: "Jose Medeiros",
+      user: "Joao Vila Nova",
     },
     {
       id: 2,
@@ -23,6 +25,8 @@ export default function ProjectListPage() {
       empresa: "Construtora Beta",
       status: "Concluído",
       andamento_do_projeto: "Finalizado",
+      fiscal: "Jose Medeiros",
+      user: "Jose Farinha Lima",
     },
     {
       id: 3,
@@ -31,6 +35,8 @@ export default function ProjectListPage() {
       empresa: "Construtora Gamma",
       status: "Ativo",
       andamento_do_projeto: "Em execução",
+      fiscal: "Jose Galinho de Farofas",
+      user: "Carlos Vila Pequena",
     },
   ]);
 
