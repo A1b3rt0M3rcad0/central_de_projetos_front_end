@@ -32,7 +32,6 @@ export default function Header({ pageTitle }) {
 
       {/* Mobile Search Toggle + Icons */}
       <div className="flex md:hidden items-center gap-3">
-        {/* Toggle search input on mobile */}
         <button
           aria-label="Buscar"
           className="p-2 rounded-md hover:bg-indigo-50 transition"
@@ -41,7 +40,6 @@ export default function Header({ pageTitle }) {
           <Search className="w-6 h-6 text-gray-700" />
         </button>
 
-        {/* Notificações */}
         <button
           aria-label="Notificações"
           className="relative p-2 rounded-md hover:bg-indigo-50 transition"
@@ -50,7 +48,6 @@ export default function Header({ pageTitle }) {
           <span className="absolute top-1 right-1 inline-block w-2 h-2 bg-red-500 rounded-full" />
         </button>
 
-        {/* Configurações */}
         <button
           aria-label="Configurações"
           className="p-2 rounded-md hover:bg-indigo-50 transition"

@@ -19,7 +19,7 @@ function SideBar() {
       {/* Botão Hamburguer (Mobile) */}
       <button
         onClick={toggleSidebar}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-white shadow-md border border-gray-300"
+        className="md:hidden fixed top-4 left-4 z-[100] p-2 rounded-md bg-white shadow-md border border-gray-300"
         aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
       >
         {isOpen ? <CloseIcon /> : <MenuIcon />}
@@ -28,7 +28,7 @@ function SideBar() {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 z-40 h-screen
+          fixed top-0 left-0 z-50 h-screen
           bg-white border-r border-gray-300 shadow-md
           flex flex-col
           transition-transform duration-300 ease-in-out
