@@ -11,6 +11,24 @@ function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const handleCpfChange = (e) => {
+    let value = e.target.value;
+    value = value.replace(/\D/g, ""); // Remove tudo que não é número
+
+    // Limita a 11 dígitos
+    if (value.length > 11) {
+      value = value.slice(0, 11);
+    }
+
+    // Aplica a máscara
+    value = value
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+
+    setCpf(value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -71,7 +89,7 @@ function Login() {
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-600 focus:border-blue-600 outline-none"
               required
               value={cpf}
-              onChange={(e) => setCpf(e.target.value)}
+              onChange={handleCpfChange}
             />
           </div>
 
