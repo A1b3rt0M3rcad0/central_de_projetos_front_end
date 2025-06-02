@@ -73,9 +73,11 @@ function SideBar() {
               },
             ]}
           />
+          {/* Modificar as Rotas de acesso */}
           <SideBarItem
             icon={<Building className="text-blue-600" />}
             text="Empresas"
+            onClick={() => navigate("/projectlistpage")}
           />
           <SideBarItem
             icon={<NotebookPen className="text-blue-600" />}

@@ -7,6 +7,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import BasePage from "./components/BasePage";
 import ProjectPage from "./pages/ProjectPage";
+import ProjectListPage from "./pages/ProjectListPage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
   {
     path: "/projectpage",
     element: <ProjectPage />,
+  },
+  {
+    path: "/projectlistpage",
+    element: <ProjectListPage />,
   },
 ]);
 

@@ -2,15 +2,26 @@ import { useState, useRef, useEffect } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import SideBarSubItem from "./SideBarSubItem";
 
-function SideBarItem({ icon, text, active, alert, submenu = [] }) {
+function SideBarItem({
+  icon,
+  text,
+  active,
+  alert,
+  submenu = [],
+  onClick = () => {}, // <-- adiciona o onClick para itens sem submenu
+}) {
   const [open, setOpen] = useState(false);
   const contentRef = useRef(null);
   const [maxHeight, setMaxHeight] = useState("0px");
 
   const hasSubmenu = submenu.length > 0;
 
-  const toggleSubmenu = () => {
-    if (hasSubmenu) setOpen(!open);
+  const handleClick = () => {
+    if (hasSubmenu) {
+      setOpen(!open);
+    } else {
+      onClick(); // <-- executa a ação se não tiver submenu
+    }
   };
 
   useEffect(() => {
@@ -26,7 +37,7 @@ function SideBarItem({ icon, text, active, alert, submenu = [] }) {
   return (
     <>
       <li
-        onClick={toggleSubmenu}
+        onClick={handleClick}
         className={`
           relative flex items-center gap-4
           px-3 py-2 my-1 rounded-md font-medium cursor-pointer
