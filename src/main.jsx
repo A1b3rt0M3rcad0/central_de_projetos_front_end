@@ -3,6 +3,9 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import Login from "./pages/Login";
 import SideBar from "./components/SideBar";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import BasePage from "./components/BasePage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -13,6 +16,18 @@ const router = createBrowserRouter([
   {
     path: "/sidebar",
     element: <SideBar />,
+  },
+  {
+    path: "/header",
+    element: <Header />,
+  },
+  {
+    path: "/footer",
+    element: <Footer />,
+  },
+  {
+    path: "/basepage",
+    element: <BasePage />,
   },
 ]);
 
