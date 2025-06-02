@@ -89,6 +89,7 @@ export default function ProjectListPage() {
         onDelete={handleDelete}
         onFilter={handleFilter}
         onSelect={handleSelect}
+        onBack={() => navigate(-1)}
       />
     </BasePage>
   );

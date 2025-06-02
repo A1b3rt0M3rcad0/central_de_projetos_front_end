@@ -8,9 +8,10 @@ export default function ProjectListContent({
   onDelete,
   onFilter,
   onSelect,
+  onBack,
 }) {
   return (
-    <BaseContent pageTitle="Projetos">
+    <BaseContent pageTitle="Projetos" onBack={onBack}>
       {/* Filtro e botão de criar */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <input

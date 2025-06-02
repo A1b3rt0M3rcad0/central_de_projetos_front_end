@@ -10,6 +10,7 @@ import {
   NotebookPen,
   MapPin,
   Users,
+  House,
 } from "lucide-react";
 import SideBarItem from "./SideBarItem";
 import { useNavigate } from "react-router-dom";
@@ -55,6 +56,11 @@ function SideBar() {
 
         {/* Menu */}
         <ul className="flex-1 p-4 space-y-1">
+          <SideBarItem
+            icon={<House className="text-blue-600" />}
+            text="Início"
+            onClick={() => navigate("/projectlistpage")}
+          />
           <SideBarItem
             icon={<Hammer className="text-blue-600" />}
             text="Projetos"
