@@ -2,8 +2,10 @@ import { useState } from "react";
 import footer from "../assets/footer.png";
 import logo from "../assets/logo_gov.png";
 import authApi from "../services/endpoints/auth.jsx";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const navitate = useNavigate();
   const [cpf, setCpf] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -16,7 +18,9 @@ function Login() {
 
     try {
       const response = await authApi.login(cpf, password);
-      alert("Login bem-sucedido!");
+      navitate("/basepage");
+      localStorage.setItem("access_token", response.data["token"]);
+      console.log(response.data["token"]);
     } catch (err) {
       const status = err.response?.status;
       const errorData = err.response?.data?.errors?.[0];

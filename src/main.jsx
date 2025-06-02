@@ -6,7 +6,6 @@ import SideBar from "./components/SideBar";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import BasePage from "./components/BasePage";
-import ListPage from "./pages/ListPage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -29,10 +28,6 @@ const router = createBrowserRouter([
   {
     path: "/basepage",
     element: <BasePage />,
-  },
-  {
-    path: "/listpage",
-    element: <ListPage />,
   },
 ]);
 

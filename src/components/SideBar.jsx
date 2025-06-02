@@ -2,14 +2,21 @@ import { useState } from "react";
 import logo from "../assets/logo_gov.png";
 import {
   User,
-  MoreVertical,
+  DoorOpen,
   Hammer,
   Menu as MenuIcon,
   X as CloseIcon,
 } from "lucide-react";
 import SideBarItem from "./SideBarItem";
+import { useNavigate } from "react-router-dom";
 
 function SideBar() {
+  const navigate = useNavigate();
+  const Logout = () => {
+    localStorage.clear("access_token");
+    navigate("/");
+  };
+
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
@@ -48,9 +55,13 @@ function SideBar() {
             icon={<Hammer className="text-blue-600" />}
             text="Projetos"
             submenu={[
-              { text: "Usuários", onClick: () => console.log("Usuários") },
-              { text: "Permissões", onClick: () => console.log("Permissões") },
-              { text: "Logs", onClick: () => console.log("Logs") },
+              {
+                text: "Projetos",
+                onClick: () => console.log("Usuários"),
+              },
+              { text: "Bairros", onClick: () => console.log("Permissões") },
+              { text: "Fiscais", onClick: () => console.log("Logs") },
+              { text: "Empresas", onClick: () => console.log("empresas") },
             ]}
           />
         </ul>
@@ -65,7 +76,9 @@ function SideBar() {
               <h4 className="font-semibold text-gray-800">****339-70</h4>
               <span className="text-xs text-gray-600">ADMIN</span>
             </div>
-            <MoreVertical size={20} className="text-gray-500" />
+            <div onClick={Logout} className="cursor-pointer">
+              <DoorOpen size={20} className="text-gray-500" />
+            </div>
           </div>
         </div>
       </aside>
