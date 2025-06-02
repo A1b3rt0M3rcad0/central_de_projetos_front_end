@@ -6,6 +6,10 @@ import {
   Hammer,
   Menu as MenuIcon,
   X as CloseIcon,
+  Building,
+  NotebookPen,
+  MapPin,
+  Users,
 } from "lucide-react";
 import SideBarItem from "./SideBarItem";
 import { useNavigate } from "react-router-dom";
@@ -56,12 +60,38 @@ function SideBar() {
             text="Projetos"
             submenu={[
               {
-                text: "Projetos",
+                text: "Lista de Projetos",
                 onClick: () => console.log("Usuários"),
               },
-              { text: "Bairros", onClick: () => console.log("Permissões") },
-              { text: "Fiscais", onClick: () => console.log("Logs") },
-              { text: "Empresas", onClick: () => console.log("empresas") },
+              {
+                text: "Status",
+                onClick: () => console.log("Status"),
+              },
+              {
+                text: "Tipos",
+                onClick: () => console.log("Tipos"),
+              },
+            ]}
+          />
+          <SideBarItem
+            icon={<Building className="text-blue-600" />}
+            text="Empresas"
+          />
+          <SideBarItem
+            icon={<NotebookPen className="text-blue-600" />}
+            text="Fiscais"
+          />
+          <SideBarItem
+            icon={<MapPin className="text-blue-600" />}
+            text="Bairros"
+          />
+          <SideBarItem
+            icon={<Users className="text-blue-600" />}
+            text="Usuários"
+            submenu={[
+              {
+                text: "Lista de Usuários",
+              },
             ]}
           />
         </ul>
