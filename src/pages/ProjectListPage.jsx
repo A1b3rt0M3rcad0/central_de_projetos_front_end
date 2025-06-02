@@ -59,6 +59,10 @@ export default function ProjectListPage() {
     navigate("/projects/new"); // Ou abrir um modal se quiser
   };
 
+  const handleSelect = (project) => {
+    navigate(`/projectpage`); // Ou abrir um modal se quiser
+  };
+
   const handleEdit = (project) => {
     navigate(`/projects/${project.id}`);
   };
@@ -84,6 +88,7 @@ export default function ProjectListPage() {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onFilter={handleFilter}
+        onSelect={handleSelect}
       />
     </BasePage>
   );

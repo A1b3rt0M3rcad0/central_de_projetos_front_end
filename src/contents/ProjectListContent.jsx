@@ -1,5 +1,5 @@
 import BaseContent from "../components/BaseContent";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Pencil, Trash2, Plus, Eye } from "lucide-react";
 
 export default function ProjectListContent({
   projects,
@@ -7,6 +7,7 @@ export default function ProjectListContent({
   onEdit,
   onDelete,
   onFilter,
+  onSelect,
 }) {
   return (
     <BaseContent pageTitle="Projetos">
@@ -59,15 +60,21 @@ export default function ProjectListContent({
                     <div className="flex gap-2">
                       <button
                         onClick={() => onEdit(project)}
-                        className="p-1 rounded hover:bg-gray-200"
+                        className="p-1 rounded hover:bg-gray-200 cursor-pointer"
                       >
                         <Pencil className="w-4 h-4 text-blue-600" />
                       </button>
                       <button
                         onClick={() => onDelete(project)}
-                        className="p-1 rounded hover:bg-gray-200"
+                        className="p-1 rounded hover:bg-gray-200 cursor-pointer"
                       >
                         <Trash2 className="w-4 h-4 text-red-600" />
+                      </button>
+                      <button
+                        onClick={() => onSelect(project)}
+                        className="p-1 rounded hover:bg-gray-200 cursor-pointer"
+                      >
+                        <Eye className="w-4 h-4 text-green-600" />
                       </button>
                     </div>
                   </td>
