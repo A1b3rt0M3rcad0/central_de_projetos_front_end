@@ -3,8 +3,8 @@ function SideBarSubItem({ text, onClick }) {
     <li
       onClick={onClick}
       className="
-        px-3 py-1 rounded-md text-sm 
-        text-gray-600 hover:bg-indigo-50 
+        px-3 py-2 rounded-md text-sm 
+        text-gray-700 hover:bg-blue-100 
         cursor-pointer transition-colors select-none
       "
     >

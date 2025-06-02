@@ -33,8 +33,8 @@ function SideBarItem({ icon, text, active, alert, submenu = [] }) {
           transition-colors select-none
           ${
             active
-              ? "bg-gradient-to-tr from-indigo-200 to-indigo-100 text-indigo-600"
-              : "hover:bg-indigo-50 text-gray-600"
+              ? "bg-gradient-to-tr from-blue-200 to-blue-100 text-blue-700"
+              : "hover:bg-blue-50 text-gray-700"
           }
         `}
       >
