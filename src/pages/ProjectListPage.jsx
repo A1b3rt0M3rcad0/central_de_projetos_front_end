@@ -56,7 +56,7 @@ export default function ProjectListPage() {
 
   // Ações
   const handleCreate = () => {
-    navigate("/projects/new"); // Ou abrir um modal se quiser
+    navigate("/projectform"); // Ou abrir um modal se quiser
   };
 
   const handleSelect = (project) => {

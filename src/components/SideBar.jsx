@@ -50,8 +50,11 @@ function SideBar() {
         `}
       >
         {/* Header */}
-        <div className="p-5 pb-3 flex justify-center items-center border-b border-gray-200">
+        <div className="p-5 pb-3 flex flex-col justify-center items-center border-b border-gray-200">
           <img className="w-[110px]" src={logo} alt="Logo Governo" />
+          <p className="px-3 py-2 my-1 rounded-md font-medium">
+            Escritório de Projetos
+          </p>
         </div>
 
         {/* Menu */}

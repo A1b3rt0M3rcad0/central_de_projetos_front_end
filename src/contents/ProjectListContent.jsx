@@ -22,7 +22,7 @@ export default function ProjectListContent({
         />
         <button
           onClick={onCreate}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           Criar Projeto
