@@ -86,7 +86,7 @@ function SideBar() {
           <SideBarItem
             icon={<Building className="text-blue-600" />}
             text="Empresas"
-            onClick={console.log("empresas")}
+            onClick={() => navigate("/empresalistpage")}
           />
           <SideBarItem
             icon={<NotebookPen className="text-blue-600" />}

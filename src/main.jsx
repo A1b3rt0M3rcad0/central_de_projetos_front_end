@@ -11,6 +11,7 @@ import ProjectListPage from "./pages/ProjectListPage";
 import HomePage from "./pages/HomePage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ProjectFormPage from "./pages/ProjectFormPage";
+import EmpresaListPage from "./pages/EmpresaListPage";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
   {
     path: "/projectform",
     element: <ProjectFormPage />,
+  },
+  {
+    path: "/empresalistpage",
+    element: <EmpresaListPage />,
   },
 ]);
 

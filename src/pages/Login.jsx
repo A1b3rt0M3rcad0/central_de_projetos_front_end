@@ -36,7 +36,7 @@ function Login() {
 
     try {
       const response = await authApi.login(cpf, password);
-      navitate("/basepage");
+      navitate("/home");
       localStorage.setItem("access_token", response.data["token"]);
       console.log(response.data["token"]);
     } catch (err) {
@@ -67,7 +67,7 @@ function Login() {
         <div className="mb-6 text-center">
           <img src={logo} alt="Logo Governo" className="mx-auto w-24 md:w-28" />
           <h1 className="text-2xl md:text-3xl font-semibold text-gray-800 mt-4">
-            Gabinete de Projetos
+            Escritório de Projetos
           </h1>
           <p className="text-sm md:text-base text-gray-600">Acesso restrito</p>
         </div>
