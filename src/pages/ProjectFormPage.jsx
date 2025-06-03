@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function ProjectFormPage() {
   const navigate = useNavigate();
   return (
-    <BasePage pageTitle={"Formulário do Projeto"}>
+    <BasePage pageTitle={""}>
       <ProjectForm
         initialData={{
           id: 1,

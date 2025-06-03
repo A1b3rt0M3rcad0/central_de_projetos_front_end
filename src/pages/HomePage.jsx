@@ -80,7 +80,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <BasePage pageTitle={"Início"}>
+    <BasePage pageTitle={""}>
       <HomeContent
         totalProjects={totalProjects}
         totalBairros={totalBairros}

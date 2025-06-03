@@ -81,7 +81,7 @@ export default function ProjectListPage() {
   };
 
   return (
-    <BasePage pageTitle="Projetos">
+    <BasePage pageTitle="">
       <ProjectListContent
         projects={filteredProjects}
         onCreate={handleCreate}

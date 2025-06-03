@@ -59,7 +59,7 @@ export default function EmpresaListPage() {
   };
 
   return (
-    <BasePage pageTitle="Empresas">
+    <BasePage pageTitle="">
       <EmpresaListContent
         companies={filteredCompanies}
         onCreate={handleCreate}

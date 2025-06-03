@@ -10,6 +10,7 @@ export default function ProjectForm({
   empresaOptions = [],
   tipoOptions = [],
   fiscalOptions = [],
+  vereadorOptions = [], // <-- Lista de vereadores [{ cpf: '', nome: '' }]
 }) {
   const [formData, setFormData] = useState({
     id: initialData.id || null,
@@ -24,7 +25,8 @@ export default function ProjectForm({
     empresa_id: initialData.empresa?.id || null,
     tipo_id: initialData.tipo?.id || null,
     fiscal_id: initialData.fiscal?.id || null,
-    files: [], // <== aqui
+    vereador_cpf: initialData.vereador_cpf || "",
+    files: [],
   });
 
   useEffect(() => {
@@ -41,7 +43,8 @@ export default function ProjectForm({
       empresa_id: initialData.empresa?.id || null,
       tipo_id: initialData.tipo?.id || null,
       fiscal_id: initialData.fiscal?.id || null,
-      files: [], // resetar files quando inicializar dados
+      vereador_cpf: initialData.vereador_cpf || "",
+      files: [],
     });
   }, [initialData]);
 
@@ -49,7 +52,6 @@ export default function ProjectForm({
     const { name, value, files } = e.target;
 
     if (name === "files") {
-      // Para arquivos, armazenamos o array FileList como array normal
       setFormData((prev) => ({ ...prev, files: Array.from(files) }));
       return;
     }
@@ -81,266 +83,217 @@ export default function ProjectForm({
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-3xl shadow-lg max-w-5xl mx-auto space-y-8"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Nome do Projeto */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="name"
-              className="mb-2 text-gray-800 font-semibold text-lg"
-            >
-              Nome do Projeto
-            </label>
-            <input
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Digite o nome do projeto"
-              required
-              className="border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            />
-          </div>
+        {/* Informações do Projeto */}
+        <div>
+          <h2 className="text-2xl font-bold mb-6 border-b pb-2">
+            Informações do Projeto
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="flex flex-col">
+              <label htmlFor="name" className="mb-2 font-semibold">
+                Nome do Projeto
+              </label>
+              <input
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Digite o nome do projeto"
+                required
+                className="border border-gray-300 rounded-xl px-4 py-3"
+              />
+            </div>
 
-          {/* Tipo */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="tipo_id"
-              className="mb-2 text-gray-800 font-semibold text-lg"
-            >
-              Tipo
-            </label>
-            <select
-              id="tipo_id"
-              name="tipo_id"
-              value={formData.tipo_id || ""}
-              onChange={handleChange}
-              required
-              className="border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            >
-              <option value="" disabled>
-                Selecione o tipo
-              </option>
-              {tipoOptions.map(({ id, nome }) => (
-                <option key={id} value={id}>
-                  {nome}
+            <div className="flex flex-col">
+              <label htmlFor="verba_disponivel" className="mb-2 font-semibold">
+                Verba Disponível (R$)
+              </label>
+              <input
+                id="verba_disponivel"
+                name="verba_disponivel"
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.verba_disponivel}
+                onChange={handleChange}
+                required
+                placeholder="Ex: 10000.00"
+                className="border border-gray-300 rounded-xl px-4 py-3"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label
+                htmlFor="andamento_do_projeto"
+                className="mb-2 font-semibold"
+              >
+                Andamento do Projeto
+              </label>
+              <input
+                id="andamento_do_projeto"
+                name="andamento_do_projeto"
+                value={formData.andamento_do_projeto}
+                onChange={handleChange}
+                placeholder="Ex: Em andamento"
+                required
+                className="border border-gray-300 rounded-xl px-4 py-3"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label htmlFor="tipo_id" className="mb-2 font-semibold">
+                Tipo
+              </label>
+              <select
+                id="tipo_id"
+                name="tipo_id"
+                value={formData.tipo_id || ""}
+                onChange={handleChange}
+                required
+                className="border border-gray-300 rounded-xl px-4 py-3"
+              >
+                <option value="" disabled>
+                  Selecione o tipo
                 </option>
-              ))}
-            </select>
-          </div>
+                {tipoOptions.map(({ id, nome }) => (
+                  <option key={id} value={id}>
+                    {nome}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {/* Bairro */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="bairro_id"
-              className="mb-2 text-gray-800 font-semibold text-lg"
-            >
-              Bairro
-            </label>
-            <select
-              id="bairro_id"
-              name="bairro_id"
-              value={formData.bairro_id || ""}
-              onChange={handleChange}
-              required
-              className="border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            >
-              <option value="" disabled>
-                Selecione o bairro
-              </option>
-              {bairroOptions.map(({ id, nome }) => (
-                <option key={id} value={id}>
-                  {nome}
+            <div className="flex flex-col">
+              <label htmlFor="start_date" className="mb-2 font-semibold">
+                Data de Início
+              </label>
+              <input
+                id="start_date"
+                name="start_date"
+                type="date"
+                value={formData.start_date}
+                onChange={handleChange}
+                required
+                className="border border-gray-300 rounded-xl px-4 py-3"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label
+                htmlFor="expected_completion_date"
+                className="mb-2 font-semibold"
+              >
+                Data Prevista de Conclusão
+              </label>
+              <input
+                id="expected_completion_date"
+                name="expected_completion_date"
+                type="date"
+                value={formData.expected_completion_date}
+                onChange={handleChange}
+                required
+                className="border border-gray-300 rounded-xl px-4 py-3"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label htmlFor="end_date" className="mb-2 font-semibold">
+                Data de Conclusão
+              </label>
+              <input
+                id="end_date"
+                name="end_date"
+                type="date"
+                value={formData.end_date || ""}
+                onChange={handleChange}
+                className="border border-gray-300 rounded-xl px-4 py-3"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Vínculos */}
+        <div>
+          <h2 className="text-2xl font-bold mb-6 border-b pb-2">Vínculos</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[
+              {
+                label: "Status",
+                name: "status_id",
+                options: statusOptions,
+              },
+              {
+                label: "Bairro",
+                name: "bairro_id",
+                options: bairroOptions,
+              },
+              {
+                label: "Empresa",
+                name: "empresa_id",
+                options: empresaOptions,
+              },
+              {
+                label: "Fiscal",
+                name: "fiscal_id",
+                options: fiscalOptions,
+              },
+            ].map(({ label, name, options }) => (
+              <div key={name} className="flex flex-col">
+                <label htmlFor={name} className="mb-2 font-semibold">
+                  {label}
+                </label>
+                <select
+                  id={name}
+                  name={name}
+                  value={formData[name] || ""}
+                  onChange={handleChange}
+                  required
+                  className="border border-gray-300 rounded-xl px-4 py-3"
+                >
+                  <option value="" disabled>
+                    Selecione {label.toLowerCase()}
+                  </option>
+                  {options.map(({ id, nome }) => (
+                    <option key={id} value={id}>
+                      {nome}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ))}
+
+            {/* Vereador */}
+            <div className="flex flex-col">
+              <label htmlFor="vereador_cpf" className="mb-2 font-semibold">
+                Vereador
+              </label>
+              <select
+                id="vereador_cpf"
+                name="vereador_cpf"
+                value={formData.vereador_cpf}
+                onChange={handleChange}
+                required
+                className="border border-gray-300 rounded-xl px-4 py-3"
+              >
+                <option value="" disabled>
+                  Selecione o vereador
                 </option>
-              ))}
-            </select>
+                {vereadorOptions.map(({ cpf, nome }) => (
+                  <option key={cpf} value={cpf}>
+                    {nome}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
+        </div>
 
-          {/* Empresa */}
+        {/* Documentos */}
+        <div>
+          <h2 className="text-2xl font-bold mb-6 border-b pb-2">Documentos</h2>
           <div className="flex flex-col">
-            <label
-              htmlFor="empresa_id"
-              className="mb-2 text-gray-800 font-semibold text-lg"
-            >
-              Empresa
-            </label>
-            <select
-              id="empresa_id"
-              name="empresa_id"
-              value={formData.empresa_id || ""}
-              onChange={handleChange}
-              required
-              className="border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            >
-              <option value="" disabled>
-                Selecione a empresa
-              </option>
-              {empresaOptions.map(({ id, nome }) => (
-                <option key={id} value={id}>
-                  {nome}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Fiscal */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="fiscal_id"
-              className="mb-2 text-gray-800 font-semibold text-lg"
-            >
-              Fiscal
-            </label>
-            <select
-              id="fiscal_id"
-              name="fiscal_id"
-              value={formData.fiscal_id || ""}
-              onChange={handleChange}
-              required
-              className="border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            >
-              <option value="" disabled>
-                Selecione o fiscal
-              </option>
-              {fiscalOptions.map(({ id, nome }) => (
-                <option key={id} value={id}>
-                  {nome}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Status */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="status_id"
-              className="mb-2 text-gray-800 font-semibold text-lg"
-            >
-              Status
-            </label>
-            <select
-              id="status_id"
-              name="status_id"
-              value={formData.status_id || ""}
-              onChange={handleChange}
-              required
-              className="border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            >
-              <option value="" disabled>
-                Selecione o status
-              </option>
-              {statusOptions.map(({ id, nome }) => (
-                <option key={id} value={id}>
-                  {nome}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Verba Disponível */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="verba_disponivel"
-              className="mb-2 text-gray-800 font-semibold text-lg"
-            >
-              Verba Disponível (R$)
-            </label>
-            <input
-              id="verba_disponivel"
-              name="verba_disponivel"
-              type="number"
-              value={formData.verba_disponivel}
-              onChange={handleChange}
-              min="0"
-              step="0.01"
-              placeholder="Ex: 10000.00"
-              required
-              className="border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            />
-          </div>
-
-          {/* Andamento do Projeto */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="andamento_do_projeto"
-              className="mb-2 text-gray-800 font-semibold text-lg"
-            >
-              Andamento do Projeto
-            </label>
-            <input
-              id="andamento_do_projeto"
-              name="andamento_do_projeto"
-              value={formData.andamento_do_projeto}
-              onChange={handleChange}
-              placeholder="Ex: Em andamento"
-              required
-              className="border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            />
-          </div>
-
-          {/* Data de Início */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="start_date"
-              className="mb-2 text-gray-800 font-semibold text-lg"
-            >
-              Data de Início
-            </label>
-            <input
-              id="start_date"
-              name="start_date"
-              type="date"
-              value={formData.start_date}
-              onChange={handleChange}
-              required
-              className="border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            />
-          </div>
-
-          {/* Data Prevista de Conclusão */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="expected_completion_date"
-              className="mb-2 text-gray-800 font-semibold text-lg"
-            >
-              Data Prevista de Conclusão
-            </label>
-            <input
-              id="expected_completion_date"
-              name="expected_completion_date"
-              type="date"
-              value={formData.expected_completion_date}
-              onChange={handleChange}
-              required
-              className="border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            />
-          </div>
-
-          {/* Data de Conclusão */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="end_date"
-              className="mb-2 text-gray-800 font-semibold text-lg"
-            >
-              Data de Conclusão
-            </label>
-            <input
-              id="end_date"
-              name="end_date"
-              type="date"
-              value={formData.end_date || ""}
-              onChange={handleChange}
-              placeholder="Se concluído"
-              className="border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            />
-          </div>
-
-          {/* Upload de Múltiplos Arquivos */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="files"
-              className="mb-2 text-gray-800 font-semibold text-lg"
-            >
-              Anexar arquivos (vários)
+            <label htmlFor="files" className="mb-2 font-semibold">
+              Anexar Arquivos
             </label>
             <input
               id="files"
@@ -348,31 +301,25 @@ export default function ProjectForm({
               type="file"
               multiple
               onChange={handleChange}
-              className="border border-gray-300 rounded-xl px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              className="border border-gray-300 rounded-xl px-4 py-3"
             />
-            {formData.files.length > 0 && (
-              <ul className="mt-2 text-sm text-gray-700">
-                {formData.files.map((file, idx) => (
-                  <li key={idx}>{file.name}</li>
-                ))}
-              </ul>
-            )}
           </div>
         </div>
 
-        <div className="flex justify-between items-center">
+        {/* Botões */}
+        <div className="flex justify-end space-x-4">
           <button
             type="button"
             onClick={onBack}
-            className="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-xl transition"
+            className="px-6 py-3 rounded-xl border border-gray-400 text-gray-700 hover:bg-gray-100 cursor-pointer"
           >
             Voltar
           </button>
           <button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-xl transition"
+            className="px-6 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
           >
-            {formData.id ? "Salvar" : "Cadastrar"}
+            {formData.id ? "Atualizar" : "Cadastrar"}
           </button>
         </div>
       </form>
