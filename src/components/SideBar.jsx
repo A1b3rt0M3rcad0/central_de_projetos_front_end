@@ -59,7 +59,7 @@ function SideBar() {
           <SideBarItem
             icon={<House className="text-blue-600" />}
             text="Início"
-            onClick={() => navigate("/projectlistpage")}
+            onClick={() => navigate("/home")}
           />
           <SideBarItem
             icon={<Hammer className="text-blue-600" />}
@@ -67,7 +67,7 @@ function SideBar() {
             submenu={[
               {
                 text: "Lista de Projetos",
-                onClick: () => console.log("Usuários"),
+                onClick: () => navigate("/projectlistpage"),
               },
               {
                 text: "Status",
@@ -83,7 +83,7 @@ function SideBar() {
           <SideBarItem
             icon={<Building className="text-blue-600" />}
             text="Empresas"
-            onClick={() => navigate("/projectlistpage")}
+            onClick={console.log("empresas")}
           />
           <SideBarItem
             icon={<NotebookPen className="text-blue-600" />}
@@ -115,7 +115,10 @@ function SideBar() {
               <span className="text-xs text-gray-600">ADMIN</span>
             </div>
             <div onClick={Logout} className="cursor-pointer">
-              <DoorOpen size={20} className="text-gray-500" />
+              <DoorOpen
+                size={20}
+                className="text-gray-700 hover:bg-blue-50 rounded-md"
+              />
             </div>
           </div>
         </div>

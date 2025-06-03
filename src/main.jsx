@@ -8,6 +8,7 @@ import Footer from "./components/Footer";
 import BasePage from "./components/BasePage";
 import ProjectPage from "./pages/ProjectPage";
 import ProjectListPage from "./pages/ProjectListPage";
+import HomePage from "./pages/HomePage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
   {
     path: "/projectlistpage",
     element: <ProjectListPage />,
+  },
+  {
+    path: "/home",
+    element: <HomePage />,
   },
 ]);
 
