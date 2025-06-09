@@ -1,11 +1,25 @@
-import DashboardPage from "../pages/HomePage";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-function IsAuthenticated({ children }) {
-  const accessToken = localStorage.getItem("access_token");
-  if (accessToken) {
-    return <DashboardPage />;
+function AuthMiddleware({ children }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+
+    if (token) {
+      navigate("/home"); // Redireciona para rota home
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [navigate]);
+
+  if (isAuthenticated === null) {
+    return null; // ou um loader
   }
+
   return children;
 }
 
-export default IsAuthenticated;
+export default AuthMiddleware;
