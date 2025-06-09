@@ -5,6 +5,7 @@ const projectApi = {
   getHistoryProjectById: () => api.get(`/history_project/`),
   getProjectTypeByProjectId: (project_id) =>
     api.get(`/project_type/${project_id}`),
+  getAllProjectsWithDetails: () => api.get("project/projects/all/details"),
 };
 
 export default projectApi;

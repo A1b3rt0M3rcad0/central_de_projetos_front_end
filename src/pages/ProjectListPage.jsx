@@ -2,47 +2,32 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BasePage from "../components/BasePage";
 import ProjectListContent from "../contents/ProjectListContent";
+import projectApi from "../services/endpoints/project";
+import { useEffect } from "react";
 
 export default function ProjectListPage() {
   const navigate = useNavigate();
+  const [projects, setProjects] = useState([]);
 
-  // Dados mockados (futuramente virão da API)
-  const [projects, setProjects] = useState([
-    {
-      id: 1,
-      name: "Revitalização Urbana",
-      bairro: "Centro",
-      empresa: "Construtora Alpha",
-      status: "Ativo",
-      andamento_do_projeto: "Em andamento",
-      fiscal: "Jose Medeiros",
-      user: "Joao Vila Nova",
-    },
-    {
-      id: 2,
-      name: "Pavimentação Rua A",
-      bairro: "Vila Nova",
-      empresa: "Construtora Beta",
-      status: "Concluído",
-      andamento_do_projeto: "Finalizado",
-      fiscal: "Jose Medeiros",
-      user: "Jose Farinha Lima",
-    },
-    {
-      id: 3,
-      name: "Construção de Escola",
-      bairro: "Jardim América",
-      empresa: "Construtora Gamma",
-      status: "Ativo",
-      andamento_do_projeto: "Em execução",
-      fiscal: "Jose Galinho de Farofas",
-      user: "Carlos Vila Pequena",
-    },
-  ]);
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await projectApi.getAllProjectsWithDetails();
+        console.log(response);
+        const content = response.data.content;
+        setProjects(content);
+      } catch (error) {
+        console.error("Erro ao buscar projetos:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   const [filter, setFilter] = useState("");
 
-  // Filtragem simples
   const filteredProjects = projects.filter((project) => {
     const search = filter.toLowerCase();
     return (
@@ -50,7 +35,8 @@ export default function ProjectListPage() {
       project.bairro.toLowerCase().includes(search) ||
       project.empresa.toLowerCase().includes(search) ||
       project.status.toLowerCase().includes(search) ||
-      project.andamento_do_projeto.toLowerCase().includes(search)
+      project.andamento_do_projeto.toLowerCase().includes(search) ||
+      project.user.toLowerCase().includes(search)
     );
   });
 
