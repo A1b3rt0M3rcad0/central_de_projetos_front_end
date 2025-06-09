@@ -6,6 +6,7 @@ const projectApi = {
   getProjectTypeByProjectId: (project_id) =>
     api.get(`/project_type/${project_id}`),
   getAllProjectsWithDetails: () => api.get("project/projects/all/details"),
+  deleteProject: (data) => api.delete("/project/", { data }),
 };
 
 export default projectApi;

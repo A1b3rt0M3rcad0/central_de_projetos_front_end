@@ -4,6 +4,7 @@ import BasePage from "../components/BasePage";
 import ProjectListContent from "../contents/ProjectListContent";
 import projectApi from "../services/endpoints/project";
 import { useEffect } from "react";
+import Swal from "sweetalert2";
 
 export default function ProjectListPage() {
   const navigate = useNavigate();
@@ -18,8 +19,6 @@ export default function ProjectListPage() {
         setProjects(content);
       } catch (error) {
         console.error("Erro ao buscar projetos:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -53,12 +52,24 @@ export default function ProjectListPage() {
     navigate(`/projects/${project.id}`);
   };
 
-  const handleDelete = (project) => {
-    const confirm = window.confirm(
-      `Deseja realmente excluir o projeto "${project.name}"?`
-    );
-    if (confirm) {
+  const handleDelete = async (project) => {
+    const result = await Swal.fire({
+      title: "Confirmar exclusão",
+      text: `Deseja realmente excluir o projeto "${project.name}"?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sim, excluir",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await projectApi.deleteProject({ project_id: project.id });
       setProjects((prev) => prev.filter((p) => p.id !== project.id));
+      Swal.fire("Excluído!", "O projeto foi removido com sucesso.", "success");
+    } catch (error) {
+      Swal.fire("Erro!", "Erro ao deletar projeto.", "error");
     }
   };
 
