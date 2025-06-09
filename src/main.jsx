@@ -13,11 +13,16 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ProjectFormPage from "./pages/ProjectFormPage";
 import EmpresaListPage from "./pages/EmpresaListPage";
 import AuthMiddleware from "./middlewares/AuthMiddleware";
+import IsAuthenticated from "./middlewares/IsAuthenticated";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Login />,
+    element: (
+      <IsAuthenticated>
+        <Login />
+      </IsAuthenticated>
+    ),
   },
   {
     path: "/sidebar",
