@@ -12,6 +12,7 @@ import HomePage from "./pages/HomePage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ProjectFormPage from "./pages/ProjectFormPage";
 import EmpresaListPage from "./pages/EmpresaListPage";
+import AuthMiddleware from "./middlewares/AuthMiddleware";
 
 const router = createBrowserRouter([
   {
@@ -36,23 +37,43 @@ const router = createBrowserRouter([
   },
   {
     path: "/projectpage",
-    element: <ProjectPage />,
+    element: (
+      <AuthMiddleware>
+        <ProjectPage />
+      </AuthMiddleware>
+    ),
   },
   {
     path: "/projectlistpage",
-    element: <ProjectListPage />,
+    element: (
+      <AuthMiddleware>
+        <ProjectListPage />
+      </AuthMiddleware>
+    ),
   },
   {
     path: "/home",
-    element: <HomePage />,
+    element: (
+      <AuthMiddleware>
+        <HomePage />
+      </AuthMiddleware>
+    ),
   },
   {
     path: "/projectform",
-    element: <ProjectFormPage />,
+    element: (
+      <AuthMiddleware>
+        <ProjectFormPage />
+      </AuthMiddleware>
+    ),
   },
   {
     path: "/empresalistpage",
-    element: <EmpresaListPage />,
+    element: (
+      <AuthMiddleware>
+        <EmpresaListPage />
+      </AuthMiddleware>
+    ),
   },
 ]);
 
