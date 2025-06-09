@@ -5,8 +5,10 @@ import ProjectListContent from "../contents/ProjectListContent";
 import projectApi from "../services/endpoints/project";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
+import LoadingContent from "../contents/LoadingContent";
 
 export default function ProjectListPage() {
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
 
@@ -18,7 +20,15 @@ export default function ProjectListPage() {
         const content = response.data.content;
         setProjects(content);
       } catch (error) {
-        console.error("Erro ao buscar projetos:", error);
+        if (!(error.response && error.response.status === 404)) {
+          Swal.fire({
+            icon: "error",
+            title: "Erro ao buscar projetos",
+            text: error.message || "Ocorreu um erro inesperado.",
+          });
+        }
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -79,15 +89,19 @@ export default function ProjectListPage() {
 
   return (
     <BasePage pageTitle="">
-      <ProjectListContent
-        projects={filteredProjects}
-        onCreate={handleCreate}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onFilter={handleFilter}
-        onSelect={handleSelect}
-        onBack={() => navigate(-1)}
-      />
+      {loading ? (
+        <LoadingContent />
+      ) : (
+        <ProjectListContent
+          projects={filteredProjects}
+          onCreate={handleCreate}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onFilter={handleFilter}
+          onSelect={handleSelect}
+          onBack={() => navigate(-1)}
+        />
+      )}
     </BasePage>
   );
 }
