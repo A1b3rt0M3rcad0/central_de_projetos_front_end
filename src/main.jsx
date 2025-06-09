@@ -14,6 +14,7 @@ import ProjectFormPage from "./pages/ProjectFormPage";
 import EmpresaListPage from "./pages/EmpresaListPage";
 import AuthMiddleware from "./middlewares/AuthMiddleware";
 import IsAuthenticated from "./middlewares/IsAuthenticated";
+import CreateProjectPage from "./pages/CreateProjectPage";
 
 const router = createBrowserRouter([
   {
@@ -77,6 +78,14 @@ const router = createBrowserRouter([
     element: (
       <AuthMiddleware>
         <EmpresaListPage />
+      </AuthMiddleware>
+    ),
+  },
+  {
+    path: "/create_project",
+    element: (
+      <AuthMiddleware>
+        <CreateProjectPage />
       </AuthMiddleware>
     ),
   },

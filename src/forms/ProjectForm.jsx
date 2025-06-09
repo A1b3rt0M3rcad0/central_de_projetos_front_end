@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import BaseContent from "../components/BaseContent";
 
-export default function ProjectForm({
+function ProjectForm({
   initialData = {},
   onSubmit = () => {},
   onBack = () => {},
@@ -326,3 +326,5 @@ export default function ProjectForm({
     </BaseContent>
   );
 }
+
+export default ProjectForm;
