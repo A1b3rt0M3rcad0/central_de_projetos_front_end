@@ -9,7 +9,7 @@ function AuthMiddleware({ children }) {
     const token = localStorage.getItem("access_token");
 
     if (!token) {
-      navigate("/login"); // Redireciona para rota login
+      navigate("/"); // Redireciona para rota login
     } else {
       setIsAuthenticated(true);
     }
