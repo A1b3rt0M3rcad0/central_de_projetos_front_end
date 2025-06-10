@@ -3,9 +3,10 @@ import ProjectForm from "../forms/ProjectForm";
 import { useNavigate } from "react-router-dom";
 
 function CreateProjectPage() {
+  const navigate = useNavigate();
   return (
     <BasePage>
-      <ProjectForm></ProjectForm>
+      <ProjectForm onBack={() => navigate(-1)}></ProjectForm>
     </BasePage>
   );
 }
