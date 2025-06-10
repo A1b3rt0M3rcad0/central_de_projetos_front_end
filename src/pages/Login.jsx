@@ -47,6 +47,8 @@ function Login() {
 
       if (status === 500) {
         errorMessage = "Erro no servidor. Tente novamente mais tarde.";
+      } else if (status == 403) {
+        errorMessage = "Senha ou CPF incorreto. Verifique antes de prosseguir.";
       } else if (errorData) {
         errorMessage = `${errorData.title}: ${errorData.detail}`;
       } else {
