@@ -47,9 +47,7 @@ export default function EmpresaListContent({
                   <td className="py-2">{company.id}</td>
                   <td className="py-2">{company.name || "--"}</td>
                   <td className="py-2">
-                    {company.created_at
-                      ? new Date(company.created_at).toLocaleDateString()
-                      : "--"}
+                    {company.created_at ? company.created_at : "--"}
                   </td>
                   <td className="py-2">
                     <div className="flex gap-2">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "../assets/logo_gov.png";
 import {
   User,
@@ -14,17 +14,97 @@ import {
 } from "lucide-react";
 import SideBarItem from "./SideBarItem";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import userAPI from "../services/endpoints/user";
 
 function SideBar() {
+  function abreviarNomeCompleto(nomeCompleto) {
+    if (!nomeCompleto) return "";
+
+    const partes = nomeCompleto.trim().split(/\s+/); // remove espaços extras
+
+    if (partes.length === 1) {
+      return partes[0]; // Apenas primeiro nome
+    }
+
+    if (partes.length === 2) {
+      return partes.join(" "); // Primeiro e último
+    }
+
+    const primeiro = partes[0];
+    const ultimo = partes[partes.length - 1];
+    const meios = partes
+      .slice(1, -1)
+      .map((n) => `${n[0]}.`)
+      .join(" ");
+
+    return `${primeiro} ${meios} ${ultimo}`;
+  }
+
   const navigate = useNavigate();
   const Logout = () => {
     localStorage.clear("access_token");
+    localStorage.clear("user_info");
     navigate("/");
   };
-
   const [isOpen, setIsOpen] = useState(false);
-
   const toggleSidebar = () => setIsOpen(!isOpen);
+
+  const [userName, setUserName] = useState("");
+  const [userRole, setUserRole] = useState("");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const accessToken = localStorage.getItem("access_token");
+        const storedUser = localStorage.getItem("user_info");
+
+        let shouldFetch = true;
+
+        if (storedUser) {
+          const userParsed = JSON.parse(storedUser);
+
+          if (userParsed.token === accessToken) {
+            // Dados ainda válidos, usa do localStorage
+            setUserName(userParsed.name);
+            setUserRole(userParsed.role);
+            shouldFetch = false;
+          }
+        }
+
+        if (shouldFetch && accessToken) {
+          const response = await userAPI.getWhoAmI(accessToken);
+
+          const updatedToken = response.data?.access_token || accessToken;
+
+          if (response.data?.access_token) {
+            localStorage.setItem("access_token", updatedToken);
+          }
+
+          const newUserInfo = {
+            name: response.data.content.name,
+            role: response.data.content.role,
+            token: updatedToken,
+          };
+
+          localStorage.setItem("user_info", JSON.stringify(newUserInfo));
+
+          setUserName(abreviarNomeCompleto(newUserInfo.name));
+          setUserRole(newUserInfo.role);
+        }
+      } catch (error) {
+        if (!(error.response && error.response.status === 404)) {
+          Swal.fire({
+            icon: "error",
+            title: "Erro ao buscar informações do usuário",
+            text: error.message || "Ocorreu um erro inesperado.",
+          });
+        }
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   return (
     <>
@@ -114,8 +194,8 @@ function SideBar() {
           </div>
           <div className="flex justify-between items-center flex-1 ml-3">
             <div className="leading-5">
-              <h4 className="font-semibold text-gray-800">****339-70</h4>
-              <span className="text-xs text-gray-600">ADMIN</span>
+              <h4 className="font-semibold text-gray-800">{userName}</h4>
+              <span className="text-xs text-gray-600">{userRole}</span>
             </div>
             <div onClick={Logout} className="cursor-pointer">
               <DoorOpen

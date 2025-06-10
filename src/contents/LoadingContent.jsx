@@ -1,6 +1,6 @@
 import BaseContent from "../components/BaseContent";
 
-export default function LoadingContent({ onBack = () => {} }) {
+function LoadingContent({ onBack = () => {} }) {
   return (
     <BaseContent pageTitle="Carregando..." onBack={onBack}>
       {/* Esqueleto dos cards */}
@@ -44,3 +44,5 @@ export default function LoadingContent({ onBack = () => {} }) {
     </BaseContent>
   );
 }
+
+export default LoadingContent;

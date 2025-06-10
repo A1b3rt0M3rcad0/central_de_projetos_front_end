@@ -20,4 +20,17 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+api.interceptors.response.use(
+  (response) => {
+    const newToken = response.data?.access_token;
+
+    if (newToken) {
+      localStorage.setItem("access_token", newToken);
+    }
+
+    return response;
+  },
+  (error) => Promise.reject(error)
+);
+
 export default api;

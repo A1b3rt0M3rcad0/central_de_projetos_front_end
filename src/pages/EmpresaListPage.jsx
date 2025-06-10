@@ -1,29 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import BasePage from "../components/BasePage";
 import EmpresaListContent from "../contents/EmpresaListContent";
+import LoadingContent from "../contents/LoadingContent";
+import empresaAPI from "../services/endpoints/empresa";
+import Swal from "sweetalert2";
 
 export default function EmpresaListPage() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   // Dados mockados
-  const [companies, setCompanies] = useState([
-    {
-      id: 1,
-      name: "Construtora Alpha",
-      created_at: "2023-01-15T10:30:00",
-    },
-    {
-      id: 2,
-      name: "Engenharia Beta",
-      created_at: "2023-03-22T09:45:00",
-    },
-    {
-      id: 3,
-      name: "Serviços Gamma Ltda",
-      created_at: "2024-02-10T14:15:00",
-    },
-  ]);
+  const [companies, setCompanies] = useState([]);
+
+  useEffect(() => {
+    const fetchEmpresas = async () => {
+      try {
+        const response = await empresaAPI.getAllEmpresas();
+        const content = response.data.content;
+        setCompanies(content);
+      } catch (error) {
+        if (!(error.response && error.response.status === 404)) {
+          Swal.fire({
+            icon: "error",
+            title: "Erro ao buscar projetos",
+            text: error.message || "Ocorreu um erro inesperado.",
+          });
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmpresas();
+  }, []);
 
   const [filter, setFilter] = useState("");
 
@@ -45,12 +55,24 @@ export default function EmpresaListPage() {
     navigate(`/company/${company.id}/edit`);
   };
 
-  const handleDelete = (company) => {
-    const confirm = window.confirm(
-      `Deseja realmente excluir a empresa "${company.name}"?`
-    );
-    if (confirm) {
+  const handleDelete = async (company) => {
+    const result = await Swal.fire({
+      title: "Confirmar exclusão",
+      text: `Deseja realmente excluir a empresa "${company.name}"?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sim, excluir",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await empresaAPI.deleteEmpresa({ name: company.name });
       setCompanies((prev) => prev.filter((c) => c.id !== company.id));
+      Swal.fire("Excluído!", "A empresa foi removido com sucesso.", "success");
+    } catch (error) {
+      Swal.fire("Erro!", "Erro ao deletar empresa.", "error");
     }
   };
 
@@ -60,15 +82,19 @@ export default function EmpresaListPage() {
 
   return (
     <BasePage pageTitle="">
-      <EmpresaListContent
-        companies={filteredCompanies}
-        onCreate={handleCreate}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onFilter={handleFilter}
-        onSelect={handleSelect}
-        onBack={() => navigate(-1)}
-      />
+      {loading ? (
+        <LoadingContent />
+      ) : (
+        <EmpresaListContent
+          companies={filteredCompanies}
+          onCreate={handleCreate}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onFilter={handleFilter}
+          onSelect={handleSelect}
+          onBack={() => navigate(-1)}
+        />
+      )}
     </BasePage>
   );
 }
