@@ -66,7 +66,7 @@ function SideBar() {
 
           if (userParsed.token === accessToken) {
             // Dados ainda válidos, usa do localStorage
-            setUserName(userParsed.name);
+            setUserName(abreviarNomeCompleto(userParsed.name));
             setUserRole(userParsed.role);
             shouldFetch = false;
           }
