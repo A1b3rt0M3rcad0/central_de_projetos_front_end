@@ -1,10 +1,13 @@
 import { HelpCircle } from "lucide-react";
 
 export default function Footer() {
+  let dataAtual = new Date();
+  let anoAtual = dataAtual.getFullYear();
   return (
     <footer className="bg-white border-t border-gray-200 shadow-inner px-6 py-3 flex flex-col md:flex-row md:justify-between md:items-center text-sm text-gray-600 gap-2 md:gap-0 text-center md:text-left">
       <span>
-        © 2025 Prefeitura Municipal de Imbituba. Todos os direitos reservados.
+        © {anoAtual} Prefeitura Municipal de Imbituba. Todos os direitos
+        reservados.
       </span>
 
       <button

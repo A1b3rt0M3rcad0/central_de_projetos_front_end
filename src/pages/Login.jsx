@@ -10,6 +10,8 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const dataAtual = new Date();
+  const anoAtual = dataAtual.getFullYear();
 
   const handleCpfChange = (e) => {
     let value = e.target.value;
@@ -137,7 +139,7 @@ function Login() {
         {/* Rodapé */}
         <div className="mt-8 text-center text-xs text-gray-500">
           <p>
-            © 2025 Prefeitura Municipal de Imbituba. Todos os direitos
+            © {anoAtual} Prefeitura Municipal de Imbituba. Todos os direitos
             reservados.
           </p>
           <div className="mt-4">
