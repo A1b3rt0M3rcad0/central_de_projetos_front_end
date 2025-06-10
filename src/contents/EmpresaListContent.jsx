@@ -6,7 +6,6 @@ export default function EmpresaListContent({
   onCreate,
   onEdit,
   onDelete,
-  onSelect,
   onFilter,
   onBack,
 }) {

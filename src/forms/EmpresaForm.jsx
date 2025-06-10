@@ -1,16 +1,25 @@
 import { useEffect, useState } from "react";
 import BaseContent from "../components/BaseContent";
+import Swal from "sweetalert2";
 
-export default function EmpresaForm({ onSubmit, initial_date, onBack }) {
+export default function EmpresaForm({
+  onSubmit,
+  initial_date,
+  onBack,
+  onUpdate,
+}) {
   const [empresaName, setEmpresaName] = useState("");
   const [tittle, setTitle] = useState("");
+  const [oldEmpresaName, setOldEmpresaName] = useState("");
 
   useEffect(() => {
-    if (initial_date?.id) {
+    if (initial_date != undefined) {
       setEmpresaName(initial_date.name);
       setTitle("Editar Empresa");
+      setOldEmpresaName(initial_date.name);
+    } else {
+      setTitle("Criar Empresa");
     }
-    setTitle("Criar Empresa");
   }, []);
 
   const handleSubmit = (e) => {
@@ -19,15 +28,25 @@ export default function EmpresaForm({ onSubmit, initial_date, onBack }) {
     setEmpresaName("");
   };
 
+  const handleUpdate = (e) => {
+    e.preventDefault();
+    if (empresaName != oldEmpresaName) {
+      onUpdate(empresaName, oldEmpresaName);
+    } else {
+      Swal.fire("Erro!", "Novo nome igual ao anterior", "error");
+      setEmpresaName(oldEmpresaName);
+    }
+  };
+
   return (
     <BaseContent onBack={onBack} pageTitle={tittle}>
       <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 p-8">
         <form
-          onSubmit={handleSubmit}
+          onSubmit={initial_date != undefined ? handleUpdate : handleSubmit}
           className="w-full max-w-lg p-8 bg-white rounded-lg shadow-lg font-sans transition-transform duration-300"
         >
           <h2 className="text-2xl font-semibold mb-4 text-gray-800 text-center">
-            Cadastrar empresa
+            {tittle}
           </h2>
           <p className="text-center text-gray-600 mb-6">
             Insira o nome da empresa para continuar.

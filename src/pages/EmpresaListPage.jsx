@@ -47,12 +47,8 @@ export default function EmpresaListPage() {
     navigate("/empresaform");
   };
 
-  const handleSelect = (company) => {
-    navigate(`/company/${company.id}`);
-  };
-
   const handleEdit = (company) => {
-    navigate(`/company/${company.id}/edit`);
+    navigate(`/empresaform`, { state: { initial_date: company } });
   };
 
   const handleDelete = async (company) => {
@@ -91,7 +87,6 @@ export default function EmpresaListPage() {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onFilter={handleFilter}
-          onSelect={handleSelect}
           onBack={() => navigate(-1)}
         />
       )}
