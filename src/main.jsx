@@ -11,6 +11,7 @@ import ProjectListPage from "./pages/ProjectListPage";
 import HomePage from "./pages/HomePage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ProjectFormPage from "./pages/ProjectFormPage";
+import EmpresaFormPage from "./pages/EmpresaFormPage";
 import EmpresaListPage from "./pages/EmpresaListPage";
 import AuthMiddleware from "./middlewares/AuthMiddleware";
 import IsAuthenticated from "./middlewares/IsAuthenticated";
@@ -70,6 +71,14 @@ const router = createBrowserRouter([
     element: (
       <AuthMiddleware>
         <ProjectFormPage />
+      </AuthMiddleware>
+    ),
+  },
+  {
+    path: "/empresaform",
+    element: (
+      <AuthMiddleware>
+        <EmpresaFormPage />
       </AuthMiddleware>
     ),
   },

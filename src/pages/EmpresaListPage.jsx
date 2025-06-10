@@ -44,7 +44,7 @@ export default function EmpresaListPage() {
 
   // Ações
   const handleCreate = () => {
-    navigate("/companyform");
+    navigate("/empresaform");
   };
 
   const handleSelect = (company) => {
