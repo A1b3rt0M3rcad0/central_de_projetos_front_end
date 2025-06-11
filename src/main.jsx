@@ -18,6 +18,7 @@ import AuthMiddleware from "./middlewares/AuthMiddleware";
 import IsAuthenticated from "./middlewares/IsAuthenticated";
 import CreateProjectPage from "./pages/CreateProjectPage";
 import FiscalFormPage from "./pages/FiscalFormPage";
+import BairroListPage from "./pages/BairroListPage";
 
 const router = createBrowserRouter([
   {
@@ -113,6 +114,14 @@ const router = createBrowserRouter([
     element: (
       <AuthMiddleware>
         <FiscalFormPage />
+      </AuthMiddleware>
+    ),
+  },
+  {
+    path: "/bairrolist",
+    element: (
+      <AuthMiddleware>
+        <BairroListPage />
       </AuthMiddleware>
     ),
   },

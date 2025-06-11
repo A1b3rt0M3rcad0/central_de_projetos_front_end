@@ -176,6 +176,7 @@ function SideBar() {
           <SideBarItem
             icon={<MapPin className="text-blue-600" />}
             text="Bairros"
+            onClick={() => navigate("/bairrolist")}
           />
           <SideBarItem
             icon={<Users className="text-blue-600" />}
