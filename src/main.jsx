@@ -21,6 +21,7 @@ import FiscalFormPage from "./pages/FiscalFormPage";
 import BairroListPage from "./pages/BairroListPage";
 import BairroFormPage from "./pages/BairroFormPage";
 import TipoListPage from "./pages/TipoListPage";
+import TipoFormPage from "./pages/TipoFormpage";
 
 const router = createBrowserRouter([
   {
@@ -140,6 +141,14 @@ const router = createBrowserRouter([
     element: (
       <AuthMiddleware>
         <TipoListPage />
+      </AuthMiddleware>
+    ),
+  },
+  {
+    path: "/tipoform",
+    element: (
+      <AuthMiddleware>
+        <TipoFormPage />
       </AuthMiddleware>
     ),
   },
