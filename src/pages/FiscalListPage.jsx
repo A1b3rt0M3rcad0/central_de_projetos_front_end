@@ -64,11 +64,11 @@ export default function FiscalListPage() {
     if (!result.isConfirmed) return;
 
     try {
-      await fiscalAPI.deleteFiscal({ id: fiscal.id });
+      await fiscalAPI.deleteFiscal({ name: fiscal.name });
       setFiscais((prev) => prev.filter((f) => f.id !== fiscal.id));
       Swal.fire("Excluído!", "O fiscal foi removido com sucesso.", "success");
     } catch (error) {
-      Swal.fire("Erro!", "Erro ao deletar fiscal.", "error");
+      Swal.fire("Erro!", `Erro ao deletar fiscal.`, "error");
     }
   };
 
