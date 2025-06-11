@@ -17,6 +17,7 @@ import FiscalListPage from "./pages/FiscalListPage";
 import AuthMiddleware from "./middlewares/AuthMiddleware";
 import IsAuthenticated from "./middlewares/IsAuthenticated";
 import CreateProjectPage from "./pages/CreateProjectPage";
+import FiscalFormPage from "./pages/FiscalFormPage";
 
 const router = createBrowserRouter([
   {
@@ -104,6 +105,14 @@ const router = createBrowserRouter([
     element: (
       <AuthMiddleware>
         <FiscalListPage />
+      </AuthMiddleware>
+    ),
+  },
+  {
+    path: "/fiscalform",
+    element: (
+      <AuthMiddleware>
+        <FiscalFormPage />
       </AuthMiddleware>
     ),
   },
