@@ -171,6 +171,7 @@ function SideBar() {
           <SideBarItem
             icon={<NotebookPen className="text-blue-600" />}
             text="Fiscais"
+            onClick={() => navigate("/fiscallist")}
           />
           <SideBarItem
             icon={<MapPin className="text-blue-600" />}
