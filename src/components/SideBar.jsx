@@ -154,7 +154,7 @@ function SideBar() {
               },
               {
                 text: "Status",
-                onClick: () => console.log("Status"),
+                onClick: () => navigate("/statuslist"),
               },
               {
                 text: "Tipos",

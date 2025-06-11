@@ -44,7 +44,7 @@ export default function StatusListContent({
               status.map((st) => (
                 <tr key={st.id} className="border-b hover:bg-gray-50">
                   <td className="py-2">{st.id}</td>
-                  <td className="py-2">{st.name || "--"}</td>
+                  <td className="py-2">{st.description || "--"}</td>
                   <td className="py-2">
                     {st.created_at ? st.created_at : "--"}
                   </td>
