@@ -20,6 +20,7 @@ import CreateProjectPage from "./pages/CreateProjectPage";
 import FiscalFormPage from "./pages/FiscalFormPage";
 import BairroListPage from "./pages/BairroListPage";
 import BairroFormPage from "./pages/BairroFormPage";
+import TipoListPage from "./pages/TipoListPage";
 
 const router = createBrowserRouter([
   {
@@ -131,6 +132,14 @@ const router = createBrowserRouter([
     element: (
       <AuthMiddleware>
         <BairroFormPage />
+      </AuthMiddleware>
+    ),
+  },
+  {
+    path: "/tipolist",
+    element: (
+      <AuthMiddleware>
+        <TipoListPage />
       </AuthMiddleware>
     ),
   },

@@ -158,7 +158,7 @@ function SideBar() {
               },
               {
                 text: "Tipos",
-                onClick: () => console.log("Tipos"),
+                onClick: () => navigate("/tipolist"),
               },
             ]}
           />
