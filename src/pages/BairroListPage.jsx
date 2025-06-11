@@ -44,11 +44,11 @@ export default function BairroListPage() {
 
   // Ações
   const handleCreate = () => {
-    navigate("/empresaform");
+    navigate("/bairroform");
   };
 
   const handleEdit = (bairro) => {
-    navigate(`/empresaform`, { state: { initial_date: company } });
+    navigate(`/bairroform`, { state: { initial_date: bairro } });
   };
 
   const handleDelete = async (bairro) => {
@@ -65,7 +65,7 @@ export default function BairroListPage() {
 
     try {
       await bairroAPI.deleteBairro({ name: bairro.name });
-      setCompanies((prev) => prev.filter((c) => c.id !== bairro.id));
+      setBairros((prev) => prev.filter((c) => c.id !== bairro.id));
       Swal.fire("Excluído!", "O Bairro foi removido com sucesso.", "success");
     } catch (error) {
       Swal.fire("Erro!", "Erro ao deletar bairro.", "error");
