@@ -23,6 +23,7 @@ import BairroFormPage from "./pages/BairroFormPage";
 import TipoListPage from "./pages/TipoListPage";
 import TipoFormPage from "./pages/TipoFormpage";
 import StatusListPage from "./pages/StatusListPage";
+import StatusFormPage from "./pages/StatusFormPage";
 
 const router = createBrowserRouter([
   {
@@ -158,6 +159,14 @@ const router = createBrowserRouter([
     element: (
       <AuthMiddleware>
         <StatusListPage />
+      </AuthMiddleware>
+    ),
+  },
+  {
+    path: "/statusform",
+    element: (
+      <AuthMiddleware>
+        <StatusFormPage />
       </AuthMiddleware>
     ),
   },
