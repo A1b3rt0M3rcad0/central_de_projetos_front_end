@@ -43,11 +43,11 @@ export default function UserListPage() {
 
   // Ações
   const handleCreate = () => {
-    navigate("/bairroform");
+    navigate("/userform");
   };
 
   const handleEdit = (user) => {
-    navigate(`/bairroform`, { state: { initial_date: user } });
+    navigate(`/userform`, { state: { initial_date: user } });
   };
 
   const handleDelete = async (user) => {
