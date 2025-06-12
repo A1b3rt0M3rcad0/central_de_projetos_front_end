@@ -184,6 +184,7 @@ function SideBar() {
             submenu={[
               {
                 text: "Lista de Usuários",
+                onClick: () => navigate("/userlist"),
               },
             ]}
           />
