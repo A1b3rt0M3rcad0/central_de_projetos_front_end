@@ -104,7 +104,7 @@ const router = createBrowserRouter([
     path: "/create_project",
     element: (
       <AuthMiddleware>
-        <CreateProjectPage />
+        <ProjectFormPage />
       </AuthMiddleware>
     ),
   },

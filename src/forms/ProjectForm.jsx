@@ -1,330 +1,204 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import BaseContent from "../components/BaseContent";
+import Swal from "sweetalert2";
+import statusAPI from "../services/endpoints/status";
 
-function ProjectForm({
-  initialData = {},
-  onSubmit = () => {},
-  onBack = () => {},
-  statusOptions = [],
-  bairroOptions = [],
-  empresaOptions = [],
-  tipoOptions = [],
-  fiscalOptions = [],
-  vereadorOptions = [], // <-- Lista de vereadores [{ cpf: '', nome: '' }]
+export default function ProjectForm({
+  onSubmit,
+  initial_date,
+  onBack,
+  loading,
 }) {
-  const [formData, setFormData] = useState({
-    id: initialData.id || null,
-    name: initialData.name || "",
-    verba_disponivel: initialData.verba_disponivel || 0,
-    andamento_do_projeto: initialData.andamento_do_projeto || "",
-    start_date: initialData.start_date || "",
-    expected_completion_date: initialData.expected_completion_date || "",
-    end_date: initialData.end_date || "",
-    status_id: initialData.status?.id || null,
-    bairro_id: initialData.bairro?.id || null,
-    empresa_id: initialData.empresa?.id || null,
-    tipo_id: initialData.tipo?.id || null,
-    fiscal_id: initialData.fiscal?.id || null,
-    vereador_cpf: initialData.vereador_cpf || "",
-    files: [],
+  const [form, setForm] = useState({
+    status_id: 0,
+    name: "",
+    verba_disponivel: 0,
+    andamento_do_projeto: "",
+    start_date: "",
+    expected_completion_date: "",
+    end_date: "",
   });
 
+  const [title, setTitle] = useState("Criar Projeto");
+  const [statuses, setStatuses] = useState([]);
+
   useEffect(() => {
-    setFormData({
-      id: initialData.id || null,
-      name: initialData.name || "",
-      verba_disponivel: initialData.verba_disponivel || 0,
-      andamento_do_projeto: initialData.andamento_do_projeto || "",
-      start_date: initialData.start_date || "",
-      expected_completion_date: initialData.expected_completion_date || "",
-      end_date: initialData.end_date || "",
-      status_id: initialData.status?.id || null,
-      bairro_id: initialData.bairro?.id || null,
-      empresa_id: initialData.empresa?.id || null,
-      tipo_id: initialData.tipo?.id || null,
-      fiscal_id: initialData.fiscal?.id || null,
-      vereador_cpf: initialData.vereador_cpf || "",
-      files: [],
-    });
-  }, [initialData]);
+    const fetchStatuses = async () => {
+      try {
+        const response = await statusAPI.getAllStatus();
+        if (response.data && response.data.content) {
+          setStatuses(response.data.content);
+        }
+      } catch (error) {
+        Swal.fire("Erro", "Falha ao buscar os status do projeto", "error");
+      }
+    };
+    fetchStatuses();
+  }, []);
+
+  useEffect(() => {
+    if (initial_date) {
+      setTitle("Editar Projeto");
+      setForm({ ...initial_date });
+    }
+  }, [initial_date]);
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-
-    if (name === "files") {
-      setFormData((prev) => ({ ...prev, files: Array.from(files) }));
-      return;
-    }
-
-    const val = [
-      "status_id",
-      "bairro_id",
-      "empresa_id",
-      "tipo_id",
-      "fiscal_id",
-    ].includes(name)
-      ? Number(value)
-      : value;
-
-    setFormData((prev) => ({ ...prev, [name]: val }));
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]:
+        name === "verba_disponivel" || name === "status_id"
+          ? Number(value)
+          : value,
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+
+    if (!form.name.trim()) {
+      return Swal.fire("Erro", "Nome do projeto é obrigatório", "error");
+    }
+
+    if (!form.status_id || form.status_id === 0) {
+      return Swal.fire("Erro", "Selecione um status válido", "error");
+    }
+
+    // Debug: veja os dados que serão enviados
+    console.log("Enviando dados:", form);
+
+    onSubmit(form);
   };
 
   return (
-    <BaseContent
-      pageTitle={formData.id ? "Editar Projeto" : "Cadastrar Projeto"}
-      onBack={onBack}
-    >
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-3xl shadow-lg max-w-5xl mx-auto space-y-8"
-      >
-        {/* Informações do Projeto */}
-        <div>
-          <h2 className="text-2xl font-bold mb-6 border-b pb-2">
-            Informações do Projeto
+    <BaseContent onBack={onBack} pageTitle={title}>
+      <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 p-8">
+        <form
+          className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-lg font-sans transition-transform duration-300"
+          onSubmit={handleSubmit}
+        >
+          <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">
+            {title}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="flex flex-col">
-              <label htmlFor="name" className="mb-2 font-semibold">
-                Nome do Projeto
-              </label>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-gray-700 font-medium">Nome:</label>
               <input
-                id="name"
+                type="text"
                 name="name"
-                value={formData.name}
+                value={form.name}
                 onChange={handleChange}
-                placeholder="Digite o nome do projeto"
                 required
-                className="border border-gray-300 rounded-xl px-4 py-3"
+                disabled={loading}
+                className="w-full px-4 py-2 border rounded-md"
               />
             </div>
 
-            <div className="flex flex-col">
-              <label htmlFor="verba_disponivel" className="mb-2 font-semibold">
-                Verba Disponível (R$)
+            <div>
+              <label className="block text-gray-700 font-medium">
+                Verba Disponível:
               </label>
               <input
-                id="verba_disponivel"
-                name="verba_disponivel"
                 type="number"
-                min="0"
+                name="verba_disponivel"
+                value={form.verba_disponivel}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full px-4 py-2 border rounded-md"
+                min={0}
                 step="0.01"
-                value={formData.verba_disponivel}
-                onChange={handleChange}
-                required
-                placeholder="Ex: 10000.00"
-                className="border border-gray-300 rounded-xl px-4 py-3"
               />
             </div>
 
-            <div className="flex flex-col">
-              <label
-                htmlFor="andamento_do_projeto"
-                className="mb-2 font-semibold"
+            <div>
+              <label className="block text-gray-700 font-medium">Status:</label>
+              <select
+                name="status_id"
+                value={form.status_id}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full px-4 py-2 border rounded-md"
               >
-                Andamento do Projeto
+                <option value={0}>-- Selecione o status --</option>
+                {statuses.map((status) => (
+                  <option key={status.id} value={status.id}>
+                    {status.description}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-gray-700 font-medium">
+                Andamento do Projeto:
               </label>
               <input
-                id="andamento_do_projeto"
+                type="date"
                 name="andamento_do_projeto"
-                value={formData.andamento_do_projeto}
+                value={form.andamento_do_projeto}
                 onChange={handleChange}
-                placeholder="Ex: Em andamento"
-                required
-                className="border border-gray-300 rounded-xl px-4 py-3"
+                disabled={loading}
+                className="w-full px-4 py-2 border rounded-md"
               />
             </div>
 
-            <div className="flex flex-col">
-              <label htmlFor="tipo_id" className="mb-2 font-semibold">
-                Tipo
-              </label>
-              <select
-                id="tipo_id"
-                name="tipo_id"
-                value={formData.tipo_id || ""}
-                onChange={handleChange}
-                required
-                className="border border-gray-300 rounded-xl px-4 py-3"
-              >
-                <option value="" disabled>
-                  Selecione o tipo
-                </option>
-                {tipoOptions.map(({ id, nome }) => (
-                  <option key={id} value={id}>
-                    {nome}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex flex-col">
-              <label htmlFor="start_date" className="mb-2 font-semibold">
-                Data de Início
+            <div>
+              <label className="block text-gray-700 font-medium">
+                Data de Início:
               </label>
               <input
-                id="start_date"
+                type="date"
                 name="start_date"
-                type="date"
-                value={formData.start_date}
+                value={form.start_date}
                 onChange={handleChange}
-                required
-                className="border border-gray-300 rounded-xl px-4 py-3"
+                disabled={loading}
+                className="w-full px-4 py-2 border rounded-md"
               />
             </div>
 
-            <div className="flex flex-col">
-              <label
-                htmlFor="expected_completion_date"
-                className="mb-2 font-semibold"
-              >
-                Data Prevista de Conclusão
+            <div>
+              <label className="block text-gray-700 font-medium">
+                Previsão de Conclusão:
               </label>
               <input
-                id="expected_completion_date"
+                type="date"
                 name="expected_completion_date"
-                type="date"
-                value={formData.expected_completion_date}
+                value={form.expected_completion_date}
                 onChange={handleChange}
-                required
-                className="border border-gray-300 rounded-xl px-4 py-3"
+                disabled={loading}
+                className="w-full px-4 py-2 border rounded-md"
               />
             </div>
 
-            <div className="flex flex-col">
-              <label htmlFor="end_date" className="mb-2 font-semibold">
-                Data de Conclusão
+            <div>
+              <label className="block text-gray-700 font-medium">
+                Data de Conclusão:
               </label>
               <input
-                id="end_date"
-                name="end_date"
                 type="date"
-                value={formData.end_date || ""}
+                name="end_date"
+                value={form.end_date}
                 onChange={handleChange}
-                className="border border-gray-300 rounded-xl px-4 py-3"
+                disabled={loading}
+                className="w-full px-4 py-2 border rounded-md"
               />
             </div>
           </div>
-        </div>
 
-        {/* Vínculos */}
-        <div>
-          <h2 className="text-2xl font-bold mb-6 border-b pb-2">Vínculos</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[
-              {
-                label: "Status",
-                name: "status_id",
-                options: statusOptions,
-              },
-              {
-                label: "Bairro",
-                name: "bairro_id",
-                options: bairroOptions,
-              },
-              {
-                label: "Empresa",
-                name: "empresa_id",
-                options: empresaOptions,
-              },
-              {
-                label: "Fiscal",
-                name: "fiscal_id",
-                options: fiscalOptions,
-              },
-            ].map(({ label, name, options }) => (
-              <div key={name} className="flex flex-col">
-                <label htmlFor={name} className="mb-2 font-semibold">
-                  {label}
-                </label>
-                <select
-                  id={name}
-                  name={name}
-                  value={formData[name] || ""}
-                  onChange={handleChange}
-                  required
-                  className="border border-gray-300 rounded-xl px-4 py-3"
-                >
-                  <option value="" disabled>
-                    Selecione {label.toLowerCase()}
-                  </option>
-                  {options.map(({ id, nome }) => (
-                    <option key={id} value={id}>
-                      {nome}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ))}
-
-            {/* Vereador */}
-            <div className="flex flex-col">
-              <label htmlFor="vereador_cpf" className="mb-2 font-semibold">
-                Vereador
-              </label>
-              <select
-                id="vereador_cpf"
-                name="vereador_cpf"
-                value={formData.vereador_cpf}
-                onChange={handleChange}
-                required
-                className="border border-gray-300 rounded-xl px-4 py-3"
-              >
-                <option value="" disabled>
-                  Selecione o vereador
-                </option>
-                {vereadorOptions.map(({ cpf, nome }) => (
-                  <option key={cpf} value={cpf}>
-                    {nome}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Documentos */}
-        <div>
-          <h2 className="text-2xl font-bold mb-6 border-b pb-2">Documentos</h2>
-          <div className="flex flex-col">
-            <label htmlFor="files" className="mb-2 font-semibold">
-              Anexar Arquivos
-            </label>
-            <input
-              id="files"
-              name="files"
-              type="file"
-              multiple
-              onChange={handleChange}
-              className="border border-gray-300 rounded-xl px-4 py-3"
-            />
-          </div>
-        </div>
-
-        {/* Botões */}
-        <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            onClick={onBack}
-            className="px-6 py-3 rounded-xl border border-gray-400 text-gray-700 hover:bg-gray-100 cursor-pointer"
-          >
-            Voltar
-          </button>
           <button
             type="submit"
-            className="px-6 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
+            disabled={loading}
+            className={`mt-8 w-full bg-blue-600 text-white font-semibold py-3 rounded-md transition
+              ${
+                loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+              }`}
           >
-            {formData.id ? "Atualizar" : "Cadastrar"}
+            {loading ? "Salvando..." : "Salvar"}
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </BaseContent>
   );
 }
-
-export default ProjectForm;
