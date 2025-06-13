@@ -5,7 +5,6 @@ import Swal from "sweetalert2";
 import BasePage from "../components/BasePage";
 import ProjectForm from "../forms/ProjectForm";
 import projectApi from "../services/endpoints/project";
-import LoadingContent from "../contents/LoadingContent";
 
 export default function ProjectFormPage() {
   const navigate = useNavigate();

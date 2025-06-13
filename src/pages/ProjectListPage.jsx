@@ -55,7 +55,7 @@ export default function ProjectListPage() {
   };
 
   const handleSelect = (project) => {
-    navigate(`/projectpage`); // Ou abrir um modal se quiser
+    navigate(`/projectpage`, { state: { initial_date: project } }); // Ou abrir um modal se quiser
   };
 
   const handleEdit = (project) => {
