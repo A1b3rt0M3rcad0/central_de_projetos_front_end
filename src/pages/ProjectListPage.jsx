@@ -51,7 +51,7 @@ export default function ProjectListPage() {
 
   // Ações
   const handleCreate = () => {
-    navigate("/create_project"); // Ou abrir um modal se quiser
+    navigate("/projectform"); // Ou abrir um modal se quiser
   };
 
   const handleSelect = (project) => {
@@ -59,7 +59,7 @@ export default function ProjectListPage() {
   };
 
   const handleEdit = (project) => {
-    navigate(`/projects/${project.id}`);
+    navigate(`/projectform/edit`, { initital_date: project });
   };
 
   const handleDelete = async (project) => {
