@@ -135,7 +135,7 @@ export default function ProjectForm({
                 Andamento do Projeto:
               </label>
               <input
-                type="date"
+                type="text"
                 name="andamento_do_projeto"
                 value={form.andamento_do_projeto}
                 onChange={handleChange}

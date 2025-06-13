@@ -39,7 +39,7 @@ export default function FiscalListPage() {
 
   // Filtragem simples
   const filteredFiscais = fiscais.filter((f) =>
-    f.name.toLowerCase().includes(filter.toLowerCase())
+    (f.name || "").toLowerCase().includes(filter.toLowerCase())
   );
 
   // Ações

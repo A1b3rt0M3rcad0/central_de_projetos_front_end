@@ -40,12 +40,12 @@ export default function ProjectListPage() {
   const filteredProjects = projects.filter((project) => {
     const search = filter.toLowerCase();
     return (
-      project.name.toLowerCase().includes(search) ||
-      project.bairro.toLowerCase().includes(search) ||
-      project.empresa.toLowerCase().includes(search) ||
-      project.status.toLowerCase().includes(search) ||
-      project.andamento_do_projeto.toLowerCase().includes(search) ||
-      project.user.toLowerCase().includes(search)
+      (project.name || "").toLowerCase().includes(search) ||
+      (project.bairro || "").toLowerCase().includes(search) ||
+      (project.empresa || "").toLowerCase().includes(search) ||
+      (project.status || "").toLowerCase().includes(search) ||
+      (project.andamento_do_projeto || "").toLowerCase().includes(search) ||
+      (project.user || "").toLowerCase().includes(search)
     );
   });
 

@@ -39,7 +39,7 @@ export default function StatusListPage() {
 
   // Filtragem simples
   const filteredStatus = status.filter((st) =>
-    st.description.toLowerCase().includes(filter.toLowerCase())
+    (st.description || "").toLowerCase().includes(filter.toLowerCase())
   );
 
   // Ações

@@ -39,7 +39,7 @@ export default function TipoListPage() {
 
   // Filtragem simples
   const filteredTipos = tipos.filter((tipo) =>
-    tipo.name.toLowerCase().includes(filter.toLowerCase())
+    (tipo.name || "").toLowerCase().includes(filter.toLowerCase())
   );
 
   // Ações

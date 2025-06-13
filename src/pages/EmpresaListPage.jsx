@@ -39,7 +39,7 @@ export default function EmpresaListPage() {
 
   // Filtragem simples
   const filteredCompanies = companies.filter((company) =>
-    company.name.toLowerCase().includes(filter.toLowerCase())
+    (company.name || "").toLowerCase().includes(filter.toLowerCase())
   );
 
   // Ações
