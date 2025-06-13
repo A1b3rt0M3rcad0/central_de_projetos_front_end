@@ -60,117 +60,129 @@ export default function UserForm({ onSubmit, initial_date, onBack, onUpdate }) {
       <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 p-8">
         <form
           onSubmit={initial_date ? handleUpdate : handleSubmit}
-          className="w-full max-w-lg p-8 bg-white rounded-lg shadow-lg font-sans transition-transform duration-300"
+          className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-lg font-sans transition-transform duration-300"
         >
-          <h2 className="text-2xl font-semibold mb-4 text-gray-800 text-center">
+          <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
             {title}
           </h2>
 
-          {/* Apenas em criação */}
-          {!initial_date && (
-            <>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+            {/* Apenas em criação */}
+            {!initial_date && (
+              <>
+                <div>
+                  <label
+                    htmlFor="userName"
+                    className="block mb-1 text-gray-700 font-medium"
+                  >
+                    Nome:
+                  </label>
+                  <input
+                    id="userName"
+                    type="text"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md
+              focus:outline-none focus:ring-2 focus:ring-blue-500
+              focus:border-blue-500 transition"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="userCpf"
+                    className="block mb-1 text-gray-700 font-medium"
+                  >
+                    CPF:
+                  </label>
+                  <input
+                    id="userCpf"
+                    type="text"
+                    value={userCpf}
+                    onChange={(e) => setUserCpf(e.target.value)}
+                    required
+                    maxLength={15}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md
+              focus:outline-none focus:ring-2 focus:ring-blue-500
+              focus:border-blue-500 transition"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="userRole"
+                    className="block mb-1 text-gray-700 font-medium"
+                  >
+                    Cargo:
+                  </label>
+                  <select
+                    id="userRole"
+                    value={userRole}
+                    onChange={(e) => setUserRole(e.target.value)}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md
+              focus:outline-none focus:ring-2 focus:ring-blue-500
+              focus:border-blue-500 transition bg-white"
+                  >
+                    <option value="" disabled>
+                      Selecione um cargo
+                    </option>
+                    <option value="admin">Administrador</option>
+                    <option value="vereador">Vereador</option>
+                    <option value="assessor">Assessor</option>
+                  </select>
+                </div>
+              </>
+            )}
+
+            {/* Campos que aparecem sempre */}
+            <div>
               <label
-                htmlFor="userName"
-                className="block mb-2 text-gray-700 font-medium"
+                htmlFor="userEmail"
+                className="block mb-1 text-gray-700 font-medium"
               >
-                Nome:
+                Email:
               </label>
               <input
-                id="userName"
-                type="text"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
+                id="userEmail"
+                type="email"
+                value={userEmail}
+                onChange={(e) => setUserEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-md
-                     focus:outline-none focus:ring-2 focus:ring-blue-500
-                     focus:border-blue-500 transition mb-6"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md
+          focus:outline-none focus:ring-2 focus:ring-blue-500
+          focus:border-blue-500 transition"
               />
+            </div>
 
+            <div>
               <label
-                htmlFor="userCpf"
-                className="block mb-2 text-gray-700 font-medium"
+                htmlFor="userPassword"
+                className="block mb-1 text-gray-700 font-medium"
               >
-                CPF:
+                Senha:
               </label>
               <input
-                id="userCpf"
-                type="text"
-                value={userCpf}
-                onChange={(e) => setUserCpf(e.target.value)}
-                required
-                maxLength={11}
-                className="w-full px-4 py-3 border border-gray-300 rounded-md
-                     focus:outline-none focus:ring-2 focus:ring-blue-500
-                     focus:border-blue-500 transition mb-6"
+                id="userPassword"
+                type="password"
+                value={userPassword}
+                onChange={(e) => setUserPassword(e.target.value)}
+                required={!initial_date}
+                placeholder={
+                  initial_date ? "Deixe em branco para não alterar" : ""
+                }
+                className="w-full px-4 py-2 border border-gray-300 rounded-md
+          focus:outline-none focus:ring-2 focus:ring-blue-500
+          focus:border-blue-500 transition"
               />
-
-              <label
-                htmlFor="userRole"
-                className="block mb-2 text-gray-700 font-medium"
-              >
-                Cargo:
-              </label>
-              <select
-                id="userRole"
-                value={userRole}
-                onChange={(e) => setUserRole(e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-md
-             focus:outline-none focus:ring-2 focus:ring-blue-500
-             focus:border-blue-500 transition mb-6 bg-white"
-              >
-                <option value="" disabled>
-                  Selecione um cargo
-                </option>
-                <option value="admin">Administrador</option>
-                <option value="vereador">Vereador</option>
-                <option value="assessor">Assessor</option>
-                {/* Adicione outras opções conforme seu caso */}
-              </select>
-            </>
-          )}
-
-          {/* Email aparece sempre */}
-          <label
-            htmlFor="userEmail"
-            className="block mb-2 text-gray-700 font-medium"
-          >
-            Email:
-          </label>
-          <input
-            id="userEmail"
-            type="email"
-            value={userEmail}
-            onChange={(e) => setUserEmail(e.target.value)}
-            required
-            className="w-full px-4 py-3 border border-gray-300 rounded-md
-                 focus:outline-none focus:ring-2 focus:ring-blue-500
-                 focus:border-blue-500 transition mb-6"
-          />
-
-          {/* Password aparece sempre (na criação obrigatório, na edição opcional) */}
-          <label
-            htmlFor="userPassword"
-            className="block mb-2 text-gray-700 font-medium"
-          >
-            Senha:
-          </label>
-          <input
-            id="userPassword"
-            type="password"
-            value={userPassword}
-            onChange={(e) => setUserPassword(e.target.value)}
-            required={!initial_date} // obrigatório só para criar
-            placeholder={initial_date ? "Deixe em branco para não alterar" : ""}
-            className="w-full px-4 py-3 border border-gray-300 rounded-md
-               focus:outline-none focus:ring-2 focus:ring-blue-500
-               focus:border-blue-500 transition mb-6"
-          />
+            </div>
+          </div>
 
           <button
             type="submit"
             className="mt-8 w-full bg-blue-600 text-white font-semibold py-3 rounded-md
-                 hover:bg-blue-700 cursor-pointer transition"
+      hover:bg-blue-700 cursor-pointer transition"
           >
             Salvar
           </button>

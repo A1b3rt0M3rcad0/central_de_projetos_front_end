@@ -9,6 +9,16 @@ export default function UserListContent({
   onFilter,
   onBack,
 }) {
+  function formatCPF(cpf) {
+    // Remove tudo que não for número
+    const numbersOnly = cpf.replace(/\D/g, "");
+
+    // Aplica a máscara se tiver 11 dígitos
+    if (numbersOnly.length !== 11) return cpf; // Retorna original se inválido
+
+    return numbersOnly.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+  }
+
   return (
     <BaseContent pageTitle="Usuários" onBack={onBack}>
       {/* Filtro e botão de criar */}
@@ -45,7 +55,7 @@ export default function UserListContent({
             {users.length > 0 ? (
               users.map((user) => (
                 <tr key={user.cpf} className="border-b hover:bg-gray-50">
-                  <td className="py-2">{user.cpf || "--"}</td>
+                  <td className="py-2">{formatCPF(user.cpf) || "--"}</td>
                   <td className="py-2">{user?.name || "--"}</td>
                   <td className="py-2">{user.email}</td>
                   <td className="py-2">{user.role || "--"}</td>
