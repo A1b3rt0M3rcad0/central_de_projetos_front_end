@@ -1,5 +1,5 @@
 import BaseContent from "../components/BaseContent";
-import { Pencil, Trash2, Plus, Eye } from "lucide-react";
+import { Pencil, Trash2, Plus, Eye, FileUp, UserRoundPen } from "lucide-react";
 
 export default function ProjectListContent({
   projects,
@@ -64,6 +64,18 @@ export default function ProjectListContent({
                         className="p-1 rounded hover:bg-gray-200 cursor-pointer"
                       >
                         <Pencil className="w-4 h-4 text-blue-600" />
+                      </button>
+                      <button
+                        onClick={() => console.log("Editar Documentos")}
+                        className="p-1 rounded hover:bg-gray-200 cursor-pointer"
+                      >
+                        <FileUp className="w-4 h-4 text-blue-600" />
+                      </button>
+                      <button
+                        onClick={() => console.log("Editar Vinculos")}
+                        className="p-1 rounded hover:bg-gray-200 cursor-pointer"
+                      >
+                        <UserRoundPen className="w-4 h-4 text-blue-600" />
                       </button>
                       <button
                         onClick={() => onDelete(project)}

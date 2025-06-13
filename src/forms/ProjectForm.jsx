@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import BaseContent from "../components/BaseContent";
 import Swal from "sweetalert2";
 import statusAPI from "../services/endpoints/status";
+import projectApi from "../services/endpoints/project";
 
 export default function ProjectForm({
   onSubmit,
@@ -19,6 +20,7 @@ export default function ProjectForm({
     end_date: "",
   });
 
+  const [oldData, setOldData] = useState(null);
   const [title, setTitle] = useState("Criar Projeto");
   const [statuses, setStatuses] = useState([]);
 
@@ -26,10 +28,10 @@ export default function ProjectForm({
     const fetchStatuses = async () => {
       try {
         const response = await statusAPI.getAllStatus();
-        if (response.data && response.data.content) {
+        if (response.data?.content) {
           setStatuses(response.data.content);
         }
-      } catch (error) {
+      } catch {
         Swal.fire("Erro", "Falha ao buscar os status do projeto", "error");
       }
     };
@@ -38,8 +40,35 @@ export default function ProjectForm({
 
   useEffect(() => {
     if (initial_date) {
-      setTitle("Editar Projeto");
-      setForm({ ...initial_date });
+      const fetchProject = async () => {
+        try {
+          const response = await projectApi.getProjectById(initial_date.id);
+          const project = response.data.content;
+
+          const formatDate = (dateStr) => {
+            if (!dateStr) return "";
+            const [day, month, year] = dateStr.split("/");
+            return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+          };
+
+          const formattedProject = {
+            ...project,
+            start_date: formatDate(project.start_date),
+            expected_completion_date: formatDate(
+              project.expected_completion_date
+            ),
+            end_date: formatDate(project.end_date),
+          };
+
+          setTitle("Editar Projeto");
+          setForm(formattedProject);
+          setOldData(formattedProject);
+        } catch {
+          Swal.fire("Erro", "Falha ao buscar os dados do projeto", "error");
+        }
+      };
+
+      fetchProject();
     }
   }, [initial_date]);
 
@@ -65,10 +94,7 @@ export default function ProjectForm({
       return Swal.fire("Erro", "Selecione um status válido", "error");
     }
 
-    // Debug: veja os dados que serão enviados
-    console.log("Enviando dados:", form);
-
-    onSubmit(form);
+    onSubmit(form, oldData);
   };
 
   return (
@@ -190,10 +216,9 @@ export default function ProjectForm({
           <button
             type="submit"
             disabled={loading}
-            className={`mt-8 w-full bg-blue-600 text-white font-semibold py-3 rounded-md transition
-              ${
-                loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
-              }`}
+            className={`mt-8 w-full bg-blue-600 text-white font-semibold py-3 rounded-md transition ${
+              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+            }`}
           >
             {loading ? "Salvando..." : "Salvar"}
           </button>

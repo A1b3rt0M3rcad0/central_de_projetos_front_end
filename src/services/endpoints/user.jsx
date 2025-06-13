@@ -7,6 +7,7 @@ const userApi = {
   postUser: (data) => api.post("/users", data),
   patchUserEmail: (data) => api.patch("/users/email", data),
   patchUserPassword: (data) => api.patch("/users/password", data),
+  getAllUserByRole: (role) => api.patch(`/users/users/all/${role}`),
 };
 
 export default userApi;

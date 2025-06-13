@@ -59,7 +59,7 @@ export default function ProjectListPage() {
   };
 
   const handleEdit = (project) => {
-    navigate(`/projectform/edit`, { initital_date: project });
+    navigate("/projectform", { state: { initial_date: project } });
   };
 
   const handleDelete = async (project) => {
