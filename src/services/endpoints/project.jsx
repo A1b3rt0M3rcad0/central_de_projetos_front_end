@@ -18,6 +18,7 @@ const projectApi = {
     api.patch("/project/projet_expected_completion_date", data),
   patchStartDate: (data) => api.patch("/project/start_date", data),
   patchVerba: (data) => api.patch("/project/verba", data),
+  patchStatus: (data) => api.patch("/project/status", data),
 };
 
 export default projectApi;
