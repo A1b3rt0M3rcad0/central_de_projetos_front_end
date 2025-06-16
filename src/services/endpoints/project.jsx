@@ -19,6 +19,12 @@ const projectApi = {
   patchStartDate: (data) => api.patch("/project/start_date", data),
   patchVerba: (data) => api.patch("/project/verba", data),
   patchStatus: (data) => api.patch("/project/status", data),
+  postSaveDocument: (formData) =>
+    api.post("/document/save", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }),
 };
 
 export default projectApi;

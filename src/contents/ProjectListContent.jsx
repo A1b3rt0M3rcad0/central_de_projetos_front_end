@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import BaseContent from "../components/BaseContent";
 import { Pencil, Trash2, Plus, Eye, FileUp, UserRoundPen } from "lucide-react";
 
@@ -10,6 +11,7 @@ export default function ProjectListContent({
   onSelect,
   onBack,
 }) {
+  const navigate = useNavigate();
   return (
     <BaseContent pageTitle="Projetos" onBack={onBack}>
       {/* Filtro e botão de criar */}
@@ -66,7 +68,11 @@ export default function ProjectListContent({
                         <Pencil className="w-4 h-4 text-blue-600" />
                       </button>
                       <button
-                        onClick={() => console.log("Editar Documentos")}
+                        onClick={() =>
+                          navigate("/documentform", {
+                            state: { initial_date: project },
+                          })
+                        }
                         className="p-1 rounded hover:bg-gray-200 cursor-pointer"
                       >
                         <FileUp className="w-4 h-4 text-blue-600" />

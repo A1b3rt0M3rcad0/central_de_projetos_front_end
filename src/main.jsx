@@ -26,6 +26,7 @@ import StatusListPage from "./pages/StatusListPage";
 import StatusFormPage from "./pages/StatusFormPage";
 import UserListPage from "./pages/UserListPage";
 import UserFormPage from "./pages/UserFormPage";
+import DocumentFormPage from "./pages/DocumentFormPage";
 
 const router = createBrowserRouter([
   {
@@ -185,6 +186,14 @@ const router = createBrowserRouter([
     element: (
       <AuthMiddleware>
         <UserFormPage />
+      </AuthMiddleware>
+    ),
+  },
+  {
+    path: "/documentform",
+    element: (
+      <AuthMiddleware>
+        <DocumentFormPage />
       </AuthMiddleware>
     ),
   },
