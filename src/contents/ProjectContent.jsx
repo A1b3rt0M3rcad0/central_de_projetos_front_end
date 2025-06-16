@@ -52,6 +52,9 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
             <p>
               <strong>Fiscal:</strong> {project.fiscal || "--"}
             </p>
+            <p>
+              <strong>Vereador:</strong> {project.user?.name || "--"}
+            </p>
           </div>
         </div>
 
