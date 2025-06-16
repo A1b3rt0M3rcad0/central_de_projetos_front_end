@@ -25,6 +25,7 @@ const projectApi = {
         "Content-Type": "multipart/form-data",
       },
     }),
+  deleteDocument: (data) => api.delete("/document", { data }),
 };
 
 export default projectApi;

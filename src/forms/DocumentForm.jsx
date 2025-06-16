@@ -81,11 +81,12 @@ export default function DocumentForm({
 
       const response = await onDelete({
         project_id: projectId,
-        file: file.name,
+        document_name: file.name,
       });
 
-      if (response && response.success) {
+      if (response && response.status) {
         setDocuments((prev) => prev.filter((doc) => doc.name !== file.name));
+        Swal.fire("Sucesso", "Documento excluido com sucesso!", "success");
       } else {
         throw new Error("Erro ao excluir");
       }
