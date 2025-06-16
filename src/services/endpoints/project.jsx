@@ -10,6 +10,14 @@ const projectApi = {
     api.get(`project/project_detail/${project_id}`),
   deleteProject: (data) => api.delete("/project/", { data }),
   postProject: (data) => api.post("/project", data),
+  patchName: (data) => api.patch("/project/name", data),
+  patchAndamentoDoProjeto: (data) =>
+    api.patch("/project/andamento_do_projeto", data),
+  patchEndDate: (data) => api.patch("/project/end_date", data),
+  patchExpectedCompletionDate: (data) =>
+    api.patch("/project/projet_expected_completion_date", data),
+  patchStartDate: (data) => api.patch("/project/start_date", data),
+  patchVerba: (data) => api.patch("/project/verba", data),
 };
 
 export default projectApi;

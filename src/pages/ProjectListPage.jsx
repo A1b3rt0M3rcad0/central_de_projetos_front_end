@@ -16,7 +16,6 @@ export default function ProjectListPage() {
     const fetchProjects = async () => {
       try {
         const response = await projectApi.getAllProjectsWithDetails();
-        console.log(response);
         const content = response.data.content;
         setProjects(content);
       } catch (error) {

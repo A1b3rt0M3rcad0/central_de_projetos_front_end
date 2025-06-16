@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import BaseContent from "../components/BaseContent";
 import Swal from "sweetalert2";
 import statusAPI from "../services/endpoints/status";
-import projectApi from "../services/endpoints/project";
 
 export default function ProjectForm({
   onSubmit,
@@ -24,6 +23,7 @@ export default function ProjectForm({
   const [title, setTitle] = useState("Criar Projeto");
   const [statuses, setStatuses] = useState([]);
 
+  // Busca os status do backend (id e descrição)
   useEffect(() => {
     const fetchStatuses = async () => {
       try {
@@ -38,39 +38,43 @@ export default function ProjectForm({
     fetchStatuses();
   }, []);
 
+  // Quando inicializar ou atualizar initial_date e statuses, preencher form
   useEffect(() => {
-    if (initial_date) {
-      const fetchProject = async () => {
-        try {
-          const response = await projectApi.getProjectById(initial_date.id);
-          const project = response.data.content;
-
-          const formatDate = (dateStr) => {
-            if (!dateStr) return "";
-            const [day, month, year] = dateStr.split("/");
-            return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-          };
-
-          const formattedProject = {
-            ...project,
-            start_date: formatDate(project.start_date),
-            expected_completion_date: formatDate(
-              project.expected_completion_date
-            ),
-            end_date: formatDate(project.end_date),
-          };
-
-          setTitle("Editar Projeto");
-          setForm(formattedProject);
-          setOldData(formattedProject);
-        } catch {
-          Swal.fire("Erro", "Falha ao buscar os dados do projeto", "error");
-        }
+    if (initial_date && statuses.length > 0) {
+      // Função para converter dd/mm/yyyy -> yyyy-mm-dd para input date
+      const convertDateToISO = (dateStr) => {
+        if (!dateStr) return "";
+        const [dd, mm, yyyy] = dateStr.split("/");
+        if (!dd || !mm || !yyyy) return "";
+        return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
       };
 
-      fetchProject();
+      // Buscar status_id pelo texto do status
+      const foundStatus = statuses.find(
+        (s) => s.description.toLowerCase() === initial_date.status.toLowerCase()
+      );
+      const status_id = foundStatus ? foundStatus.id : 0;
+
+      // Atualizar título para editar
+      setTitle("Editar Projeto");
+
+      const newForm = {
+        id: initial_date.id,
+        status_id,
+        name: initial_date.name || "",
+        verba_disponivel: initial_date.verba_disponivel || 0,
+        andamento_do_projeto: initial_date.andamento_do_projeto || "",
+        start_date: convertDateToISO(initial_date.start_date),
+        expected_completion_date: convertDateToISO(
+          initial_date.expected_completion_date
+        ),
+        end_date: convertDateToISO(initial_date.end_date),
+      };
+
+      setForm(newForm);
+      setOldData(newForm);
     }
-  }, [initial_date]);
+  }, [initial_date, statuses]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
