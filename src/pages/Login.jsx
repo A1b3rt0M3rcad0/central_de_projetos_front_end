@@ -51,6 +51,9 @@ function Login() {
         errorMessage = "Erro no servidor. Tente novamente mais tarde.";
       } else if (status == 403) {
         errorMessage = "Senha ou CPF incorreto. Verifique antes de prosseguir.";
+      } else if (status == 429) {
+        errorMessage =
+          "Número de tentativas excedido, tente novamente mais tarde";
       } else if (errorData) {
         errorMessage = `${errorData.title}: ${errorData.detail}`;
       } else {
