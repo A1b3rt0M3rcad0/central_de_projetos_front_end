@@ -50,7 +50,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
               <strong>Tipo:</strong> {project.types?.name || "--"}
             </p>
             <p>
-              <strong>Fiscal:</strong> {project.fiscal || "--"}
+              <strong>Fiscal:</strong> {project.fiscal?.name || "--"}
             </p>
             <p>
               <strong>Vereador:</strong> {project.user?.name || "--"}

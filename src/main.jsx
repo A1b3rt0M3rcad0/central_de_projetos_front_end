@@ -27,6 +27,7 @@ import StatusFormPage from "./pages/StatusFormPage";
 import UserListPage from "./pages/UserListPage";
 import UserFormPage from "./pages/UserFormPage";
 import DocumentFormPage from "./pages/DocumentFormPage";
+import ProjectAssociationFormPage from "./pages/ProjectAssociationFormPage";
 
 const router = createBrowserRouter([
   {
@@ -194,6 +195,14 @@ const router = createBrowserRouter([
     element: (
       <AuthMiddleware>
         <DocumentFormPage />
+      </AuthMiddleware>
+    ),
+  },
+  {
+    path: "/projectassociationform",
+    element: (
+      <AuthMiddleware>
+        <ProjectAssociationFormPage />
       </AuthMiddleware>
     ),
   },

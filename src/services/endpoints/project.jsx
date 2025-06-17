@@ -26,6 +26,70 @@ const projectApi = {
       },
     }),
   deleteDocument: (data) => api.delete("/document", { data }),
+  getAllPossiblyAssociationsFromProject: () =>
+    api.get("/project/projects/associations/all"),
+
+  deleteUserProjectAssociation: (cpf, project_id) => {
+    const data = { cpf: cpf, project_id: project_id };
+    api.delete("/user_project/", { data });
+  },
+
+  deleteProjectBairroAssociation: (bairro_id, project_id) => {
+    const data = {
+      bairro_id: bairro_id,
+      project_id: project_id,
+    };
+    api.delete("/project_bairro/", { data });
+  },
+
+  deleteProjectFiscalAssociation: (fiscal_id, project_id) => {
+    const data = {
+      project_id: project_id,
+      fiscal_id: fiscal_id,
+    };
+    api.delete("/project_fiscal/", { data });
+  },
+  deleteProjectTypeAssociation: (types_id, project_id) => {
+    const data = {
+      types_id: types_id,
+      project_id: project_id,
+    };
+    api.delete("/project_type/", { data });
+  },
+  deleteProjectEmpresaAssociation: (empresa_id, project_id) => {
+    const data = {
+      empresa_id: empresa_id,
+      project_id: project_id,
+    };
+    api.delete("/project_empresa/", { data });
+  },
+  postUserProjectAssociation: (cpf, project_id) =>
+    api.post("/user_project/", { cpf: cpf, project_id: project_id }),
+
+  postProjectBairroAssociation: (bairro_id, project_id) =>
+    api.post("/project_bairro/", {
+      bairro_id: bairro_id,
+      project_id: project_id,
+    }),
+
+  postProjectFiscalAssociation: (fiscal_id, project_id) => {
+    api.post("/project_fiscal/", {
+      project_id: project_id,
+      fiscal_id: fiscal_id,
+    });
+  },
+  postProjectTypeAssociation: (types_id, project_id) => {
+    api.post("/project_type/", {
+      types_id: types_id,
+      project_id: project_id,
+    });
+  },
+  postProjectEmpresaAssociation: (empresa_id, project_id) => {
+    api.post("/project_empresa/", {
+      empresa_id: empresa_id,
+      project_id: project_id,
+    });
+  },
 };
 
 export default projectApi;

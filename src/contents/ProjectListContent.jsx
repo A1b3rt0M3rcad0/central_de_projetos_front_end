@@ -36,6 +36,7 @@ export default function ProjectListContent({
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b">
+              <th className="text-left py-2">ID</th>
               <th className="text-left py-2">Nome</th>
               <th className="text-left py-2">Bairro</th>
               <th className="text-left py-2">Empresa</th>
@@ -50,6 +51,7 @@ export default function ProjectListContent({
             {projects.length > 0 ? (
               projects.map((project) => (
                 <tr key={project.id} className="border-b hover:bg-gray-50">
+                  <td className="py-2">{project.id || "--"}</td>
                   <td className="py-2">{project.name || "--"}</td>
                   <td className="py-2">{project.bairro || "--"}</td>
                   <td className="py-2">{project.empresa || "--"}</td>
@@ -78,7 +80,11 @@ export default function ProjectListContent({
                         <FileUp className="w-4 h-4 text-blue-600" />
                       </button>
                       <button
-                        onClick={() => console.log("Editar Vinculos")}
+                        onClick={() =>
+                          navigate("/projectassociationform", {
+                            state: { initial_date: project },
+                          })
+                        }
                         className="p-1 rounded hover:bg-gray-200 cursor-pointer"
                       >
                         <UserRoundPen className="w-4 h-4 text-blue-600" />
