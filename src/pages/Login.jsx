@@ -40,7 +40,6 @@ function Login() {
       const response = await authApi.login(cpf, password);
       navitate("/home");
       localStorage.setItem("access_token", response.data["token"]);
-      console.log(response.data["token"]);
     } catch (err) {
       const status = err.response?.status;
       const errorData = err.response?.data?.errors?.[0];
