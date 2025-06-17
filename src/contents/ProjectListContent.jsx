@@ -107,7 +107,7 @@ export default function ProjectListContent({
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="py-4 text-center text-gray-500">
+                <td colSpan="9" className="py-4 text-center text-gray-500">
                   Nenhum projeto encontrado.
                 </td>
               </tr>
