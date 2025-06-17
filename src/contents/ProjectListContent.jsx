@@ -62,7 +62,6 @@ export default function ProjectListContent({
                     {project.andamento_do_projeto || "--"}
                   </td>
                   <td className="py-2">{project.types || "--"}</td>
-                  {console.log(project)}
                   <td className="py-2">{project.status || "--"}</td>
                   <td className="py-2">
                     <div className="flex gap-2">
