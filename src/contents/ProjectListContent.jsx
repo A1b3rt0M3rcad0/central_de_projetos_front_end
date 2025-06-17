@@ -43,6 +43,7 @@ export default function ProjectListContent({
               <th className="text-left py-2">Fiscais</th>
               <th className="text-left py-2">Vereador</th>
               <th className="text-left py-2">Andamento</th>
+              <th className="text-left py-2">Tipo</th>
               <th className="text-left py-2">Status</th>
               <th className="text-left py-2">Ações</th>
             </tr>
@@ -60,6 +61,8 @@ export default function ProjectListContent({
                   <td className="py-2">
                     {project.andamento_do_projeto || "--"}
                   </td>
+                  <td className="py-2">{project.types || "--"}</td>
+                  {console.log(project)}
                   <td className="py-2">{project.status || "--"}</td>
                   <td className="py-2">
                     <div className="flex gap-2">

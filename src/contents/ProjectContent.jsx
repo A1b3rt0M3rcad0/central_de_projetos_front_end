@@ -20,7 +20,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
               <strong>Andamento:</strong> {project.andamento_do_projeto || "--"}
             </p>
             <p>
-              <strong>Verba disponível:</strong> R${" "}
+              <strong>Orçamento:</strong> R${" "}
               {project.verba_disponivel?.toLocaleString() || "--"}
             </p>
             <p>
