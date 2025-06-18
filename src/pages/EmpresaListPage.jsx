@@ -68,7 +68,15 @@ export default function EmpresaListPage() {
       setCompanies((prev) => prev.filter((c) => c.id !== company.id));
       Swal.fire("Excluído!", "A empresa foi removido com sucesso.", "success");
     } catch (error) {
-      Swal.fire("Erro!", "Erro ao deletar empresa.", "error");
+      if (error.status != 409) {
+        Swal.fire("Erro!", "Erro ao deletar empresa.", "error");
+      } else {
+        Swal.fire(
+          "Info!",
+          "Não foi possivel deletar empresa, pois ela já está associada a um projeto!",
+          "info"
+        );
+      }
     }
   };
 

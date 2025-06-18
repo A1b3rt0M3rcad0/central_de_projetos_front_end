@@ -68,7 +68,15 @@ export default function TipoListPage() {
       setTipos((prev) => prev.filter((c) => c.id !== tipo.id));
       Swal.fire("Excluído!", "O Tipo foi removido com sucesso.", "success");
     } catch (error) {
-      Swal.fire("Erro!", "Erro ao deletar tipo.", "error");
+      if (error.status != 409) {
+        Swal.fire("Erro!", "Erro ao deletar tipo.", "error");
+      } else {
+        Swal.fire(
+          "Info!",
+          "Não foi possivel deletar tipo, pois ele já está associado a um projeto!",
+          "info"
+        );
+      }
     }
   };
 

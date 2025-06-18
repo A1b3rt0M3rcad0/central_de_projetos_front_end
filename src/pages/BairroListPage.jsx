@@ -68,7 +68,15 @@ export default function BairroListPage() {
       setBairros((prev) => prev.filter((c) => c.id !== bairro.id));
       Swal.fire("Excluído!", "O Bairro foi removido com sucesso.", "success");
     } catch (error) {
-      Swal.fire("Erro!", "Erro ao deletar bairro.", "error");
+      if (error.status != 409) {
+        Swal.fire("Erro!", "Erro ao deletar bairro.", "error");
+      } else {
+        Swal.fire(
+          "Info!",
+          "Não foi possivel deletar bairro, pois ele já está associado a um projeto!",
+          "info"
+        );
+      }
     }
   };
 

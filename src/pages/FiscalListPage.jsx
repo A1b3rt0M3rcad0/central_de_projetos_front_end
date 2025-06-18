@@ -68,7 +68,15 @@ export default function FiscalListPage() {
       setFiscais((prev) => prev.filter((f) => f.id !== fiscal.id));
       Swal.fire("Excluído!", "O fiscal foi removido com sucesso.", "success");
     } catch (error) {
-      Swal.fire("Erro!", `Erro ao deletar fiscal.`, "error");
+      if (error.status != 409) {
+        Swal.fire("Erro!", `Erro ao deletar fiscal.`, "error");
+      } else {
+        Swal.fire(
+          "Info!",
+          `Não foi possivel deletar fiscal, pois ele já está associado a um projeto!`,
+          "info"
+        );
+      }
     }
   };
 

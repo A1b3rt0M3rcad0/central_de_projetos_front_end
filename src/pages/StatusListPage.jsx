@@ -68,7 +68,15 @@ export default function StatusListPage() {
       setStatus((prev) => prev.filter((c) => c.id !== st.id));
       Swal.fire("Excluído!", "O Status foi removido com sucesso.", "success");
     } catch (error) {
-      Swal.fire("Erro!", "Erro ao deletar status.", "error");
+      if (error.status != 409) {
+        Swal.fire("Erro!", "Erro ao deletar status.", "error");
+      } else {
+        Swal.fire(
+          "Info!",
+          "Não foi possivel deletar status, pois ele já está associado a um projeto!",
+          "info"
+        );
+      }
     }
   };
 
