@@ -80,13 +80,16 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
               </tr>
             </thead>
             <tbody>
-              {project.history_project?.map((item) => (
-                <tr key={item.id} className="border-b">
-                  <td className="py-2">{item.updated_at}</td>
-                  <td className="py-2">{item.data_name}</td>
-                  <td className="py-2">{item.description}</td>
-                </tr>
-              ))}
+              {project.history_project
+                ?.slice(-5)
+                .reverse()
+                .map((item) => (
+                  <tr key={item.id} className="border-b">
+                    <td className="py-2">{item.updated_at}</td>
+                    <td className="py-2">{item.data_name}</td>
+                    <td className="py-2">{item.description}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
