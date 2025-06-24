@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import BaseContent from "../components/BaseContent";
 import { Pencil, Trash2, Plus, Eye, FileUp, UserRoundPen } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function ProjectListContent({
   projects,
@@ -12,6 +13,17 @@ export default function ProjectListContent({
   onBack,
 }) {
   const navigate = useNavigate();
+  const [role, setRole] = useState();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const userInfo = localStorage.getItem("user_info");
+      const userInfoParsed = JSON.parse(userInfo);
+      setRole(userInfoParsed.role);
+    };
+    fetchData();
+  }, []);
+
   return (
     <BaseContent pageTitle="Projetos" onBack={onBack}>
       {/* Filtro e botão de criar */}
@@ -65,38 +77,46 @@ export default function ProjectListContent({
                   <td className="py-2">{project.status || "--"}</td>
                   <td className="py-2">
                     <div className="flex gap-2">
-                      <button
-                        onClick={() => onEdit(project)}
-                        className="p-1 rounded hover:bg-gray-200 cursor-pointer"
-                      >
-                        <Pencil className="w-4 h-4 text-blue-600" />
-                      </button>
-                      <button
-                        onClick={() =>
-                          navigate("/documentform", {
-                            state: { initial_date: project },
-                          })
-                        }
-                        className="p-1 rounded hover:bg-gray-200 cursor-pointer"
-                      >
-                        <FileUp className="w-4 h-4 text-blue-600" />
-                      </button>
-                      <button
-                        onClick={() =>
-                          navigate("/projectassociationform", {
-                            state: { initial_date: project },
-                          })
-                        }
-                        className="p-1 rounded hover:bg-gray-200 cursor-pointer"
-                      >
-                        <UserRoundPen className="w-4 h-4 text-blue-600" />
-                      </button>
-                      <button
-                        onClick={() => onDelete(project)}
-                        className="p-1 rounded hover:bg-gray-200 cursor-pointer"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-600" />
-                      </button>
+                      {role && role.toUpperCase() === "ADMIN" ? (
+                        <>
+                          <button
+                            onClick={() => onEdit(project)}
+                            className="p-1 rounded hover:bg-gray-200 cursor-pointer"
+                          >
+                            <Pencil className="w-4 h-4 text-blue-600" />
+                          </button>
+
+                          <button
+                            onClick={() =>
+                              navigate("/documentform", {
+                                state: { initial_date: project },
+                              })
+                            }
+                            className="p-1 rounded hover:bg-gray-200 cursor-pointer"
+                          >
+                            <FileUp className="w-4 h-4 text-blue-600" />
+                          </button>
+
+                          <button
+                            onClick={() =>
+                              navigate("/projectassociationform", {
+                                state: { initial_date: project },
+                              })
+                            }
+                            className="p-1 rounded hover:bg-gray-200 cursor-pointer"
+                          >
+                            <UserRoundPen className="w-4 h-4 text-blue-600" />
+                          </button>
+
+                          <button
+                            onClick={() => onDelete(project)}
+                            className="p-1 rounded hover:bg-gray-200 cursor-pointer"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-600" />
+                          </button>
+                        </>
+                      ) : null}
+
                       <button
                         onClick={() => onSelect(project)}
                         className="p-1 rounded hover:bg-gray-200 cursor-pointer"
