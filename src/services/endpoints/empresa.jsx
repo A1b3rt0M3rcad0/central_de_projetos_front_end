@@ -5,6 +5,7 @@ const empresaAPI = {
   deleteEmpresa: (data) => api.delete("/empresa", { data }),
   postEmpresa: (data) => api.post("/empresa", data),
   patchEmpresa: (data) => api.patch("/empresa", data),
+  getCountEmpresas: () => api.get("/empresa/empresa/count/all"),
 };
 
 export default empresaAPI;

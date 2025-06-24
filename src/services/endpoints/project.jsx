@@ -90,6 +90,7 @@ const projectApi = {
       project_id: project_id,
     });
   },
+  getCountProjects: () => api.get("/project/count/all"),
 };
 
 export default projectApi;

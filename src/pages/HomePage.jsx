@@ -1,109 +1,91 @@
+import { useEffect, useState } from "react";
 import BasePage from "../components/BasePage";
 import HomeContent from "../contents/HomeContent";
 import { useNavigate } from "react-router-dom";
+import projectApi from "../services/endpoints/project";
+import empresaAPI from "../services/endpoints/empresa";
+import fiscalAPI from "../services/endpoints/fiscal";
+import bairroAPI from "../services/endpoints/bairro";
+import LoadingContent from "../contents/LoadingContent";
 
 // Página principal do dashboard com dados mockados
 export default function DashboardPage() {
   const navigate = useNavigate();
 
-  // 👷‍♀️ Dados de resumo
-  const totalProjects = 12;
-  const totalBairros = 5;
-  const totalEmpresas = 4;
-  const totalFiscais = 3;
-  const custoMedio = 125000;
-  const totalVerba = 2800000; // R$ 2.800.000,00
+  //  Card Infos
+  const [loading, setLoading] = useState(true);
+  const [totalProjects, setTotalProjects] = useState(0);
+  const [totalBairros, setTotalBairros] = useState(0);
+  const [totalEmpresas, setTotalEmpresas] = useState(0);
+  const [totalFiscais, setTotalFiscais] = useState(0);
 
-  // 📊 Top 10 mock com status para filtro
-  const empresasMaisAtivas = [
-    { nome: "Construtora ABC", quantidade: 5, status: "running" },
-    { nome: "Construtora XYZ", quantidade: 4, status: "planning" },
-    { nome: "Engenharia Rio", quantidade: 3, status: "done" },
-  ];
+  // Charts
+  const [countProjectsByBairro, setCountProjectsByBairro] = useState({});
+  const [orcamentoProjectByBairro, setOrcamentoProjectByBairro] = useState({});
 
-  const bairrosMaisAtivos = [
-    { nome: "Centro", quantidade: 4, status: "running" },
-    { nome: "Bela Vista", quantidade: 3, status: "awaiting_funds" },
-    { nome: "São João", quantidade: 2, status: "planning" },
-    { nome: "Vila Nova", quantidade: 2, status: "running" },
-    { nome: "Jardim das Flores", quantidade: 1, status: "done" },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      // Card Infos
+      const bairroCount = (await bairroAPI.getCountBairros()).data.content
+        .bairros;
+      setTotalBairros(bairroCount);
 
-  const fiscaisMaisAtivos = [
-    { nome: "Carlos Silva", quantidade: 5, status: "running" },
-    { nome: "Ana Souza", quantidade: 4, status: "planning" },
-    { nome: "Marcos Lima", quantidade: 3, status: "awaiting_funds" },
-  ];
+      const projectCount = (await projectApi.getCountProjects()).data.content
+        .projects;
+      setTotalProjects(projectCount);
 
-  // 🕓 Timeline de projetos recentes
-  const recentProjects = [
-    {
-      id: 1,
-      name: "Praça Central",
-      bairro: "Centro",
-      empresa: "Construtora ABC",
-      created_at: "2024-05-20",
-      status: "running",
-    },
-    {
-      id: 2,
-      name: "Escola Nova Vida",
-      bairro: "Bela Vista",
-      empresa: "Construtora XYZ",
-      created_at: "2024-05-18",
-      status: "awaiting_funds",
-    },
-    {
-      id: 3,
-      name: "Ponte do Rio",
-      bairro: "São João",
-      empresa: "Engenharia Rio",
-      created_at: "2024-05-15",
-      status: "planning",
-    },
-  ];
+      const empresaCount = (await empresaAPI.getCountEmpresas()).data.content
+        .empresas;
+      setTotalEmpresas(empresaCount);
 
-  // 🔧 Histórico de alterações recentes
-  const recentChanges = [
-    {
-      project_name: "Praça Central",
-      field_changed: "Status",
-      new_value: "Em Andamento",
-      changed_at: "2024-05-21",
-      status: "running",
-    },
-    {
-      project_name: "Ponte do Rio",
-      field_changed: "Andamento",
-      new_value: "80% concluído",
-      changed_at: "2024-05-20",
-      status: "running",
-    },
-    {
-      project_name: "Escola Nova Vida",
-      field_changed: "Status",
-      new_value: "Concluído",
-      changed_at: "2024-05-19",
-      status: "done",
-    },
-  ];
+      const fiscalCount = (await fiscalAPI.getCountFiscal()).data.content
+        .fiscals;
+      setTotalFiscais(fiscalCount);
+      // ------------------------------------------------------------------------
+
+      // Número de projetos por Bairro
+      const rawProjectByBairro = (await bairroAPI.getCountProjectsByBairro())
+        .data.content.counts;
+      const parsedProjectByBairro = Object.entries(rawProjectByBairro).map(
+        ([nome, quantidade]) => ({
+          nome,
+          quantidade,
+        })
+      );
+      setCountProjectsByBairro(parsedProjectByBairro);
+      // ----------------------------------------------------------------------------
+
+      // Orçamento por bairro
+      const rawOrcamentoByBairro = (await bairroAPI.getProjectVerbaByBairro())
+        .data.content.verba;
+
+      const parsedOrcamentoByBairro = Object.values(rawOrcamentoByBairro).map(
+        (bairroObj) => {
+          const [nome, orcamento] = Object.entries(bairroObj)[0];
+          return { nome, orcamento };
+        }
+      );
+      setOrcamentoProjectByBairro(parsedOrcamentoByBairro);
+    };
+    fetchData();
+    setLoading(false);
+  }, []);
 
   return (
-    <BasePage pageTitle="Dashboard">
-      <HomeContent
-        totalProjects={totalProjects}
-        totalBairros={totalBairros}
-        totalEmpresas={totalEmpresas}
-        totalFiscais={totalFiscais}
-        totalVerba={totalVerba}
-        custoMedio={custoMedio}
-        empresasMaisAtivas={empresasMaisAtivas}
-        bairrosMaisAtivos={bairrosMaisAtivos}
-        fiscaisMaisAtivos={fiscaisMaisAtivos}
-        recentProjects={recentProjects}
-        recentChanges={recentChanges}
-        onBack={() => navigate(-1)}
-      />
+    <BasePage pageTitle="">
+      {loading ? (
+        <LoadingContent />
+      ) : (
+        <HomeContent
+          totalProjects={totalProjects}
+          totalBairros={totalBairros}
+          totalEmpresas={totalEmpresas}
+          totalFiscais={totalFiscais}
+          countProjectsByBairro={countProjectsByBairro}
+          orcamentoProjectByBairro={orcamentoProjectByBairro}
+          onBack={() => navigate(-1)}
+        />
+      )}
     </BasePage>
   );
 }
