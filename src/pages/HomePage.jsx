@@ -25,50 +25,50 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Card Infos
-      const bairroCount = (await bairroAPI.getCountBairros()).data.content
-        .bairros;
-      setTotalBairros(bairroCount);
+      try {
+        // Card Infos
+        const bairroCount = (await bairroAPI.getCountBairros()).data.content
+          .bairros;
+        setTotalBairros(bairroCount);
 
-      const projectCount = (await projectApi.getCountProjects()).data.content
-        .projects;
-      setTotalProjects(projectCount);
+        const projectCount = (await projectApi.getCountProjects()).data.content
+          .projects;
+        setTotalProjects(projectCount);
 
-      const empresaCount = (await empresaAPI.getCountEmpresas()).data.content
-        .empresas;
-      setTotalEmpresas(empresaCount);
+        const empresaCount = (await empresaAPI.getCountEmpresas()).data.content
+          .empresas;
+        setTotalEmpresas(empresaCount);
 
-      const fiscalCount = (await fiscalAPI.getCountFiscal()).data.content
-        .fiscals;
-      setTotalFiscais(fiscalCount);
-      // ------------------------------------------------------------------------
+        const fiscalCount = (await fiscalAPI.getCountFiscal()).data.content
+          .fiscals;
+        setTotalFiscais(fiscalCount);
 
-      // Número de projetos por Bairro
-      const rawProjectByBairro = (await bairroAPI.getCountProjectsByBairro())
-        .data.content.counts;
-      const parsedProjectByBairro = Object.entries(rawProjectByBairro).map(
-        ([nome, quantidade]) => ({
-          nome,
-          quantidade,
-        })
-      );
-      setCountProjectsByBairro(parsedProjectByBairro);
-      // ----------------------------------------------------------------------------
+        // Número de projetos por Bairro
+        const rawProjectByBairro = (await bairroAPI.getCountProjectsByBairro())
+          .data.content.counts;
+        const parsedProjectByBairro = Object.entries(rawProjectByBairro).map(
+          ([nome, quantidade]) => ({ nome, quantidade })
+        );
+        setCountProjectsByBairro(parsedProjectByBairro);
 
-      // Orçamento por bairro
-      const rawOrcamentoByBairro = (await bairroAPI.getProjectVerbaByBairro())
-        .data.content.verba;
-
-      const parsedOrcamentoByBairro = Object.values(rawOrcamentoByBairro).map(
-        (bairroObj) => {
-          const [nome, orcamento] = Object.entries(bairroObj)[0];
-          return { nome, orcamento };
-        }
-      );
-      setOrcamentoProjectByBairro(parsedOrcamentoByBairro);
+        // Orçamento por bairro
+        const rawOrcamentoByBairro = (await bairroAPI.getProjectVerbaByBairro())
+          .data.content.verba;
+        const parsedOrcamentoByBairro = Object.values(rawOrcamentoByBairro).map(
+          (bairroObj) => {
+            const [nome, orcamento] = Object.entries(bairroObj)[0];
+            return { nome, orcamento };
+          }
+        );
+        setOrcamentoProjectByBairro(parsedOrcamentoByBairro);
+      } catch (error) {
+        console.error("Erro ao carregar dados do dashboard:", error);
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchData();
-    setLoading(false);
   }, []);
 
   return (
