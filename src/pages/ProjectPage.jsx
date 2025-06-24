@@ -79,7 +79,7 @@ export default function ProjectPage() {
   }
 
   return (
-    <BasePage pageTitle={`Projeto: ${project.name}`}>
+    <BasePage pageTitle={""}>
       <ProjectContent
         project={project}
         onBack={() => navigate(-1)}
