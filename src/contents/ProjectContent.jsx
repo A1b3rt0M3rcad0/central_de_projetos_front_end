@@ -17,7 +17,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
               <strong>Status:</strong> {project.status?.description || "--"}
             </p>
             <p>
-              <strong>Andamento:</strong> {project.andamento_do_projeto || "--"}
+              <strong>Situação:</strong> {project.andamento_do_projeto || "--"}
             </p>
             <p>
               <strong>Orçamento:</strong> R${" "}

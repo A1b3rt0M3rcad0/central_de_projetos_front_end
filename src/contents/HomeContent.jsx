@@ -237,7 +237,11 @@ export default function HomeContent({
                   />
                 ))}
               </Pie>
-              <Legend verticalAlign="bottom" height={36} />
+              <Legend
+                verticalAlign="bottom"
+                height={36}
+                wrapperStyle={{ fontSize: "12px" }}
+              />
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
@@ -266,7 +270,7 @@ export default function HomeContent({
               <XAxis dataKey="tipo" />
               <YAxis allowDecimals={false} />
               <Tooltip />
-              <Legend />
+              <Legend wrapperStyle={{ fontSize: "12px" }} />
               {tipoFilterBairro === "all"
                 ? Array.from(
                     new Set(

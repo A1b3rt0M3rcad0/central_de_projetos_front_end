@@ -52,9 +52,9 @@ export default function ProjectListContent({
               <th className="text-left py-2">Nome</th>
               <th className="text-left py-2">Bairro</th>
               <th className="text-left py-2">Empresa</th>
-              <th className="text-left py-2">Fiscais</th>
+              <th className="text-left py-2">Fiscal</th>
               <th className="text-left py-2">Vereador</th>
-              <th className="text-left py-2">Andamento</th>
+              <th className="text-left py-2">Situação</th>
               <th className="text-left py-2">Tipo</th>
               <th className="text-left py-2">Status</th>
               <th className="text-left py-2">Ações</th>
