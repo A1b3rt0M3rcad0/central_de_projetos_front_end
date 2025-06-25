@@ -48,78 +48,102 @@ export default function ProjectListContent({
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b">
-              <th className="text-left py-2">ID</th>
+              {/* Escondemos essas colunas no mobile */}
+              <th className="text-left py-2 hidden md:table-cell">ID</th>
               <th className="text-left py-2">Nome</th>
-              <th className="text-left py-2">Bairro</th>
-              <th className="text-left py-2">Empresa</th>
-              <th className="text-left py-2">Fiscal</th>
-              <th className="text-left py-2">Vereador</th>
-              <th className="text-left py-2">Situação</th>
-              <th className="text-left py-2">Tipo</th>
-              <th className="text-left py-2">Status</th>
+              <th className="text-left py-2 hidden md:table-cell">Bairro</th>
+              <th className="text-left py-2 hidden md:table-cell">Empresa</th>
+              <th className="text-left py-2 hidden md:table-cell">Fiscal</th>
+              <th className="text-left py-2 hidden md:table-cell">Vereador</th>
+              <th className="text-left py-2 hidden md:table-cell">Situação</th>
+              <th className="text-left py-2 hidden md:table-cell">Tipo</th>
+              <th className="text-left py-2 hidden md:table-cell">Status</th>
               <th className="text-left py-2">Ações</th>
             </tr>
           </thead>
+
           <tbody>
             {projects.length > 0 ? (
               projects.map((project) => (
                 <tr key={project.id} className="border-b hover:bg-gray-50">
-                  <td className="py-2">{project.id || "--"}</td>
-                  <td className="py-2">{project.name || "--"}</td>
-                  <td className="py-2">{project.bairro || "--"}</td>
-                  <td className="py-2">{project.empresa || "--"}</td>
-                  <td className="py-2">{project.fiscal || "--"}</td>
-                  <td className="py-2">{project.user || "--"}</td>
-                  <td className="py-2">
+                  <td className="py-2 hidden md:table-cell">
+                    {project.id || "--"}
+                  </td>
+
+                  {/* Nome visível sempre, com truncamento */}
+                  <td className="py-2 max-w-[160px] truncate whitespace-nowrap overflow-hidden">
+                    {project.name || "--"}
+                  </td>
+
+                  <td className="py-2 hidden md:table-cell max-w-[120px] truncate whitespace-nowrap overflow-hidden">
+                    {project.bairro || "--"}
+                  </td>
+
+                  <td className="py-2 hidden md:table-cell max-w-[120px] truncate whitespace-nowrap overflow-hidden">
+                    {project.empresa || "--"}
+                  </td>
+
+                  <td className="py-2 hidden md:table-cell max-w-[120px] truncate whitespace-nowrap overflow-hidden">
+                    {project.fiscal || "--"}
+                  </td>
+
+                  <td className="py-2 hidden md:table-cell max-w-[120px] truncate whitespace-nowrap overflow-hidden">
+                    {project.user || "--"}
+                  </td>
+
+                  <td className="py-2 hidden md:table-cell max-w-[120px] truncate whitespace-nowrap overflow-hidden">
                     {project.andamento_do_projeto || "--"}
                   </td>
-                  <td className="py-2">{project.types || "--"}</td>
-                  <td className="py-2">{project.status || "--"}</td>
+
+                  <td className="py-2 hidden md:table-cell max-w-[120px] truncate whitespace-nowrap overflow-hidden">
+                    {project.types || "--"}
+                  </td>
+
+                  <td className="py-2 hidden md:table-cell max-w-[120px] truncate whitespace-nowrap overflow-hidden">
+                    {project.status || "--"}
+                  </td>
+
                   <td className="py-2">
-                    <div className="flex gap-2">
-                      {role && role.toUpperCase() === "ADMIN" ? (
+                    <div className="flex gap-2 flex-wrap">
+                      {role && role.toUpperCase() === "ADMIN" && (
                         <>
                           <button
                             onClick={() => onEdit(project)}
-                            className="p-1 rounded hover:bg-gray-200 cursor-pointer"
+                            className="p-1 rounded hover:bg-gray-200"
                           >
                             <Pencil className="w-4 h-4 text-blue-600" />
                           </button>
-
                           <button
                             onClick={() =>
                               navigate("/documentform", {
                                 state: { initial_date: project },
                               })
                             }
-                            className="p-1 rounded hover:bg-gray-200 cursor-pointer"
+                            className="p-1 rounded hover:bg-gray-200"
                           >
                             <FileUp className="w-4 h-4 text-blue-600" />
                           </button>
-
                           <button
                             onClick={() =>
                               navigate("/projectassociationform", {
                                 state: { initial_date: project },
                               })
                             }
-                            className="p-1 rounded hover:bg-gray-200 cursor-pointer"
+                            className="p-1 rounded hover:bg-gray-200"
                           >
                             <UserRoundPen className="w-4 h-4 text-blue-600" />
                           </button>
-
                           <button
                             onClick={() => onDelete(project)}
-                            className="p-1 rounded hover:bg-gray-200 cursor-pointer"
+                            className="p-1 rounded hover:bg-gray-200"
                           >
                             <Trash2 className="w-4 h-4 text-red-600" />
                           </button>
                         </>
-                      ) : null}
-
+                      )}
                       <button
                         onClick={() => onSelect(project)}
-                        className="p-1 rounded hover:bg-gray-200 cursor-pointer"
+                        className="p-1 rounded hover:bg-gray-200"
                       >
                         <Eye className="w-4 h-4 text-green-600" />
                       </button>

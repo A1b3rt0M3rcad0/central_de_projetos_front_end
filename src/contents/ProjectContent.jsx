@@ -59,58 +59,77 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
         </div>
 
         {/* Histórico */}
-        <div className="bg-white p-6 rounded-2xl shadow md:col-span-2">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white p-4 md:p-6 rounded-2xl shadow md:col-span-2">
+          {/* Título e botão responsivos */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
             <h3 className="text-lg font-semibold">Histórico de Alterações</h3>
             <button
               onClick={() =>
                 alert("Exibir todos os detalhes do histórico de alterações")
               }
-              className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+              className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 w-fit"
             >
               Mais detalhes
             </button>
           </div>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left py-2">Data</th>
-                <th className="text-left py-2">Campo</th>
-                <th className="text-left py-2">Descrição</th>
-              </tr>
-            </thead>
-            <tbody>
-              {project.history_project
-                ?.slice(-5)
-                .reverse()
-                .map((item) => (
-                  <tr key={item.id} className="border-b">
-                    <td className="py-2">{item.updated_at}</td>
-                    <td className="py-2">{item.data_name}</td>
-                    <td className="py-2">{item.description}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
+
+          {/* Tabela com scroll horizontal no mobile */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2 pr-4 whitespace-nowrap">
+                    Data
+                  </th>
+                  <th className="text-left py-2 pr-4 whitespace-nowrap">
+                    Campo
+                  </th>
+                  <th className="text-left py-2">Descrição</th>
+                </tr>
+              </thead>
+              <tbody>
+                {project.history_project
+                  ?.slice(-5)
+                  .reverse()
+                  .map((item) => (
+                    <tr key={item.id} className="border-b">
+                      <td className="py-2 pr-4 whitespace-nowrap">
+                        {item.updated_at}
+                      </td>
+                      <td className="py-2 pr-4 max-w-[160px] truncate whitespace-nowrap overflow-hidden">
+                        {item.data_name}
+                      </td>
+                      <td className="py-2 max-w-[300px] truncate whitespace-nowrap overflow-hidden">
+                        {item.description}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Documentos */}
-        <div className="bg-white p-6 rounded-2xl shadow md:col-span-2">
+        <div className="bg-white p-4 md:p-6 rounded-2xl shadow md:col-span-2">
           <h3 className="text-lg font-semibold mb-4">Documentos</h3>
+
           {project.documents && project.documents.length > 0 ? (
             <div className="space-y-2">
               {project.documents.map((filename, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between border rounded-lg p-3 hover:bg-gray-50"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border rounded-lg p-3 hover:bg-gray-50"
                 >
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-5 h-5 text-gray-600" />
-                    <span className="text-sm">{filename}</span>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <FileText className="w-5 h-5 text-gray-600 shrink-0" />
+                    <span className="text-sm truncate max-w-[240px] sm:max-w-none">
+                      {filename}
+                    </span>
                   </div>
+
                   <button
                     onClick={() => handleDownloadDocument(project.id, filename)}
-                    className="flex items-center gap-1 text-blue-600 hover:underline text-sm"
+                    className="flex items-center gap-1 text-blue-600 hover:underline text-sm w-fit"
                   >
                     <Download className="w-4 h-4" />
                     Baixar
