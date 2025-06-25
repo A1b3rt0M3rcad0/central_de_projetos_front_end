@@ -34,6 +34,20 @@ export default function HomeContent({
   const [statusFilterBairro, setStatusFilterBairro] = useState("all");
   const [tipoFilterBairro, setTipoFilterBairro] = useState("all");
 
+  const countProjectsByBairroSorted = useMemo(() => {
+    if (!countProjectsByBairro) return [];
+    return [...countProjectsByBairro]
+      .sort((a, b) => b.quantidade - a.quantidade)
+      .slice(0, 10); // pega os 10 maiores
+  }, [countProjectsByBairro]);
+
+  const orcamentoProjectByBairroSorted = useMemo(() => {
+    if (!orcamentoProjectByBairro) return [];
+    return [...orcamentoProjectByBairro]
+      .sort((a, b) => b.orcamento - a.orcamento)
+      .slice(0, 10); // pega os 10 maiores
+  }, [orcamentoProjectByBairro]);
+
   const filteredStatusDistribution = useMemo(() => {
     const data = countProjectStatusByBairro?.status;
     if (!data) return [];
@@ -149,7 +163,7 @@ export default function HomeContent({
             📍 Número de Projetos por Bairro
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={countProjectsByBairro}>
+            <BarChart data={countProjectsByBairroSorted}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="nome"
@@ -171,7 +185,7 @@ export default function HomeContent({
             💰 Orçamento Total por Bairro
           </h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart layout="vertical" data={orcamentoProjectByBairro}>
+            <BarChart layout="vertical" data={orcamentoProjectByBairroSorted}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type="number" />
               <YAxis
