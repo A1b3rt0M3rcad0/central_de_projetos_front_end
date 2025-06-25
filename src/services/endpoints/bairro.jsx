@@ -8,6 +8,10 @@ const bairroAPI = {
   getCountBairros: () => api.get("/bairro/count/all"),
   getCountProjectsByBairro: () => api.get("/project_bairro/project/count/"),
   getProjectVerbaByBairro: () => api.get("/project_bairro/project/verba/"),
+  getCountProjectByBairroAndType: () =>
+    api.get("/project_type/project/types/count"),
+  getCountProjectStatusByBairro: () =>
+    api.get("/project_bairro/project/status/"),
 };
 
 export default bairroAPI;

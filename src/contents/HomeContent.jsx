@@ -33,12 +33,6 @@ const bairroOptions = [
 ];
 
 // Mock data para demonstração orçamento por bairro
-const mockBairros = [
-  { nome: "Centro", orcamento: 1200000 },
-  { nome: "Jardim", orcamento: 850000 },
-  { nome: "Vila Nova", orcamento: 600000 },
-  { nome: "São José", orcamento: 920000 },
-];
 
 const mockStatusDistribution = [
   { name: "Em Projeto", value: 12, status: "planning" },
@@ -48,33 +42,7 @@ const mockStatusDistribution = [
   { name: "Cancelado", value: 1, status: "canceled" },
 ];
 
-const mockProjetosPorTipo = [
-  { tipo: "Construção", Centro: 5, Jardim: 2, "Vila Nova": 3, "São José": 4 },
-  { tipo: "Reforma", Centro: 3, Jardim: 1, "Vila Nova": 2, "São José": 1 },
-  { tipo: "Manutenção", Centro: 7, Jardim: 3, "Vila Nova": 1, "São José": 7 },
-  { tipo: "Ampliação", Centro: 2, Jardim: 3, "Vila Nova": 1, "São José": 0 },
-  { tipo: "Demolição", Centro: 1, Jardim: 0, "Vila Nova": 0, "São José": 0 },
-];
-
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
-
-const mockFiscais = [
-  { nome: "João Silva", projetos: 12 },
-  { nome: "Maria Oliveira", projetos: 9 },
-  { nome: "Carlos Santos", projetos: 7 },
-];
-
-const mockEmpresas = [
-  { nome: "Construtora Alpha", projetos: 18 },
-  { nome: "Empreiteira Beta", projetos: 10 },
-  { nome: "Construções Gama", projetos: 9 },
-];
-
-const mockVereadores = [
-  { nome: "Vereador A", projetos: 14 },
-  { nome: "Vereador B", projetos: 11 },
-  { nome: "Vereador C", projetos: 6 },
-];
 
 export default function HomeContent({
   totalProjects,
@@ -83,6 +51,11 @@ export default function HomeContent({
   totalFiscais,
   countProjectsByBairro,
   orcamentoProjectByBairro,
+  countProjectByFiscal,
+  countProjectByEmpresa,
+  countProjectByUser,
+  countProjectByBairroAndType,
+  countProjectStatusByBairro,
   onBack = () => {},
 }) {
   // Estado local dos filtros por gráfico
@@ -110,14 +83,47 @@ export default function HomeContent({
     return filtered;
   }, [statusFilterStatus, statusFilterBairro]);
 
-  // Filtra projetos por tipo por bairro
+  // Projetos por
+  const projetosPorTipoTransformado = useMemo(() => {
+    const data = countProjectByBairroAndType;
+    if (!data?.types || !data?.types_count_by_bairro) return [];
+
+    const tiposPorLinha = {};
+    data.types.forEach((t) => {
+      tiposPorLinha[t.name] = {};
+    });
+
+    const tiposBairro = data.types_count_by_bairro;
+    Object.values(tiposBairro).forEach((bairroData) => {
+      Object.entries(bairroData).forEach(([bairro, tiposNoBairro]) => {
+        Object.entries(tiposNoBairro).forEach(([tipo, qtd]) => {
+          if (!tiposPorLinha[tipo]) tiposPorLinha[tipo] = {};
+          tiposPorLinha[tipo][bairro] = qtd;
+        });
+      });
+    });
+
+    const todosBairros = new Set();
+    Object.values(tiposBairro).forEach((bairroData) => {
+      Object.keys(bairroData).forEach((bairro) => todosBairros.add(bairro));
+    });
+
+    return Object.entries(tiposPorLinha).map(([tipo, bairros]) => {
+      const linha = { tipo };
+      todosBairros.forEach((bairro) => {
+        linha[bairro] = bairros[bairro] || 0;
+      });
+      return linha;
+    });
+  }, [countProjectByBairroAndType]);
+
   const filteredProjetosPorTipo = useMemo(() => {
-    if (tipoFilterBairro === "all") return mockProjetosPorTipo;
-    return mockProjetosPorTipo.map((item) => ({
+    if (tipoFilterBairro === "all") return projetosPorTipoTransformado;
+    return projetosPorTipoTransformado.map((item) => ({
       tipo: item.tipo,
       quantidade: item[tipoFilterBairro] || 0,
     }));
-  }, [tipoFilterBairro]);
+  }, [projetosPorTipoTransformado, tipoFilterBairro]);
 
   return (
     <BaseContent pageTitle="Início" onBack={onBack}>
@@ -267,19 +273,35 @@ export default function HomeContent({
               ))}
             </select>
           </div>
-
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={filteredProjetosPorTipo} stackOffset="expand">
+            <BarChart data={filteredProjetosPorTipo}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="tipo" />
-              <YAxis tickFormatter={(val) => `${(val * 100).toFixed(0)}%`} />
-              <Tooltip
-                formatter={(value) => `${Math.round(value * 100)}%`}
-                cursor={{ fill: "rgba(0, 0, 0, 0.1)" }}
-              />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
               <Legend />
-              {/* Como aqui o dado já é só quantidade, use uma cor padrão */}
-              <Bar dataKey="quantidade" fill="#3b82f6" />
+              {tipoFilterBairro === "all"
+                ? Array.from(
+                    new Set(
+                      projetosPorTipoTransformado.flatMap((p) =>
+                        Object.keys(p).filter((k) => k !== "tipo")
+                      )
+                    )
+                  ).map((bairro, idx) => (
+                    <Bar
+                      key={bairro}
+                      dataKey={bairro}
+                      stackId="a"
+                      fill={COLORS[idx % COLORS.length]}
+                    />
+                  ))
+                : [
+                    <Bar
+                      key="quantidade"
+                      dataKey="quantidade"
+                      fill="#3b82f6"
+                    />,
+                  ]}
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -300,12 +322,15 @@ export default function HomeContent({
               </tr>
             </thead>
             <tbody>
-              {mockFiscais.map((fiscal) => (
-                <tr key={fiscal.nome}>
-                  <td className="py-1 border-b">{fiscal.nome}</td>
-                  <td className="py-1 border-b">{fiscal.projetos}</td>
-                </tr>
-              ))}
+              {countProjectByFiscal
+                .sort((a, b) => b.projetos - a.projetos) // ordena do maior para o menor
+                .slice(0, 3) // pega os 3 com mais projetos
+                .map((fiscal) => (
+                  <tr key={fiscal.nome}>
+                    <td className="py-1 border-b">{fiscal.nome}</td>
+                    <td className="py-1 border-b">{fiscal.projetos}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -323,7 +348,7 @@ export default function HomeContent({
               </tr>
             </thead>
             <tbody>
-              {mockEmpresas.map((empresa) => (
+              {countProjectByEmpresa.map((empresa) => (
                 <tr key={empresa.nome}>
                   <td className="py-1 border-b">{empresa.nome}</td>
                   <td className="py-1 border-b">{empresa.projetos}</td>
@@ -346,7 +371,7 @@ export default function HomeContent({
               </tr>
             </thead>
             <tbody>
-              {mockVereadores.map((vereador) => (
+              {countProjectByUser.map((vereador) => (
                 <tr key={vereador.nome}>
                   <td className="py-1 border-b">{vereador.nome}</td>
                   <td className="py-1 border-b">{vereador.projetos}</td>

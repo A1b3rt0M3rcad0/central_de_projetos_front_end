@@ -7,6 +7,7 @@ import empresaAPI from "../services/endpoints/empresa";
 import fiscalAPI from "../services/endpoints/fiscal";
 import bairroAPI from "../services/endpoints/bairro";
 import LoadingContent from "../contents/LoadingContent";
+import userApi from "../services/endpoints/user";
 
 // Página principal do dashboard com dados mockados
 export default function DashboardPage() {
@@ -22,6 +23,16 @@ export default function DashboardPage() {
   // Charts
   const [countProjectsByBairro, setCountProjectsByBairro] = useState({});
   const [orcamentoProjectByBairro, setOrcamentoProjectByBairro] = useState({});
+  const [countProjectByBairroAndType, setCountProjectByBairroAndType] =
+    useState({});
+  const [countProjectStatusByBairro, setCountProjectStatusByBairro] = useState(
+    {}
+  );
+
+  // Tables
+  const [countProjectByFiscal, setCountProjectByFiscal] = useState({});
+  const [countProjectByEmpresa, setCountProjectByEmpresa] = useState({});
+  const [countProjectByUser, setCountProjectByUser] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,6 +72,58 @@ export default function DashboardPage() {
           }
         );
         setOrcamentoProjectByBairro(parsedOrcamentoByBairro);
+        // Count Project By Fiscal
+        const rawCountProjectByFiscal = (
+          await fiscalAPI.getCountProjectByFiscal()
+        ).data.content;
+
+        const parsedCountProjectByFiscal = Object.entries(
+          rawCountProjectByFiscal
+        ).map(([nome, projetos]) => ({
+          nome,
+          projetos,
+        }));
+
+        setCountProjectByFiscal(parsedCountProjectByFiscal);
+
+        // Count Project By Empresa
+        const rawCountProjectByEmpresa = (
+          await empresaAPI.getCountProjectsbyEmpresas()
+        ).data.content;
+
+        const parsedCountProjectByEmpresa = Object.entries(
+          rawCountProjectByEmpresa
+        ).map(([nome, projetos]) => ({
+          nome,
+          projetos,
+        }));
+
+        setCountProjectByEmpresa(parsedCountProjectByEmpresa);
+
+        // Count Project By Empresa
+        const rawCountProjectByUser = (await userApi.getCountProjectsByUser())
+          .data.content;
+
+        const parsedCountProjectByUser = Object.entries(
+          rawCountProjectByUser
+        ).map(([nome, projetos]) => ({
+          nome,
+          projetos,
+        }));
+
+        setCountProjectByUser(parsedCountProjectByUser);
+
+        // Count project by bairro and type
+        const countProjectByBairroAndType = (
+          await bairroAPI.getCountProjectByBairroAndType()
+        ).data.content;
+        setCountProjectByBairroAndType(countProjectByBairroAndType);
+
+        // Count project by bairro and type
+        const countProjectStatusByBairro = (
+          await bairroAPI.getCountProjectStatusByBairro()
+        ).data.content;
+        setCountProjectStatusByBairro(countProjectStatusByBairro);
       } catch (error) {
         console.error("Erro ao carregar dados do dashboard:", error);
       } finally {
@@ -83,6 +146,11 @@ export default function DashboardPage() {
           totalFiscais={totalFiscais}
           countProjectsByBairro={countProjectsByBairro}
           orcamentoProjectByBairro={orcamentoProjectByBairro}
+          countProjectByFiscal={countProjectByFiscal}
+          countProjectByEmpresa={countProjectByEmpresa}
+          countProjectByUser={countProjectByUser}
+          countProjectByBairroAndType={countProjectByBairroAndType}
+          countProjectStatusByBairro={countProjectStatusByBairro}
           onBack={() => navigate(-1)}
         />
       )}

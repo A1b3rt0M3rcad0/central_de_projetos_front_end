@@ -6,6 +6,8 @@ const empresaAPI = {
   postEmpresa: (data) => api.post("/empresa", data),
   patchEmpresa: (data) => api.patch("/empresa", data),
   getCountEmpresas: () => api.get("/empresa/empresa/count/all"),
+  getCountProjectsbyEmpresas: () =>
+    api.get("/project_empresa/project/count/all"),
 };
 
 export default empresaAPI;

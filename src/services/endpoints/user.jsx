@@ -8,6 +8,7 @@ const userApi = {
   patchUserEmail: (data) => api.patch("/users/email", data),
   patchUserPassword: (data) => api.patch("/users/password", data),
   getAllUserByRole: (role) => api.patch(`/users/users/all/${role}`),
+  getCountProjectsByUser: () => api.get("/user_project/project/count/all"),
 };
 
 export default userApi;
