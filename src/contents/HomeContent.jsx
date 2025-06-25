@@ -151,7 +151,14 @@ export default function HomeContent({
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={countProjectsByBairro}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="nome" />
+              <XAxis
+                dataKey="nome"
+                angle={-45}
+                textAnchor="end"
+                interval={0}
+                height={100}
+                tick={{ fontSize: 12 }}
+              />
               <YAxis />
               <Tooltip />
               <Bar dataKey="quantidade" fill="#3b82f6" />
@@ -167,7 +174,12 @@ export default function HomeContent({
             <BarChart layout="vertical" data={orcamentoProjectByBairro}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type="number" />
-              <YAxis dataKey="nome" type="category" width={120} />
+              <YAxis
+                dataKey="nome"
+                type="category"
+                width={150}
+                tick={{ fontSize: 12 }}
+              />
               <Tooltip formatter={(value) => `R$ ${value.toLocaleString()}`} />
               <Bar dataKey="orcamento" fill="#10b981" />
             </BarChart>
