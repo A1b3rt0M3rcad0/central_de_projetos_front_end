@@ -20,8 +20,18 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
               <strong>Situação:</strong> {project.andamento_do_projeto || "--"}
             </p>
             <p>
-              <strong>Orçamento:</strong> R${" "}
-              {project.verba_disponivel?.toLocaleString() || "--"}
+              <strong>Orçamento:</strong>{" "}
+              {typeof project.verba_disponivel === "number" ? (
+                <span>
+                  R${" "}
+                  {new Intl.NumberFormat("pt-BR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }).format(project.verba_disponivel)}
+                </span>
+              ) : (
+                "--"
+              )}
             </p>
             <p>
               <strong>Data de início:</strong> {project.start_date || "--"}

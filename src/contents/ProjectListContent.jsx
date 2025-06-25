@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import BaseContent from "../components/BaseContent";
 import { Pencil, Trash2, Plus, Eye, FileUp, UserRoundPen } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 export default function ProjectListContent({
   projects,
@@ -14,6 +14,8 @@ export default function ProjectListContent({
 }) {
   const navigate = useNavigate();
   const [role, setRole] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,6 +25,21 @@ export default function ProjectListContent({
     };
     fetchData();
   }, []);
+
+  // Calcular total de páginas
+  const totalPages = Math.ceil(projects.length / itemsPerPage);
+
+  // Projetos da página atual
+  const currentProjects = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return projects.slice(start, start + itemsPerPage);
+  }, [projects, currentPage]);
+
+  // Funções para mudar página
+  function goToPage(page) {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  }
 
   return (
     <BaseContent pageTitle="Projetos" onBack={onBack}>
@@ -48,7 +65,6 @@ export default function ProjectListContent({
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b">
-              {/* Escondemos essas colunas no mobile */}
               <th className="text-left py-2 hidden md:table-cell">ID</th>
               <th className="text-left py-2">Nome</th>
               <th className="text-left py-2 hidden md:table-cell">Bairro</th>
@@ -63,14 +79,13 @@ export default function ProjectListContent({
           </thead>
 
           <tbody>
-            {projects.length > 0 ? (
-              projects.map((project) => (
+            {currentProjects.length > 0 ? (
+              currentProjects.map((project) => (
                 <tr key={project.id} className="border-b hover:bg-gray-50">
                   <td className="py-2 hidden md:table-cell">
                     {project.id || "--"}
                   </td>
 
-                  {/* Nome visível sempre, com truncamento */}
                   <td className="py-2 max-w-[160px] truncate whitespace-nowrap overflow-hidden">
                     {project.name || "--"}
                   </td>
@@ -153,13 +168,36 @@ export default function ProjectListContent({
               ))
             ) : (
               <tr>
-                <td colSpan="9" className="py-4 text-center text-gray-500">
+                <td colSpan="10" className="py-4 text-center text-gray-500">
                   Nenhum projeto encontrado.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
+
+        {/* Controles de paginação */}
+        <div className="mt-4 flex justify-center items-center gap-3">
+          <button
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded border disabled:opacity-50"
+          >
+            Anterior
+          </button>
+
+          <span>
+            Página {currentPage} de {totalPages}
+          </span>
+
+          <button
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded border disabled:opacity-50"
+          >
+            Próxima
+          </button>
+        </div>
       </div>
     </BaseContent>
   );
