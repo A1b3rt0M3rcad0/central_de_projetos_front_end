@@ -15,33 +15,6 @@ import {
   Legend,
 } from "recharts";
 
-const statusOptions = [
-  { value: "all", label: "Todos os Status" },
-  { value: "planning", label: "Em Projeto" },
-  { value: "running", label: "Em execução" },
-  { value: "awaiting_funds", label: "Aguardando verba" },
-  { value: "done", label: "Finalizado" },
-  { value: "canceled", label: "Cancelado" },
-];
-
-const bairroOptions = [
-  { value: "all", label: "Todos os Bairros" },
-  { value: "Centro", label: "Centro" },
-  { value: "Jardim", label: "Jardim" },
-  { value: "Vila Nova", label: "Vila Nova" },
-  { value: "São José", label: "São José" },
-];
-
-// Mock data para demonstração orçamento por bairro
-
-const mockStatusDistribution = [
-  { name: "Em Projeto", value: 12, status: "planning" },
-  { name: "Em execução", value: 8, status: "running" },
-  { name: "Aguardando verba", value: 4, status: "awaiting_funds" },
-  { name: "Finalizado", value: 20, status: "done" },
-  { name: "Cancelado", value: 1, status: "canceled" },
-];
-
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
 export default function HomeContent({
@@ -58,32 +31,42 @@ export default function HomeContent({
   countProjectStatusByBairro,
   onBack = () => {},
 }) {
-  // Estado local dos filtros por gráfico
-  const [statusFilterStatus, setStatusFilterStatus] = useState("all");
   const [statusFilterBairro, setStatusFilterBairro] = useState("all");
-
   const [tipoFilterBairro, setTipoFilterBairro] = useState("all");
 
-  // Filtra distribuição de status por bairro e status (exemplo simples)
   const filteredStatusDistribution = useMemo(() => {
-    let filtered = [...mockStatusDistribution];
+    const data = countProjectStatusByBairro?.status;
+    if (!data) return [];
 
-    if (statusFilterStatus !== "all") {
-      filtered = filtered.filter((s) => s.status === statusFilterStatus);
-    }
+    const statusMap = {};
 
-    if (statusFilterBairro !== "all") {
-      // Simula ajuste de valores por bairro
-      filtered = filtered.map((s) => ({
-        ...s,
-        value: Math.floor(s.value * 0.8),
-      }));
-    }
+    Object.values(data).forEach((bairroObj) => {
+      Object.entries(bairroObj).forEach(([bairroName, statusCounts]) => {
+        if (statusFilterBairro === "all" || bairroName === statusFilterBairro) {
+          Object.entries(statusCounts).forEach(([status, count]) => {
+            if (!statusMap[status]) statusMap[status] = 0;
+            statusMap[status] += count;
+          });
+        }
+      });
+    });
 
-    return filtered;
-  }, [statusFilterStatus, statusFilterBairro]);
+    return Object.entries(statusMap).map(([name, value]) => ({ name, value }));
+  }, [countProjectStatusByBairro, statusFilterBairro]);
 
-  // Projetos por
+  const bairroOptions = useMemo(() => {
+    if (!countProjectStatusByBairro?.bairros)
+      return [{ value: "all", label: "Todos os Bairros" }];
+
+    return [
+      { value: "all", label: "Todos os Bairros" },
+      ...countProjectStatusByBairro.bairros.map((bairro) => ({
+        value: bairro.name,
+        label: bairro.name,
+      })),
+    ];
+  }, [countProjectStatusByBairro]);
+
   const projetosPorTipoTransformado = useMemo(() => {
     const data = countProjectByBairroAndType;
     if (!data?.types || !data?.types_count_by_bairro) return [];
@@ -124,10 +107,8 @@ export default function HomeContent({
       quantidade: item[tipoFilterBairro] || 0,
     }));
   }, [projetosPorTipoTransformado, tipoFilterBairro]);
-
   return (
     <BaseContent pageTitle="Início" onBack={onBack}>
-      {/* Cards resumo */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {[
           {
@@ -162,9 +143,7 @@ export default function HomeContent({
         ))}
       </div>
 
-      {/* Gráficos - 2 por linha */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        {/* Projetos por Bairro - barra vertical - sem filtro */}
         <div className="bg-white p-6 rounded-2xl shadow">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">
             📍 Número de Projetos por Bairro
@@ -180,7 +159,6 @@ export default function HomeContent({
           </ResponsiveContainer>
         </div>
 
-        {/* Orçamento total por bairro - barra horizontal - sem filtro */}
         <div className="bg-white p-6 rounded-2xl shadow">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">
             💰 Orçamento Total por Bairro
@@ -196,26 +174,12 @@ export default function HomeContent({
           </ResponsiveContainer>
         </div>
 
-        {/* Distribuição projetos por status - pizza com filtros */}
         <div className="bg-white p-6 rounded-2xl shadow">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">
             📊 Distribuição de Projetos por Status
           </h2>
 
-          {/* Filtros status e bairro */}
           <div className="flex gap-4 mb-4 flex-wrap">
-            <select
-              value={statusFilterStatus}
-              onChange={(e) => setStatusFilterStatus(e.target.value)}
-              className="border rounded p-2"
-            >
-              {statusOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-
             <select
               value={statusFilterBairro}
               onChange={(e) => setStatusFilterBairro(e.target.value)}
@@ -253,13 +217,10 @@ export default function HomeContent({
           </ResponsiveContainer>
         </div>
 
-        {/* Projetos por tipo - barra empilhada com filtro bairro */}
         <div className="bg-white p-6 rounded-2xl shadow">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">
             🏗️ Número de Projetos por Tipo
           </h2>
-
-          {/* Filtro bairro */}
           <div className="mb-4">
             <select
               value={tipoFilterBairro}
@@ -307,9 +268,7 @@ export default function HomeContent({
         </div>
       </div>
 
-      {/* Resumos em tabelas */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        {/* Fiscais */}
         <div className="bg-white p-6 rounded-2xl shadow overflow-auto max-h-64">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">
             👷 Fiscais e Projetos Associados
@@ -323,8 +282,8 @@ export default function HomeContent({
             </thead>
             <tbody>
               {countProjectByFiscal
-                .sort((a, b) => b.projetos - a.projetos) // ordena do maior para o menor
-                .slice(0, 3) // pega os 3 com mais projetos
+                .sort((a, b) => b.projetos - a.projetos)
+                .slice(0, 3)
                 .map((fiscal) => (
                   <tr key={fiscal.nome}>
                     <td className="py-1 border-b">{fiscal.nome}</td>
@@ -335,7 +294,6 @@ export default function HomeContent({
           </table>
         </div>
 
-        {/* Empresas */}
         <div className="bg-white p-6 rounded-2xl shadow overflow-auto max-h-64">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">
             🏢 Empresas e Projetos Associados
@@ -358,7 +316,6 @@ export default function HomeContent({
           </table>
         </div>
 
-        {/* Vereadores */}
         <div className="bg-white p-6 rounded-2xl shadow overflow-auto max-h-64">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">
             🏛️ Vereadores e Projetos Associados

@@ -119,7 +119,7 @@ export default function DashboardPage() {
         ).data.content;
         setCountProjectByBairroAndType(countProjectByBairroAndType);
 
-        // Count project by bairro and type
+        // Count project by bairro and status
         const countProjectStatusByBairro = (
           await bairroAPI.getCountProjectStatusByBairro()
         ).data.content;
