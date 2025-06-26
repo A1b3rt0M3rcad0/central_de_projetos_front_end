@@ -102,7 +102,10 @@ export default function ProjectForm({
   };
 
   return (
-    <BaseContent onBack={onBack} pageTitle={title}>
+    <BaseContent
+      onBack={onBack}
+      pageTitle={`${title}: ${initial_date?.name ? initial_date.name : ""}`}
+    >
       <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 p-8">
         <form
           className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-lg font-sans transition-transform duration-300"
