@@ -336,12 +336,15 @@ export default function HomeContent({
               </tr>
             </thead>
             <tbody>
-              {countProjectByEmpresa.map((empresa) => (
-                <tr key={empresa.nome}>
-                  <td className="py-1 border-b">{empresa.nome}</td>
-                  <td className="py-1 border-b">{empresa.projetos}</td>
-                </tr>
-              ))}
+              {countProjectByEmpresa
+                .sort((a, b) => b.projetos - a.projetos)
+                .slice(0, 3)
+                .map((empresa) => (
+                  <tr key={empresa.nome}>
+                    <td className="py-1 border-b">{empresa.nome}</td>
+                    <td className="py-1 border-b">{empresa.projetos}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -358,12 +361,15 @@ export default function HomeContent({
               </tr>
             </thead>
             <tbody>
-              {countProjectByUser.map((vereador) => (
-                <tr key={vereador.nome}>
-                  <td className="py-1 border-b">{vereador.nome}</td>
-                  <td className="py-1 border-b">{vereador.projetos}</td>
-                </tr>
-              ))}
+              {countProjectByUser
+                .sort((a, b) => b.projetos - a.projetos)
+                .slice(0, 3)
+                .map((vereador) => (
+                  <tr key={vereador.nome}>
+                    <td className="py-1 border-b">{vereador.nome}</td>
+                    <td className="py-1 border-b">{vereador.projetos}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
