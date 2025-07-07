@@ -15,7 +15,7 @@ export default function ProjectListContent({
   const navigate = useNavigate();
   const [role, setRole] = useState();
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
+  const itemsPerPage = 15;
 
   useEffect(() => {
     const fetchData = async () => {

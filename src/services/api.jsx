@@ -27,10 +27,17 @@ api.interceptors.response.use(
     if (newToken) {
       localStorage.setItem("access_token", newToken);
     }
-
     return response;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.clear();
+      window.location.href = "/";
+      // Opcional: retornar uma Promise rejeitada para evitar mais tratamento
+      return Promise.reject(error);
+    }
+    return Promise.reject(error);
+  }
 );
 
 export default api;
