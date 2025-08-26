@@ -15,7 +15,7 @@ import {
 import SideBarItem from "./SideBarItem";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import userAPI from "../services/endpoints/user";
+import userAPI from "../services/api/user";
 
 function SideBar() {
   function abreviarNomeCompleto(nomeCompleto) {
