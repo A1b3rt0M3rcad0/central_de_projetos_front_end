@@ -1,52 +1,100 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import BasePage from "../../components/layout/BasePage";
 import ProjectListContent from "../../features/contents/ProjectListContent";
 import projectApi from "../../services/api/project";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
 import LoadingContent from "../../features/contents/LoadingContent";
+import { UI_CONFIG } from "../../config/constants";
 
 export default function ProjectListPage() {
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [projects, setProjects] = useState([]);
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await projectApi.getAllProjectsWithDetails();
-        const content = response.data.content;
-        setProjects(content);
-      } catch (error) {
-        if (!(error.response && error.response.status === 404)) {
-          Swal.fire({
-            icon: "error",
-            title: "Erro ao buscar projetos",
-            text: error.message || "Ocorreu um erro inesperado.",
-          });
-        }
-      } finally {
-        setLoading(false);
+  // Obter página atual da URL ou usar 1 como padrão
+  const currentPage = parseInt(searchParams.get("page") || "1");
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalProjects, setTotalProjects] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+
+  const pageSize = 10; // Valor constante para simplificar
+
+  const fetchProjects = async (page = 1) => {
+    try {
+      const loadingState = page === 1 ? setLoading : setLoadingMore;
+      loadingState(true);
+
+      // Usando a rota de paginação
+      const response = await projectApi.getProjectsWithPagination(
+        pageSize,
+        page
+      );
+
+      // Processando dados da rota de paginação
+      const paginationData = response.data?.content || {};
+      const projectsData = paginationData.projects || []; // Corrigido: 'projects' em vez de 'project'
+      const totalProjects = paginationData.total_items || 0;
+      const totalPages = paginationData.total_pages || 0;
+
+      setProjects(projectsData);
+
+      setTotalPages(totalPages || 0);
+      setTotalProjects(totalProjects || 0);
+      setHasMore(currentPage < totalPages);
+
+      // Atualizar a URL com a nova página
+      setSearchParams({ page: page.toString() });
+    } catch (error) {
+      console.error("Erro ao buscar projetos:", error);
+
+      // Em caso de erro, garantir que projects seja um array vazio
+      setProjects([]);
+      setTotalPages(0);
+      setTotalProjects(0);
+      setHasMore(false);
+
+      if (!(error.response && error.response.status === 404)) {
+        Swal.fire({
+          icon: "error",
+          title: "Erro ao buscar projetos",
+          text: error.message || "Ocorreu um erro inesperado.",
+        });
       }
-    };
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
 
-    fetchProjects();
-  }, []);
+  useEffect(() => {
+    // Carregar projetos quando a página mudar na URL
+    fetchProjects(currentPage);
+  }, [currentPage]);
 
-  const [filter, setFilter] = useState("");
+  // Removendo filtro por enquanto - usando todos os projetos
+  const projectsToShow = Array.isArray(projects) ? projects : [];
 
-  const filteredProjects = projects.filter((project) => {
-    const search = filter.toLowerCase();
-    return (
-      (project.name || "").toLowerCase().includes(search) ||
-      (project.bairro || "").toLowerCase().includes(search) ||
-      (project.empresa || "").toLowerCase().includes(search) ||
-      (project.status || "").toLowerCase().includes(search) ||
-      (project.andamento_do_projeto || "").toLowerCase().includes(search) ||
-      (project.user || "").toLowerCase().includes(search)
-    );
-  });
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages && !loading) {
+      setSearchParams({ page: newPage.toString() });
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages && !loading) {
+      setSearchParams({ page: (currentPage + 1).toString() });
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1 && !loading) {
+      setSearchParams({ page: (currentPage - 1).toString() });
+    }
+  };
 
   // Ações
   const handleCreate = () => {
@@ -54,7 +102,7 @@ export default function ProjectListPage() {
   };
 
   const handleSelect = (project) => {
-    navigate(`/projectpage`, { state: { initial_date: project } }); // Ou abrir um modal se quiser
+    navigate(`/projectpage`, { state: { initial_date: project } });
   };
 
   const handleEdit = (project) => {
@@ -75,15 +123,12 @@ export default function ProjectListPage() {
 
     try {
       await projectApi.deleteProject({ project_id: project.id });
-      setProjects((prev) => prev.filter((p) => p.id !== project.id));
       Swal.fire("Excluído!", "O projeto foi removido com sucesso.", "success");
+      // Recarregar os dados após exclusão
+      handleRefresh();
     } catch (error) {
       Swal.fire("Erro!", "Erro ao deletar projeto.", "error");
     }
-  };
-
-  const handleFilter = (value) => {
-    setFilter(value);
   };
 
   return (
@@ -92,13 +137,19 @@ export default function ProjectListPage() {
         <LoadingContent />
       ) : (
         <ProjectListContent
-          projects={filteredProjects}
+          projects={projectsToShow}
           onCreate={handleCreate}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          onFilter={handleFilter}
           onSelect={handleSelect}
           onBack={() => navigate(-1)}
+          onPageChange={handlePageChange}
+          onNextPage={handleNextPage}
+          onPrevPage={handlePrevPage}
+          loading={loading}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalProjects={totalProjects}
         />
       )}
     </BasePage>

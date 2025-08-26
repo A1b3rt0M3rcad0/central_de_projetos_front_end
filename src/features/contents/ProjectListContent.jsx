@@ -1,21 +1,25 @@
 import { useNavigate } from "react-router-dom";
 import BaseContent from "../../components/BaseContent";
 import { Pencil, Trash2, Plus, Eye, FileUp, UserRoundPen } from "lucide-react";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 
 export default function ProjectListContent({
   projects,
   onCreate,
   onEdit,
   onDelete,
-  onFilter,
   onSelect,
   onBack,
+  onPageChange,
+  onNextPage,
+  onPrevPage,
+  loading,
+  currentPage,
+  totalPages,
+  totalProjects,
 }) {
   const navigate = useNavigate();
   const [role, setRole] = useState();
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,31 +30,12 @@ export default function ProjectListContent({
     fetchData();
   }, []);
 
-  // Calcular total de páginas
-  const totalPages = Math.ceil(projects.length / itemsPerPage);
-
-  // Projetos da página atual
-  const currentProjects = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return projects.slice(start, start + itemsPerPage);
-  }, [projects, currentPage]);
-
-  // Funções para mudar página
-  function goToPage(page) {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-  }
-
   return (
     <BaseContent pageTitle="Projetos" onBack={onBack}>
       {/* Filtro e botão de criar */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <input
-          type="text"
-          placeholder="Filtrar por nome, bairro, status..."
-          onChange={(e) => onFilter(e.target.value)}
-          className="w-full md:w-1/3 border rounded-lg px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        {/* Filtro temporariamente removido */}
+        <div className="w-full md:w-1/3"></div>
         <button
           onClick={onCreate}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 cursor-pointer"
@@ -79,8 +64,8 @@ export default function ProjectListContent({
           </thead>
 
           <tbody>
-            {currentProjects.length > 0 ? (
-              currentProjects.map((project) => (
+            {projects.length > 0 ? (
+              projects.map((project) => (
                 <tr key={project.id} className="border-b hover:bg-gray-50">
                   <td className="py-2 hidden md:table-cell">
                     {project.id || "--"}
@@ -91,19 +76,19 @@ export default function ProjectListContent({
                   </td>
 
                   <td className="py-2 hidden md:table-cell max-w-[120px] truncate whitespace-nowrap overflow-hidden">
-                    {project.bairro || "--"}
+                    {project.bairro?.name || "--"}
                   </td>
 
                   <td className="py-2 hidden md:table-cell max-w-[120px] truncate whitespace-nowrap overflow-hidden">
-                    {project.empresa || "--"}
+                    {project.empresa?.name || "--"}
                   </td>
 
                   <td className="py-2 hidden md:table-cell max-w-[120px] truncate whitespace-nowrap overflow-hidden">
-                    {project.fiscal || "--"}
+                    {project.fiscal?.name || "--"}
                   </td>
 
                   <td className="py-2 hidden md:table-cell max-w-[120px] truncate whitespace-nowrap overflow-hidden">
-                    {project.user || "--"}
+                    {project.user?.name || "--"}
                   </td>
 
                   <td className="py-2 hidden md:table-cell max-w-[120px] truncate whitespace-nowrap overflow-hidden">
@@ -111,11 +96,11 @@ export default function ProjectListContent({
                   </td>
 
                   <td className="py-2 hidden md:table-cell max-w-[120px] truncate whitespace-nowrap overflow-hidden">
-                    {project.types || "--"}
+                    {project.types?.name || "--"}
                   </td>
 
                   <td className="py-2 hidden md:table-cell max-w-[120px] truncate whitespace-nowrap overflow-hidden">
-                    {project.status || "--"}
+                    {project.status?.description || "--"}
                   </td>
 
                   <td className="py-2">
@@ -176,27 +161,65 @@ export default function ProjectListContent({
           </tbody>
         </table>
 
-        {/* Controles de paginação */}
-        <div className="mt-4 flex justify-center items-center gap-3">
-          <button
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 rounded border disabled:opacity-50"
-          >
-            Anterior
-          </button>
+        {/* Informações de paginação */}
+        <div className="mt-4 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="text-sm text-gray-600">
+            Página {currentPage} de {totalPages} - Mostrando {projects.length}{" "}
+            de {totalProjects} projetos
+          </div>
 
-          <span>
-            Página {currentPage} de {totalPages}
-          </span>
+          {/* Controles de paginação */}
+          <div className="flex items-center gap-3">
+            {/* Navegação por páginas */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={onPrevPage}
+                disabled={currentPage <= 1 || loading}
+                className="px-3 py-1 rounded border hover:bg-gray-50 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Anterior
+              </button>
 
-          <button
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 rounded border disabled:opacity-50"
-          >
-            Próxima
-          </button>
+              {/* Números das páginas */}
+              <div className="flex items-center gap-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => onPageChange(pageNum)}
+                      disabled={loading}
+                      className={`px-3 py-1 rounded text-sm ${
+                        currentPage === pageNum
+                          ? "bg-blue-600 text-white"
+                          : "border hover:bg-gray-50"
+                      } disabled:opacity-50`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={onNextPage}
+                disabled={currentPage >= totalPages || loading}
+                className="px-3 py-1 rounded border hover:bg-gray-50 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Próxima
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </BaseContent>

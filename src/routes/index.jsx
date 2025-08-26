@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { ROUTES } from "../config/constants";
 import AuthGuard from "../components/auth/AuthGuard";
+import ErrorBoundary from "../components/ui/ErrorBoundary";
 
 // Layout Components
 import BasePage from "../components/layout/BasePage";
@@ -58,18 +59,22 @@ const router = createBrowserRouter([
   {
     path: ROUTES.HOME,
     element: (
-      <AuthGuard>
-        <HomePage />
-      </AuthGuard>
+      <ErrorBoundary>
+        <AuthGuard>
+          <HomePage />
+        </AuthGuard>
+      </ErrorBoundary>
     ),
   },
   // Project Routes
   {
     path: ROUTES.PROJECTS.LIST,
     element: (
-      <AuthGuard>
-        <ProjectListPage />
-      </AuthGuard>
+      <ErrorBoundary>
+        <AuthGuard>
+          <ProjectListPage />
+        </AuthGuard>
+      </ErrorBoundary>
     ),
   },
   {

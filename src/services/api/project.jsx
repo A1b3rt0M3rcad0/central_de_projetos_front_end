@@ -91,6 +91,8 @@ const projectApi = {
     });
   },
   getCountProjects: () => api.get("/project/count/all"),
+  getProjectsWithPagination: (pageSize, page) =>
+    api.get(`/project/projects/pagination/${pageSize}/${page}`),
 };
 
 export default projectApi;
