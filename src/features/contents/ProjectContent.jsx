@@ -15,12 +15,30 @@ import {
   PlayCircle,
   Target,
   Flag,
+  Upload,
+  UserRoundPen,
+  Edit,
+  MoreHorizontal,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../config/constants";
+import { useEffect, useState } from "react";
 
 export default function ProjectContent({ onBack, project, downloadDocument }) {
   const navigate = useNavigate();
+  const [userRole, setUserRole] = useState(null);
+  const [showActions, setShowActions] = useState(false);
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      const userInfo = localStorage.getItem("user_info");
+      if (userInfo) {
+        const userInfoParsed = JSON.parse(userInfo);
+        setUserRole(userInfoParsed.role);
+      }
+    };
+    fetchUserRole();
+  }, []);
 
   const handleDownloadDocument = (project_id, document_name) => {
     downloadDocument(project_id, document_name);
@@ -32,6 +50,24 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
         projectId: project.id,
         projectName: project.name,
       },
+    });
+  };
+
+  const handleUploadDocument = () => {
+    navigate("/documentform", {
+      state: { initial_date: project },
+    });
+  };
+
+  const handleProjectAssociation = () => {
+    navigate("/projectassociationform", {
+      state: { initial_date: project },
+    });
+  };
+
+  const handleEditProject = () => {
+    navigate("/projectform", {
+      state: { initial_date: project },
     });
   };
 
@@ -107,15 +143,68 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              {getStatusIcon(project.status?.description)}
-              <span
-                className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(
-                  project.status?.description
-                )}`}
-              >
-                {project.status?.description || "Status não definido"}
-              </span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                {getStatusIcon(project.status?.description)}
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(
+                    project.status?.description
+                  )}`}
+                >
+                  {project.status?.description || "Status não definido"}
+                </span>
+              </div>
+
+              {/* Botão de Ações */}
+              {userRole?.toUpperCase() === "ADMIN" && (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowActions(!showActions)}
+                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 hover:border-gray-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                  >
+                    <MoreHorizontal className="w-4 h-4" />
+                    Ações
+                  </button>
+
+                  {/* Dropdown de Ações */}
+                  {showActions && (
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                      <div className="py-1">
+                        <button
+                          onClick={() => {
+                            handleEditProject();
+                            setShowActions(false);
+                          }}
+                          className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <Edit className="w-4 h-4 text-blue-600" />
+                          Editar Projeto
+                        </button>
+                        <button
+                          onClick={() => {
+                            handleUploadDocument();
+                            setShowActions(false);
+                          }}
+                          className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <Upload className="w-4 h-4 text-green-600" />
+                          Upload Documento
+                        </button>
+                        <button
+                          onClick={() => {
+                            handleProjectAssociation();
+                            setShowActions(false);
+                          }}
+                          className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <UserRoundPen className="w-4 h-4 text-purple-600" />
+                          Associar
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -128,13 +217,24 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Orçamento */}
               <div className="bg-white p-6 rounded-2xl shadow">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <DollarSign className="w-5 h-5 text-green-600" />
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-green-100 rounded-lg">
+                      <DollarSign className="w-5 h-5 text-green-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Orçamento
+                    </h3>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Orçamento
-                  </h3>
+                  {userRole?.toUpperCase() === "ADMIN" && (
+                    <button
+                      onClick={handleEditProject}
+                      className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Editar orçamento"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -163,13 +263,24 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
 
               {/* Cronograma */}
               <div className="bg-white p-6 rounded-2xl shadow">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Calendar className="w-5 h-5 text-blue-600" />
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <Calendar className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Cronograma
+                    </h3>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Cronograma
-                  </h3>
+                  {userRole?.toUpperCase() === "ADMIN" && (
+                    <button
+                      onClick={handleEditProject}
+                      className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Editar cronograma"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -254,13 +365,24 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
           <div className="space-y-6">
             {/* Vínculos */}
             <div className="bg-white p-6 rounded-2xl shadow">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-indigo-100 rounded-lg">
-                  <Users className="w-5 h-5 text-indigo-600" />
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-indigo-100 rounded-lg">
+                    <Users className="w-5 h-5 text-indigo-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Vínculos
+                  </h3>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Vínculos
-                </h3>
+                {userRole?.toUpperCase() === "ADMIN" && (
+                  <button
+                    onClick={handleProjectAssociation}
+                    className="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                    title="Gerenciar vínculos"
+                  >
+                    <UserRoundPen className="w-4 h-4" />
+                  </button>
+                )}
               </div>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -361,13 +483,24 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
 
             {/* Documentos */}
             <div className="bg-white p-6 rounded-2xl shadow">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <FileText className="w-5 h-5 text-orange-600" />
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-orange-100 rounded-lg">
+                    <FileText className="w-5 h-5 text-orange-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Documentos
+                  </h3>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Documentos
-                </h3>
+                {userRole?.toUpperCase() === "ADMIN" && (
+                  <button
+                    onClick={handleUploadDocument}
+                    className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                    title="Upload documento"
+                  >
+                    <Upload className="w-4 h-4" />
+                  </button>
+                )}
               </div>
 
               {project.documents && project.documents.length > 0 ? (
@@ -409,6 +542,15 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                   <p className="text-gray-500 text-sm">
                     Nenhum documento disponível
                   </p>
+                  {userRole?.toUpperCase() === "ADMIN" && (
+                    <button
+                      onClick={handleUploadDocument}
+                      className="mt-3 flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 hover:border-green-300 transition-all duration-200 mx-auto"
+                    >
+                      <Upload className="w-4 h-4" />
+                      Fazer primeiro upload
+                    </button>
+                  )}
                 </div>
               )}
             </div>

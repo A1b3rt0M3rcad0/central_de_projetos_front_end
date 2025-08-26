@@ -125,8 +125,9 @@ export default function ProjectListPage() {
       await projectApi.deleteProject({ project_id: project.id });
       Swal.fire("Excluído!", "O projeto foi removido com sucesso.", "success");
       // Recarregar os dados após exclusão
-      handleRefresh();
+      fetchProjects(currentPage);
     } catch (error) {
+      console.error("Erro ao deletar projeto:", error);
       Swal.fire("Erro!", "Erro ao deletar projeto.", "error");
     }
   };

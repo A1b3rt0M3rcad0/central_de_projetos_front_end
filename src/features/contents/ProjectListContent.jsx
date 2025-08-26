@@ -57,7 +57,7 @@ export default function ProjectListContent({
   const generatePageNumbers = () => {
     const pages = [];
     const maxVisiblePages = 7;
-    
+
     if (totalPages <= maxVisiblePages) {
       // Se temos poucas páginas, mostrar todas
       for (let i = 1; i <= totalPages; i++) {
@@ -66,31 +66,31 @@ export default function ProjectListContent({
     } else {
       // Sempre mostrar primeira página
       pages.push(1);
-      
+
       if (currentPage <= 4) {
         // Páginas iniciais
         for (let i = 2; i <= 5; i++) {
           pages.push(i);
         }
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         pages.push(totalPages);
       } else if (currentPage >= totalPages - 3) {
         // Páginas finais
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         for (let i = totalPages - 4; i <= totalPages; i++) {
           pages.push(i);
         }
       } else {
         // Páginas do meio
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         for (let i = currentPage - 1; i <= currentPage + 1; i++) {
           pages.push(i);
         }
-        pages.push('ellipsis');
+        pages.push("ellipsis");
         pages.push(totalPages);
       }
     }
-    
+
     return pages;
   };
 
@@ -231,7 +231,7 @@ export default function ProjectListContent({
     containerClassName: "max-w-full",
   };
 
-  // Ações customizadas
+  // Ações simplificadas - apenas visualização e exclusão
   const actions = {
     bulk:
       role?.toUpperCase() === "ADMIN"
@@ -254,31 +254,28 @@ export default function ProjectListContent({
             },
           ]
         : [],
-    row:
-      role?.toUpperCase() === "ADMIN"
+    row: [
+      {
+        label: "Visualizar",
+        icon: <Eye className="w-4 h-4" />,
+        className: "text-blue-600 hover:bg-blue-50",
+        onClick: (project) => {
+          onSelect(project);
+        },
+      },
+      ...(role?.toUpperCase() === "ADMIN"
         ? [
             {
-              label: "Upload Documento",
-              icon: <FileUp className="w-4 h-4" />,
-              className: "text-blue-600 hover:bg-blue-50",
+              label: "Excluir",
+              icon: <Trash2 className="w-4 h-4" />,
+              className: "text-red-600 hover:bg-red-50",
               onClick: (project) => {
-                navigate("/documentform", {
-                  state: { initial_date: project },
-                });
-              },
-            },
-            {
-              label: "Associar",
-              icon: <UserRoundPen className="w-4 h-4" />,
-              className: "text-green-600 hover:bg-green-50",
-              onClick: (project) => {
-                navigate("/projectassociationform", {
-                  state: { initial_date: project },
-                });
+                onDelete(project);
               },
             },
           ]
-        : [],
+        : []),
+    ],
     export: {
       onClick: () => {
         console.log("Exportar todos os projetos");
@@ -301,9 +298,6 @@ export default function ProjectListContent({
             columns={columns}
             config={config}
             onCreate={onCreate}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onView={onSelect}
             onRefresh={() => window.location.reload()}
             actions={actions}
           />
@@ -323,16 +317,27 @@ export default function ProjectListContent({
                     </span>
                   </div>
                   <div className="text-sm text-gray-600">
-                    Mostrando <span className="font-semibold text-gray-900">{projects.length}</span> de{" "}
-                    <span className="font-semibold text-gray-900">{totalProjects}</span> projetos
+                    Mostrando{" "}
+                    <span className="font-semibold text-gray-900">
+                      {projects.length}
+                    </span>{" "}
+                    de{" "}
+                    <span className="font-semibold text-gray-900">
+                      {totalProjects}
+                    </span>{" "}
+                    projetos
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <span>Página</span>
-                  <span className="font-semibold text-blue-600">{currentPage}</span>
+                  <span className="font-semibold text-blue-600">
+                    {currentPage}
+                  </span>
                   <span>de</span>
-                  <span className="font-semibold text-gray-900">{totalPages}</span>
+                  <span className="font-semibold text-gray-900">
+                    {totalPages}
+                  </span>
                 </div>
               </div>
             </div>
@@ -356,7 +361,7 @@ export default function ProjectListContent({
                   <div className="flex items-center gap-1">
                     {generatePageNumbers().map((page, index) => (
                       <div key={index}>
-                        {page === 'ellipsis' ? (
+                        {page === "ellipsis" ? (
                           <div className="flex items-center justify-center w-10 h-10 text-gray-400">
                             <MoreHorizontal className="w-4 h-4" />
                           </div>
