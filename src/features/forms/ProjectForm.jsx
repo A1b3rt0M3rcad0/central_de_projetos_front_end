@@ -53,8 +53,14 @@ export default function ProjectForm({
       };
 
       // Buscar status_id pelo texto do status
+      const statusDescription =
+        initial_date.status?.description || initial_date.status;
       const foundStatus = statuses.find(
-        (s) => s.description.toLowerCase() === initial_date.status.toLowerCase()
+        (s) =>
+          s.description.toLowerCase() ===
+          (typeof statusDescription === "string"
+            ? statusDescription.toLowerCase()
+            : "")
       );
       const status_id = foundStatus ? foundStatus.id : 0;
 
@@ -66,7 +72,7 @@ export default function ProjectForm({
         status_id,
         name: initial_date.name || "",
         verba_disponivel: initial_date.verba_disponivel
-          ? formatCurrency(initial_date.verba_disponivel.toString())
+          ? formatNumberToCurrency(initial_date.verba_disponivel)
           : "",
         andamento_do_projeto: initial_date.andamento_do_projeto || "",
         start_date: convertDateToISO(initial_date.start_date),
@@ -135,6 +141,21 @@ export default function ProjectForm({
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
+  };
+
+  const formatNumberToCurrency = (value) => {
+    // Para valores que já são números (não strings digitadas pelo usuário)
+    if (typeof value === "number") {
+      return value.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
+    // Para strings, usar a função original
+    return formatCurrency(value);
   };
 
   const parseCurrency = (value) => {
