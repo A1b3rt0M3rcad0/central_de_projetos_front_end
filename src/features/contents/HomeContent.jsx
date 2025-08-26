@@ -357,7 +357,7 @@ export default function HomeContent({
         {/* Tabelas de performance */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Performance e Rankings
+            Performance e Análise
           </h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -365,7 +365,7 @@ export default function HomeContent({
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-2 h-6 bg-blue-500 rounded-full"></div>
                 <h3 className="text-lg font-semibold text-gray-800">
-                  Top Fiscais
+                  Performance dos Fiscais
                 </h3>
               </div>
               <TopPerformersTable
@@ -375,6 +375,7 @@ export default function HomeContent({
                   { key: "nome", label: "Fiscal" },
                   { key: "projetos", label: "Projetos" },
                 ]}
+                category="fiscais"
               />
             </div>
 
@@ -382,7 +383,7 @@ export default function HomeContent({
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-2 h-6 bg-green-500 rounded-full"></div>
                 <h3 className="text-lg font-semibold text-gray-800">
-                  Top Empresas
+                  Performance das Empresas
                 </h3>
               </div>
               <TopPerformersTable
@@ -392,6 +393,7 @@ export default function HomeContent({
                   { key: "nome", label: "Empresa" },
                   { key: "projetos", label: "Projetos" },
                 ]}
+                category="empresas"
               />
             </div>
 
@@ -399,7 +401,7 @@ export default function HomeContent({
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-2 h-6 bg-purple-500 rounded-full"></div>
                 <h3 className="text-lg font-semibold text-gray-800">
-                  Top Vereadores
+                  Performance dos Vereadores
                 </h3>
               </div>
               <TopPerformersTable
@@ -409,6 +411,7 @@ export default function HomeContent({
                   { key: "nome", label: "Vereador" },
                   { key: "projetos", label: "Projetos" },
                 ]}
+                category="vereadores"
               />
             </div>
           </div>
