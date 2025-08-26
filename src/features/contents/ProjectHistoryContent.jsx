@@ -85,7 +85,15 @@ export default function ProjectHistoryContent({ project, onBack }) {
   };
 
   return (
-    <BaseContent pageTitle="Histórico de Alterações" onBack={onBack}>
+    <BaseContent
+      pageTitle="Histórico de Alterações"
+      onBack={onBack}
+      breadcrumbs={[
+        { label: "Projetos", onClick: () => navigate("/projectlistpage") },
+        { label: "Detalhes", onClick: () => navigate(-1) },
+        { label: "Histórico" },
+      ]}
+    >
       <div className="space-y-6">
         {/* Informações do Projeto */}
         <div className="bg-white p-6 rounded-2xl shadow">

@@ -31,7 +31,11 @@ export default function ProjectListContent({
   }, []);
 
   return (
-    <BaseContent pageTitle="Projetos" onBack={onBack}>
+    <BaseContent
+      pageTitle="Projetos"
+      onBack={onBack}
+      breadcrumbs={[{ label: "Lista de Projetos" }]}
+    >
       {/* Filtro e botão de criar */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         {/* Filtro temporariamente removido */}

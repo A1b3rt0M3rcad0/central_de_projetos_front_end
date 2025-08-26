@@ -350,6 +350,10 @@ export default function ProjectForm({
     <BaseContent
       onBack={onBack}
       pageTitle={`${title}: ${initial_date?.name ? initial_date.name : ""}`}
+      breadcrumbs={[
+        { label: "Projetos", onClick: () => navigate("/projectlistpage") },
+        { label: initial_date?.id ? "Editar" : "Novo Projeto" },
+      ]}
     >
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
         <div className="max-w-4xl mx-auto">

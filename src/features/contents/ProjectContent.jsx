@@ -83,7 +83,14 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
   };
 
   return (
-    <BaseContent pageTitle={project.name} onBack={onBack}>
+    <BaseContent
+      pageTitle={project.name}
+      onBack={onBack}
+      breadcrumbs={[
+        { label: "Projetos", onClick: () => navigate("/projectlistpage") },
+        { label: "Detalhes" },
+      ]}
+    >
       <div className="space-y-6">
         {/* Header com Status */}
         <div className="bg-white p-6 rounded-2xl shadow">
