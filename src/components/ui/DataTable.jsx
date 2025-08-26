@@ -12,6 +12,7 @@ import {
   Download,
   RefreshCw,
 } from "lucide-react";
+import { formatDate } from "../../utils/dateUtils";
 
 /**
  * Componente DataTable - Lista de dados reutilizável
@@ -159,7 +160,7 @@ export default function DataTable({
     }
 
     if (column.type === "date") {
-      return new Date(value).toLocaleDateString("pt-BR");
+      return formatDate(value);
     }
 
     if (column.type === "currency") {

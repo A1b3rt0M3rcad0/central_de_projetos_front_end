@@ -7,39 +7,9 @@ import {
   FileText,
   TrendingUp,
 } from "lucide-react";
+import { formatDate } from "../../utils/dateUtils";
 
 export default function ProjectHistoryContent({ project, onBack }) {
-  const formatDate = (dateString) => {
-    if (!dateString) return "--";
-
-    try {
-      // Se já é uma string formatada, retornar como está
-      if (typeof dateString === "string" && dateString.includes("/")) {
-        return dateString;
-      }
-
-      // Tentar criar objeto Date
-      const date = new Date(dateString);
-
-      // Verificar se a data é válida
-      if (isNaN(date.getTime())) {
-        return dateString; // Retornar string original se não conseguir parsear
-      }
-
-      // Formatar para pt-BR
-      return date.toLocaleDateString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch (error) {
-      console.error("Erro ao formatar data:", dateString, error);
-      return dateString; // Retornar string original em caso de erro
-    }
-  };
-
   const getFieldDisplayName = (fieldName) => {
     const fieldMap = {
       name: "Nome do Projeto",

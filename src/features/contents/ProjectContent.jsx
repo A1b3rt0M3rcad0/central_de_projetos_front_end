@@ -23,6 +23,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../config/constants";
 import { useEffect, useState } from "react";
+import { formatDate } from "../../utils/dateUtils";
 
 export default function ProjectContent({ onBack, project, downloadDocument }) {
   const navigate = useNavigate();
@@ -105,17 +106,6 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(value);
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "--";
-    try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return dateString;
-      return date.toLocaleDateString("pt-BR");
-    } catch {
-      return dateString;
-    }
   };
 
   return (

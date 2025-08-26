@@ -15,6 +15,7 @@ import {
   ArrowUp,
   AlertTriangle,
 } from "lucide-react";
+import { formatDate } from "../../utils/dateUtils";
 
 export default function DocumentForm({
   onSubmit,
@@ -87,17 +88,6 @@ export default function DocumentForm({
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  };
-
-  // Função para formatar data
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
   };
 
   const handleDrag = (e) => {

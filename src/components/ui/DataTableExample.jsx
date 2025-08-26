@@ -15,6 +15,7 @@ import {
   Tag,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { formatDate } from "../../utils/dateUtils";
 
 /**
  * Exemplo avançado do DataTable para Projetos
@@ -36,18 +37,6 @@ export default function DataTableExample({
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
-
-  // Função para formatar data
-  const formatDate = (dateString) => {
-    if (!dateString) return "--";
-    try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return dateString;
-      return date.toLocaleDateString("pt-BR");
-    } catch {
-      return dateString;
-    }
   };
 
   // Configuração das colunas
