@@ -39,25 +39,44 @@ function SideBarItem({
       <li
         onClick={handleClick}
         className={`
-          relative flex items-center gap-4
-          px-3 py-2 my-1 rounded-md font-medium cursor-pointer
-          transition-colors select-none
+          relative flex items-center gap-3
+          px-4 py-3 rounded-xl font-medium cursor-pointer
+          transition-all duration-200 select-none group
           ${
             active
-              ? "bg-gradient-to-tr from-blue-200 to-blue-100 text-blue-700"
-              : "hover:bg-blue-50 text-gray-700"
+              ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/25"
+              : "hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 text-gray-700 hover:text-gray-900 hover:shadow-md"
           }
         `}
       >
-        {icon}
+        <div
+          className={`
+          p-1.5 rounded-lg transition-all duration-200
+          ${
+            active
+              ? "bg-white/20 text-white"
+              : "text-gray-600 group-hover:text-blue-600 group-hover:bg-blue-100/50"
+          }
+        `}
+        >
+          {icon}
+        </div>
 
-        <span className="flex-1">{text}</span>
+        <span className="flex-1 font-medium">{text}</span>
 
-        {hasSubmenu &&
-          (open ? <ChevronUp size={18} /> : <ChevronDown size={18} />)}
+        {hasSubmenu && (
+          <div
+            className={`
+            transition-all duration-200
+            ${active ? "text-white" : "text-gray-400 group-hover:text-gray-600"}
+          `}
+          >
+            {open ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </div>
+        )}
 
         {alert && (
-          <div className="absolute right-2 w-2 h-2 bg-red-500 rounded-full"></div>
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
         )}
       </li>
 
@@ -67,9 +86,9 @@ function SideBarItem({
           style={{
             maxHeight: maxHeight,
             overflow: "hidden",
-            transition: "max-height 0.3s ease",
+            transition: "max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
-          className="ml-8 space-y-1"
+          className="ml-6 space-y-1 mt-1"
         >
           {submenu.map((item, index) => (
             <SideBarSubItem

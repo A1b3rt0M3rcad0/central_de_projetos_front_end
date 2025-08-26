@@ -11,6 +11,7 @@ import {
   MapPin,
   Users,
   House,
+  ChevronRight,
 } from "lucide-react";
 import SideBarItem from "./SideBarItem";
 import { useNavigate } from "react-router-dom";
@@ -108,103 +109,134 @@ function SideBar() {
 
   return (
     <>
+      {/* Overlay para mobile */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 md:hidden"
+          onClick={toggleSidebar}
+        />
+      )}
+
       {/* Botão Hamburguer (Mobile) */}
       <button
         onClick={toggleSidebar}
-        className="md:hidden fixed top-4 left-4 z-[100] p-2 rounded-md bg-white shadow-md border border-gray-300"
+        className="md:hidden fixed top-4 left-4 z-[100] p-3 rounded-xl bg-white/90 backdrop-blur-sm shadow-lg border border-gray-200/50 hover:bg-white transition-all duration-200"
         aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
       >
-        {isOpen ? <CloseIcon /> : <MenuIcon />}
+        {isOpen ? (
+          <CloseIcon className="w-5 h-5" />
+        ) : (
+          <MenuIcon className="w-5 h-5" />
+        )}
       </button>
 
       {/* Sidebar */}
       <aside
         className={`
           fixed top-0 left-0 z-50 h-screen
-          bg-white border-r border-gray-300 shadow-md
+          bg-gradient-to-b from-white via-blue-50/30 to-indigo-50/50 backdrop-blur-sm
+          border-r border-gray-200/50
           flex flex-col
-          transition-transform duration-300 ease-in-out
+          transition-all duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0
-          md:static md:flex md:w-1/6 md:min-w-[220px]
+          md:static md:flex md:w-80 md:min-w-[280px]
+          md:shadow-xl
         `}
       >
         {/* Header */}
-        <div className="p-5 pb-3 flex flex-col justify-center items-center border-b border-gray-200">
-          <img className="w-[110px]" src={logo} alt="Logo Governo" />
-          <p className="px-3 py-2 my-1 rounded-md font-medium">
+        <div className="p-6 pb-4 flex flex-col justify-center items-center border-b border-gray-200/50 bg-white/50 backdrop-blur-sm">
+          <div className="relative">
+            <img
+              className="w-[120px] drop-shadow-sm"
+              src={logo}
+              alt="Logo Governo"
+            />
+            <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full"></div>
+          </div>
+          <h1 className="mt-4 text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
             Escritório de Projetos
-          </p>
+          </h1>
+          <p className="text-xs text-gray-500 mt-1">Sistema de Gestão</p>
         </div>
 
         {/* Menu */}
-        <ul className="flex-1 p-4 space-y-1">
-          <SideBarItem
-            icon={<House className="text-blue-600" />}
-            text="Início"
-            onClick={() => navigate("/home")}
-          />
-          <SideBarItem
-            icon={<Hammer className="text-blue-600" />}
-            text="Projetos"
-            submenu={[
-              {
-                text: "Lista de Projetos",
-                onClick: () => navigate("/projectlistpage"),
-              },
-              {
-                text: "Status",
-                onClick: () => navigate("/statuslist"),
-              },
-              {
-                text: "Tipos",
-                onClick: () => navigate("/tipolist"),
-              },
-            ]}
-          />
-          {/* Modificar as Rotas de acesso */}
-          <SideBarItem
-            icon={<Building className="text-blue-600" />}
-            text="Empresas"
-            onClick={() => navigate("/empresalistpage")}
-          />
-          <SideBarItem
-            icon={<NotebookPen className="text-blue-600" />}
-            text="Fiscais"
-            onClick={() => navigate("/fiscallist")}
-          />
-          <SideBarItem
-            icon={<MapPin className="text-blue-600" />}
-            text="Bairros"
-            onClick={() => navigate("/bairrolist")}
-          />
-          <SideBarItem
-            icon={<Users className="text-blue-600" />}
-            text="Usuários"
-            submenu={[
-              {
-                text: "Lista de Usuários",
-                onClick: () => navigate("/userlist"),
-              },
-            ]}
-          />
-        </ul>
+        <div className="flex-1 p-4 space-y-2 overflow-y-auto">
+          <div className="space-y-1">
+            <SideBarItem
+              icon={<House className="w-5 h-5" />}
+              text="Início"
+              onClick={() => navigate("/home")}
+            />
+            <SideBarItem
+              icon={<Hammer className="w-5 h-5" />}
+              text="Projetos"
+              submenu={[
+                {
+                  text: "Lista de Projetos",
+                  onClick: () => navigate("/projectlistpage"),
+                },
+                {
+                  text: "Status",
+                  onClick: () => navigate("/statuslist"),
+                },
+                {
+                  text: "Tipos",
+                  onClick: () => navigate("/tipolist"),
+                },
+              ]}
+            />
+            <SideBarItem
+              icon={<Building className="w-5 h-5" />}
+              text="Empresas"
+              onClick={() => navigate("/empresalistpage")}
+            />
+            <SideBarItem
+              icon={<NotebookPen className="w-5 h-5" />}
+              text="Fiscais"
+              onClick={() => navigate("/fiscallist")}
+            />
+            <SideBarItem
+              icon={<MapPin className="w-5 h-5" />}
+              text="Bairros"
+              onClick={() => navigate("/bairrolist")}
+            />
+            <SideBarItem
+              icon={<Users className="w-5 h-5" />}
+              text="Usuários"
+              submenu={[
+                {
+                  text: "Lista de Usuários",
+                  onClick: () => navigate("/userlist"),
+                },
+              ]}
+            />
+          </div>
+        </div>
 
         {/* Footer */}
-        <div className="border-t border-gray-200 flex items-center p-4 bg-gray-50">
-          <div className="w-10 h-10 rounded-md flex items-center justify-center bg-blue-100 text-blue-700">
-            <User />
-          </div>
-          <div className="flex justify-between items-center flex-1 ml-3">
-            <div className="leading-5">
-              <h4 className="font-semibold text-gray-800">{userName}</h4>
-              <span className="text-xs text-gray-600">{userRole}</span>
+        <div className="border-t border-gray-200/50 bg-white/50 backdrop-blur-sm p-4">
+          <div className="flex items-center p-3 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/50">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg">
+              <User className="w-5 h-5" />
             </div>
-            <div onClick={Logout} className="cursor-pointer">
-              <DoorOpen
-                size={20}
-                className="text-gray-700 hover:bg-blue-50 rounded-md"
-              />
+            <div className="flex justify-between items-center flex-1 ml-3">
+              <div className="leading-5">
+                <h4 className="font-semibold text-gray-800 text-sm">
+                  {userName}
+                </h4>
+                <span className="text-xs text-gray-600">{userRole}</span>
+              </div>
+              <button
+                onClick={Logout}
+                className="p-2 rounded-lg hover:bg-red-50 hover:text-red-600 transition-all duration-200 group"
+                title="Sair do sistema"
+              >
+                <DoorOpen
+                  size={18}
+                  className="text-gray-600 group-hover:text-red-600 transition-colors"
+                />
+              </button>
             </div>
           </div>
         </div>

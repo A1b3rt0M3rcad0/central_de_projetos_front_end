@@ -4,7 +4,7 @@ import Footer from "../Footer";
 
 export default function BasePage({ pageTitle, children }) {
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
       {/* Sidebar */}
       <SideBar />
 
@@ -14,7 +14,9 @@ export default function BasePage({ pageTitle, children }) {
         <Header pageTitle={pageTitle} />
 
         {/* Conteúdo principal: scrollable */}
-        <main className="flex-1 overflow-auto p-6">{children}</main>
+        <main className="flex-1 overflow-auto p-6 bg-transparent">
+          <div className="max-w-7xl mx-auto">{children}</div>
+        </main>
 
         {/* Footer */}
         <Footer />
