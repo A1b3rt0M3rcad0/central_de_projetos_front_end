@@ -9,26 +9,49 @@ import {
   CartesianGrid,
 } from "recharts";
 
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
+        <p className="font-medium text-gray-900">{label}</p>
+        <p className="text-blue-600 font-bold">{payload[0].value} projetos</p>
+      </div>
+    );
+  }
+  return null;
+};
+
 export default function ProjectsByBairroChart({ data }) {
   return (
-    <div className="bg-white p-6 rounded-2xl shadow">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">
-        📍 Número de Projetos por Bairro
-      </h2>
+    <div className="w-full h-full">
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
+        <BarChart
+          data={data}
+          margin={{ top: 20, right: 30, left: 20, bottom: 80 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
           <XAxis
             dataKey="nome"
             angle={-45}
             textAnchor="end"
             interval={0}
             height={100}
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: 11, fill: "#6b7280" }}
+            axisLine={false}
+            tickLine={false}
           />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="quantidade" fill="#3b82f6" />
+          <YAxis
+            tick={{ fontSize: 12, fill: "#6b7280" }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <Tooltip content={<CustomTooltip />} />
+          <Bar
+            dataKey="quantidade"
+            fill="#3b82f6"
+            radius={[4, 4, 0, 0]}
+            barSize={30}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -9,7 +9,11 @@ export { default as BaseContent } from "./BaseContent";
 export { default as AuthGuard } from "./auth/AuthGuard";
 
 // UI Components
-export { default as LoadingSpinner } from "./ui/LoadingSpinner";
+export {
+  default as LoadingSpinner,
+  CardSkeleton,
+  ChartSkeleton,
+} from "./ui/LoadingSpinner";
 export { default as ErrorBoundary } from "./ui/ErrorBoundary";
 export { default as SideBarItem } from "./SideBarItem";
 export { default as SideBarSubItem } from "./SideBarSubItem";
@@ -19,3 +23,8 @@ export { default as BudgetByBairroChart } from "./ui/BudgetByBairroChart";
 export { default as StatusDistributionChart } from "./ui/StatusDistributionChart";
 export { default as ProjectsByTypeChart } from "./ui/ProjectsByTypeChart";
 export { default as TopPerformersTable } from "./ui/TopPerformersTable";
+export {
+  default as Notification,
+  useNotification,
+  NotificationContainer,
+} from "./ui/Notification";
