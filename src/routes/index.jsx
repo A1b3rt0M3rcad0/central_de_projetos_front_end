@@ -16,6 +16,7 @@ import HomePage from "../pages/dashboard/HomePage";
 import ProjectListPage from "../pages/projects/ProjectListPage";
 import ProjectFormPage from "../pages/projects/ProjectFormPage";
 import ProjectViewPage from "../pages/projects/ProjectViewPage";
+import ProjectHistoryPage from "../pages/projects/ProjectHistoryPage";
 
 // Empresa Pages
 import EmpresaListPage from "../pages/empresas/EmpresaListPage";
@@ -98,6 +99,14 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <ProjectViewPage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: ROUTES.PROJECTS.HISTORY,
+    element: (
+      <AuthGuard>
+        <ProjectHistoryPage />
       </AuthGuard>
     ),
   },

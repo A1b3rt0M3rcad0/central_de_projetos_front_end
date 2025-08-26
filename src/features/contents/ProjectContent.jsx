@@ -1,9 +1,22 @@
 import BaseContent from "../../components/BaseContent";
 import { Download, FileText } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../config/constants";
 
 export default function ProjectContent({ onBack, project, downloadDocument }) {
+  const navigate = useNavigate();
+
   const handleDownloadDocument = (project_id, document_name) => {
     downloadDocument(project_id, document_name);
+  };
+
+  const handleViewHistory = () => {
+    navigate(ROUTES.PROJECTS.HISTORY, {
+      state: {
+        projectId: project.id,
+        projectName: project.name,
+      },
+    });
   };
 
   return (
@@ -74,9 +87,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
             <h3 className="text-lg font-semibold">Histórico de Alterações</h3>
             <button
-              onClick={() =>
-                alert("Exibir todos os detalhes do histórico de alterações")
-              }
+              onClick={handleViewHistory}
               className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 w-fit"
             >
               Mais detalhes
