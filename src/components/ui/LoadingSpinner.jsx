@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function LoadingSpinner({
+export function LoadingSpinner({
   size = "md",
   className = "",
   text = "Carregando...",
@@ -33,6 +33,9 @@ export default function LoadingSpinner({
     </div>
   );
 }
+
+// Default export para compatibilidade
+export default LoadingSpinner;
 
 // Componente de loading para cards
 export function CardSkeleton({ className = "" }) {
