@@ -1,6 +1,6 @@
 // Configurações da API
 export const API_CONFIG = {
-  BASE_URL: "http://localhost:8000",
+  BASE_URL: import.meta.env.VITE_API_URL || "http://localhost:8000",
   TIMEOUT: 1000000,
 };
 
@@ -14,6 +14,8 @@ export const ROUTES = {
     EDIT: "/projectform",
     VIEW: "/projectpage",
     HISTORY: "/projecthistory",
+    WORK_PROJECTS: "/workprojects",
+    WORK_PROJECT_VIEW: "/workproject",
   },
   EMPRESAS: {
     LIST: "/empresalistpage",

@@ -21,9 +21,14 @@ export const formatDate = (dateString, locale = "pt-BR", fallback = "--") => {
 
     // Se é uma string
     if (typeof dateString === "string") {
-      // Verifica se é formato brasileiro (dd/mm/yyyy)
-      if (dateString.includes("/")) {
-        const parts = dateString.split("/");
+      // Remove espaços em branco
+      const cleanDateString = dateString.trim();
+
+      // Verifica se é formato brasileiro (dd/mm/yyyy) com ou sem hora
+      if (cleanDateString.includes("/")) {
+        // Remove a parte da hora se existir
+        const dateOnly = cleanDateString.split(" ")[0];
+        const parts = dateOnly.split("/");
         if (parts.length === 3) {
           const [day, month, year] = parts;
           const date = new Date(year, month - 1, day);
@@ -32,7 +37,21 @@ export const formatDate = (dateString, locale = "pt-BR", fallback = "--") => {
         }
       }
 
+      // Verifica se é formato ISO (yyyy-mm-dd)
+      if (cleanDateString.includes("-")) {
+        const date = new Date(cleanDateString);
+        if (isNaN(date.getTime())) return fallback;
+        return date.toLocaleDateString(locale);
+      }
+
       // Tenta criar uma nova data
+      const date = new Date(cleanDateString);
+      if (isNaN(date.getTime())) return fallback;
+      return date.toLocaleDateString(locale);
+    }
+
+    // Se é um número (timestamp)
+    if (typeof dateString === "number") {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return fallback;
       return date.toLocaleDateString(locale);

@@ -11,3 +11,4 @@ export { default as bairroAPI } from "./api/bairro";
 export { default as statusAPI } from "./api/status";
 export { default as tipoAPI } from "./api/tipo";
 export { default as documentsAPI } from "./api/documents";
+export { default as workProjectApi } from "./api/workProject";

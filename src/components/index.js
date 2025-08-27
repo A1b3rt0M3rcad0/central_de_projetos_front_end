@@ -28,3 +28,4 @@ export {
   useNotification,
   NotificationContainer,
 } from "./ui/Notification";
+export { default as DocumentViewerModal } from "./ui/DocumentViewerModal";

@@ -17,6 +17,8 @@ import ProjectListPage from "../pages/projects/ProjectListPage";
 import ProjectFormPage from "../pages/projects/ProjectFormPage";
 import ProjectViewPage from "../pages/projects/ProjectViewPage";
 import ProjectHistoryPage from "../pages/projects/ProjectHistoryPage";
+import WorkProjectListPage from "../pages/projects/WorkProjectListPage";
+import WorkProjectViewPage from "../pages/projects/WorkProjectViewPage";
 
 // Empresa Pages
 import EmpresaListPage from "../pages/empresas/EmpresaListPage";
@@ -107,6 +109,24 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <ProjectHistoryPage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: ROUTES.PROJECTS.WORK_PROJECTS,
+    element: (
+      <ErrorBoundary>
+        <AuthGuard>
+          <WorkProjectListPage />
+        </AuthGuard>
+      </ErrorBoundary>
+    ),
+  },
+  {
+    path: ROUTES.PROJECTS.WORK_PROJECT_VIEW,
+    element: (
+      <AuthGuard>
+        <WorkProjectViewPage />
       </AuthGuard>
     ),
   },

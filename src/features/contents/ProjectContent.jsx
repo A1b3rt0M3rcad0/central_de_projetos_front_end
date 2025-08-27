@@ -19,16 +19,21 @@ import {
   UserRoundPen,
   Edit,
   MoreHorizontal,
+  Eye,
+  List,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../config/constants";
 import { useEffect, useState } from "react";
 import { formatDate } from "../../utils/dateUtils";
+import { workProjectApi } from "../../services";
 
 export default function ProjectContent({ onBack, project, downloadDocument }) {
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState(null);
   const [showActions, setShowActions] = useState(false);
+  const [latestWorkProject, setLatestWorkProject] = useState(null);
+  const [loadingWorkProject, setLoadingWorkProject] = useState(false);
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -40,6 +45,29 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
     };
     fetchUserRole();
   }, []);
+
+  useEffect(() => {
+    const fetchLatestWorkProject = async () => {
+      if (!project?.id) return;
+
+      setLoadingWorkProject(true);
+      try {
+        const response = await workProjectApi.getLatestWorkProjectByProject(
+          project.id
+        );
+        if (response.data?.content) {
+          setLatestWorkProject(response.data.content);
+        }
+      } catch (error) {
+        console.log("Nenhuma fiscalização encontrada para este projeto");
+        setLatestWorkProject(null);
+      } finally {
+        setLoadingWorkProject(false);
+      }
+    };
+
+    fetchLatestWorkProject();
+  }, [project?.id]);
 
   const handleDownloadDocument = (project_id, document_name) => {
     downloadDocument(project_id, document_name);
@@ -69,6 +97,24 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
   const handleEditProject = () => {
     navigate("/projectform", {
       state: { initial_date: project },
+    });
+  };
+
+  const handleViewAllWorkProjects = () => {
+    navigate(ROUTES.PROJECTS.WORK_PROJECTS, {
+      state: {
+        projectId: project.id,
+        projectName: project.name,
+      },
+    });
+  };
+
+  const handleViewWorkProject = (workProjectId) => {
+    navigate(ROUTES.PROJECTS.WORK_PROJECT_VIEW, {
+      state: {
+        workProjectId: workProjectId,
+        projectName: project.name,
+      },
     });
   };
 
@@ -469,6 +515,79 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Última Fiscalização */}
+            <div className="bg-white p-6 rounded-2xl shadow">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <Eye className="w-5 h-5 text-green-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Última Fiscalização
+                  </h3>
+                </div>
+                <button
+                  onClick={handleViewAllWorkProjects}
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 hover:border-blue-300 transition-all duration-200"
+                >
+                  <List className="w-4 h-4" />
+                  Ver Todas
+                </button>
+              </div>
+
+              {loadingWorkProject ? (
+                <div className="text-center py-6">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
+                  <p className="text-gray-500 text-sm mt-2">Carregando...</p>
+                </div>
+              ) : latestWorkProject ? (
+                <div className="space-y-4">
+                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-green-900 mb-1">
+                          {latestWorkProject.title}
+                        </h4>
+                        <p className="text-sm text-green-700 mb-2">
+                          {latestWorkProject.description}
+                        </p>
+                        <div className="flex items-center gap-4 text-xs text-green-600">
+                          <span className="flex items-center gap-1">
+                            <User className="w-3 h-3" />
+                            {latestWorkProject.fiscal?.name ||
+                              "Fiscal não informado"}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {formatDate(latestWorkProject.created_at)}
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() =>
+                          handleViewWorkProject(latestWorkProject.id)
+                        }
+                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-green-700 bg-white border border-green-300 rounded-lg hover:bg-green-50 transition-colors"
+                      >
+                        <Eye className="w-3 h-3" />
+                        Ver Detalhes
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <Eye className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                  <p className="text-gray-500 text-sm">
+                    Nenhuma fiscalização encontrada
+                  </p>
+                  <p className="text-gray-400 text-xs mt-1">
+                    As fiscalizações aparecerão aqui quando forem criadas
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Documentos */}
