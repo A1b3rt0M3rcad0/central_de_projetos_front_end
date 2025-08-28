@@ -2,7 +2,7 @@ import api from "../../config/api";
 
 const userApi = {
   // Endpoints existentes
-  getWhoAmI: (token) => api.get(`/users/who_am_i/${token}`),
+  getWhoAmI: (token) => api.post("/users/who_am_i", { token }),
   getAllUser: () => api.get("users/users/all"),
   deleteUser: (data) => api.delete("/users", { data }),
   postUser: (data) => api.post("/users", data),
