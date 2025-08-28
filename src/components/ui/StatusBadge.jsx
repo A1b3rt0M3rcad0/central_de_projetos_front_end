@@ -13,6 +13,24 @@ const StatusBadge = ({ status, size = "md", showIcon = true }) => {
         shadow: "shadow-orange-100",
       };
     }
+    if (statusLower.includes("projeto")) {
+      return {
+        bg: "bg-gradient-to-r from-purple-50 to-indigo-50",
+        text: "text-purple-700",
+        border: "border-purple-200",
+        icon: "📋",
+        shadow: "shadow-purple-100",
+      };
+    }
+    if (statusLower.includes("execução")) {
+      return {
+        bg: "bg-gradient-to-r from-blue-50 to-cyan-50",
+        text: "text-blue-700",
+        border: "border-blue-200",
+        icon: "🚧",
+        shadow: "shadow-blue-100",
+      };
+    }
     if (statusLower.includes("em andamento")) {
       return {
         bg: "bg-gradient-to-r from-blue-50 to-cyan-50",
