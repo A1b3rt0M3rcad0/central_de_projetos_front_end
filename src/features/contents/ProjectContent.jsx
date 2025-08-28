@@ -132,8 +132,6 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
     return <Target className="w-4 h-4 text-gray-500" />;
   };
 
-
-
   const formatCurrency = (value) => {
     if (typeof value !== "number") return "--";
     return new Intl.NumberFormat("pt-BR", {
@@ -411,20 +409,22 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                     <p className="text-xs text-gray-500">Bairros</p>
                     <div className="relative group">
                       <p className="text-sm font-medium truncate">
-                        {Array.isArray(project.bairro) && project.bairro.length > 0 
-                          ? project.bairro.length === 1 
-                            ? project.bairro[0].name 
+                        {Array.isArray(project.bairro) &&
+                        project.bairro.length > 0
+                          ? project.bairro.length === 1
+                            ? project.bairro[0].name
                             : `${project.bairro.length} bairros associados`
                           : "Não informado"}
                       </p>
-                      {Array.isArray(project.bairro) && project.bairro.length > 0 && (
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                          {Array.isArray(project.bairro) 
-                            ? project.bairro.map(b => b.name).join(", ")
-                            : project.bairro.name}
-                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                        </div>
-                      )}
+                      {Array.isArray(project.bairro) &&
+                        project.bairro.length > 0 && (
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                            {Array.isArray(project.bairro)
+                              ? project.bairro.map((b) => b.name).join(", ")
+                              : project.bairro.name}
+                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                          </div>
+                        )}
                     </div>
                   </div>
                 </div>
@@ -435,20 +435,22 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                     <p className="text-xs text-gray-500">Empresas</p>
                     <div className="relative group">
                       <p className="text-sm font-medium truncate">
-                        {Array.isArray(project.empresa) && project.empresa.length > 0 
-                          ? project.empresa.length === 1 
-                            ? project.empresa[0].name 
+                        {Array.isArray(project.empresa) &&
+                        project.empresa.length > 0
+                          ? project.empresa.length === 1
+                            ? project.empresa[0].name
                             : `${project.empresa.length} empresas associadas`
                           : "Não informado"}
                       </p>
-                      {Array.isArray(project.empresa) && project.empresa.length > 0 && (
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                          {Array.isArray(project.empresa) 
-                            ? project.empresa.map(e => e.name).join(", ")
-                            : project.empresa.name}
-                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                        </div>
-                      )}
+                      {Array.isArray(project.empresa) &&
+                        project.empresa.length > 0 && (
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                            {Array.isArray(project.empresa)
+                              ? project.empresa.map((e) => e.name).join(", ")
+                              : project.empresa.name}
+                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                          </div>
+                        )}
                     </div>
                   </div>
                 </div>
@@ -459,20 +461,22 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                     <p className="text-xs text-gray-500">Tipos</p>
                     <div className="relative group">
                       <p className="text-sm font-medium truncate">
-                        {Array.isArray(project.types) && project.types.length > 0 
-                          ? project.types.length === 1 
-                            ? project.types[0].name 
+                        {Array.isArray(project.types) &&
+                        project.types.length > 0
+                          ? project.types.length === 1
+                            ? project.types[0].name
                             : `${project.types.length} tipos associados`
                           : "Não informado"}
                       </p>
-                      {Array.isArray(project.types) && project.types.length > 0 && (
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                          {Array.isArray(project.types) 
-                            ? project.types.map(t => t.name).join(", ")
-                            : project.types.name}
-                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                        </div>
-                      )}
+                      {Array.isArray(project.types) &&
+                        project.types.length > 0 && (
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                            {Array.isArray(project.types)
+                              ? project.types.map((t) => t.name).join(", ")
+                              : project.types.name}
+                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                          </div>
+                        )}
                     </div>
                   </div>
                 </div>
@@ -483,20 +487,22 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                     <p className="text-xs text-gray-500">Fiscais</p>
                     <div className="relative group">
                       <p className="text-sm font-medium truncate">
-                        {Array.isArray(project.fiscal) && project.fiscal.length > 0 
-                          ? project.fiscal.length === 1 
-                            ? project.fiscal[0].name 
+                        {Array.isArray(project.fiscal) &&
+                        project.fiscal.length > 0
+                          ? project.fiscal.length === 1
+                            ? project.fiscal[0].name
                             : `${project.fiscal.length} fiscais associados`
                           : "Não informado"}
                       </p>
-                      {Array.isArray(project.fiscal) && project.fiscal.length > 0 && (
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                          {Array.isArray(project.fiscal) 
-                            ? project.fiscal.map(f => f.name).join(", ")
-                            : project.fiscal.name}
-                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                        </div>
-                      )}
+                      {Array.isArray(project.fiscal) &&
+                        project.fiscal.length > 0 && (
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                            {Array.isArray(project.fiscal)
+                              ? project.fiscal.map((f) => f.name).join(", ")
+                              : project.fiscal.name}
+                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                          </div>
+                        )}
                     </div>
                   </div>
                 </div>

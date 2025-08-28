@@ -33,11 +33,27 @@ export default function ProjectAssociationFormPage() {
 
         if (project && poss) {
           const associations = {
-            types: project.types ? (Array.isArray(project.types) ? project.types.map(t => t.id) : [project.types.id]) : [],
+            types: project.types
+              ? Array.isArray(project.types)
+                ? project.types.map((t) => t.id)
+                : [project.types.id]
+              : [],
             users: project.user ? [project.user.cpf] : [],
-            bairros: project.bairro ? (Array.isArray(project.bairro) ? project.bairro.map(b => b.id) : [project.bairro.id]) : [],
-            empresas: project.empresa ? (Array.isArray(project.empresa) ? project.empresa.map(e => e.id) : [project.empresa.id]) : [],
-            fiscais: project.fiscal ? (Array.isArray(project.fiscal) ? project.fiscal.map(f => f.id) : [project.fiscal.id]) : [],
+            bairros: project.bairro
+              ? Array.isArray(project.bairro)
+                ? project.bairro.map((b) => b.id)
+                : [project.bairro.id]
+              : [],
+            empresas: project.empresa
+              ? Array.isArray(project.empresa)
+                ? project.empresa.map((e) => e.id)
+                : [project.empresa.id]
+              : [],
+            fiscais: project.fiscal
+              ? Array.isArray(project.fiscal)
+                ? project.fiscal.map((f) => f.id)
+                : [project.fiscal.id]
+              : [],
           };
 
           setInitialData({
