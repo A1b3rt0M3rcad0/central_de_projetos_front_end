@@ -86,7 +86,7 @@ export default function UserListPage() {
   return (
     <BasePage pageTitle="">
       {loading ? (
-        <LoadingContent />
+        <LoadingContent pageTitle="" />
       ) : (
         <UserListContent
           users={filteredUsers}

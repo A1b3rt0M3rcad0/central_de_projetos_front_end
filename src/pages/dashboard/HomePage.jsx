@@ -137,7 +137,7 @@ export default function DashboardPage() {
   return (
     <BasePage pageTitle="">
       {loading ? (
-        <LoadingContent />
+        <LoadingContent pageTitle="Dashboard" />
       ) : (
         <HomeContent
           totalProjects={totalProjects}

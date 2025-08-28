@@ -87,7 +87,7 @@ export default function BairroListPage() {
   return (
     <BasePage pageTitle="">
       {loading ? (
-        <LoadingContent />
+        <LoadingContent pageTitle="" />
       ) : (
         <BairroListContent
           bairros={filteredBairros}

@@ -87,7 +87,7 @@ export default function EmpresaListPage() {
   return (
     <BasePage pageTitle="">
       {loading ? (
-        <LoadingContent />
+        <LoadingContent pageTitle="" />
       ) : (
         <EmpresaListContent
           companies={filteredCompanies}

@@ -87,7 +87,7 @@ export default function FiscalListPage() {
   return (
     <BasePage pageTitle="">
       {loading ? (
-        <LoadingContent />
+        <LoadingContent pageTitle="" />
       ) : (
         <FiscalListContent
           fiscais={filteredFiscais}

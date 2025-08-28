@@ -87,7 +87,7 @@ export default function StatusListPage() {
   return (
     <BasePage pageTitle="">
       {loading ? (
-        <LoadingContent />
+        <LoadingContent pageTitle="" />
       ) : (
         <StatusListContent
           status={filteredStatus}

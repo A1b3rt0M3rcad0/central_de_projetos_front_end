@@ -87,7 +87,7 @@ export default function TipoListPage() {
   return (
     <BasePage pageTitle="">
       {loading ? (
-        <LoadingContent />
+        <LoadingContent pageTitle="" />
       ) : (
         <TipoListContent
           tipos={filteredTipos}

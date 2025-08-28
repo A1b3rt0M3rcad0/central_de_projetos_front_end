@@ -5,9 +5,9 @@ import {
   LoadingSpinner,
 } from "../../components/ui/LoadingSpinner";
 
-function LoadingContent({ onBack = () => {} }) {
+function LoadingContent({ onBack = () => {}, pageTitle = "" }) {
   return (
-    <BaseContent pageTitle="Dashboard" onBack={onBack}>
+    <BaseContent pageTitle={pageTitle} onBack={onBack}>
       {/* Header skeleton */}
       <div className="mb-8">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">

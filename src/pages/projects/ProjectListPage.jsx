@@ -135,7 +135,7 @@ export default function ProjectListPage() {
   return (
     <BasePage pageTitle="">
       {loading ? (
-        <LoadingContent />
+        <LoadingContent pageTitle="" />
       ) : (
         <ProjectListContent
           projects={projectsToShow}
