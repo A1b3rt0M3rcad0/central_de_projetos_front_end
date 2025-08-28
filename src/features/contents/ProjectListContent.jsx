@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import BaseContent from "../../components/BaseContent";
 import DataTable from "../../components/ui/DataTable";
+import StatusBadge from "../../components/ui/StatusBadge";
 import {
   Pencil,
   Trash2,
@@ -202,15 +203,9 @@ export default function ProjectListContent({
       label: "Status",
       sortable: true,
       type: "status",
-      className: "hidden md:table-cell w-28",
+      className: "hidden md:table-cell w-32",
       accessor: (item) => item.status?.description,
-      statusColors: {
-        "Aguardando Verba": "bg-orange-100 text-orange-800",
-        "Em Andamento": "bg-blue-100 text-blue-800",
-        Concluído: "bg-green-100 text-green-800",
-        Cancelado: "bg-red-100 text-red-800",
-        Pausado: "bg-yellow-100 text-yellow-800",
-      },
+      render: (value) => <StatusBadge status={value} size="md" />,
     },
   ];
 

@@ -1,4 +1,5 @@
 import BaseContent from "../../components/BaseContent";
+import StatusBadge from "../../components/ui/StatusBadge";
 import {
   Download,
   FileText,
@@ -131,18 +132,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
     return <Target className="w-4 h-4 text-gray-500" />;
   };
 
-  const getStatusColor = (status) => {
-    const statusLower = status?.toLowerCase() || "";
-    if (statusLower.includes("aguardando"))
-      return "bg-orange-50 text-orange-700 border-orange-200";
-    if (statusLower.includes("em andamento"))
-      return "bg-blue-50 text-blue-700 border-blue-200";
-    if (statusLower.includes("concluído"))
-      return "bg-green-50 text-green-700 border-green-200";
-    if (statusLower.includes("cancelado"))
-      return "bg-red-50 text-red-700 border-red-200";
-    return "bg-gray-50 text-gray-700 border-gray-200";
-  };
+
 
   const formatCurrency = (value) => {
     if (typeof value !== "number") return "--";
@@ -182,13 +172,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 {getStatusIcon(project.status?.description)}
-                <span
-                  className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(
-                    project.status?.description
-                  )}`}
-                >
-                  {project.status?.description || "Status não definido"}
-                </span>
+                <StatusBadge status={project.status?.description} size="lg" />
               </div>
 
               {/* Botão de Ações */}

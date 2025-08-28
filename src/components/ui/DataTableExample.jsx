@@ -1,4 +1,5 @@
 import DataTable from "./DataTable";
+import StatusBadge from "./StatusBadge";
 import {
   Eye,
   Edit,
@@ -170,13 +171,7 @@ export default function DataTableExample({
       type: "status",
       className: "hidden md:table-cell",
       accessor: (item) => item.status?.description,
-      statusColors: {
-        "Aguardando Verba": "bg-orange-100 text-orange-800",
-        "Em Andamento": "bg-blue-100 text-blue-800",
-        Concluído: "bg-green-100 text-green-800",
-        Cancelado: "bg-red-100 text-red-800",
-        Pausado: "bg-yellow-100 text-yellow-800",
-      },
+      render: (value) => <StatusBadge status={value} size="md" />,
     },
     {
       key: "start_date",

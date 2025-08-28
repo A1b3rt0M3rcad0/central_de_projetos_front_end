@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import StatusBadge from "./StatusBadge";
 import {
   ChevronLeft,
   ChevronRight,
@@ -171,6 +172,18 @@ export default function DataTable({
     }
 
     if (column.type === "status") {
+      // Para status de projetos, usar o StatusBadge
+      if (value && typeof value === 'string' && (
+        value.toLowerCase().includes('aguardando') ||
+        value.toLowerCase().includes('andamento') ||
+        value.toLowerCase().includes('concluído') ||
+        value.toLowerCase().includes('cancelado') ||
+        value.toLowerCase().includes('pausado')
+      )) {
+        return <StatusBadge status={value} size="md" />;
+      }
+      
+      // Para outros tipos de status (como roles de usuário), usar o formato antigo
       return (
         <span
           className={`px-2 py-1 rounded-full text-xs font-medium ${
