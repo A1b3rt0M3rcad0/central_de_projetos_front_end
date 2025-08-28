@@ -38,8 +38,11 @@ export default function FiscalListPage() {
   const [filter, setFilter] = useState("");
 
   // Filtragem simples
-  const filteredFiscais = fiscais.filter((f) =>
-    (f.name || "").toLowerCase().includes(filter.toLowerCase())
+  const filteredFiscais = fiscais.filter(
+    (f) =>
+      (f.name || "").toLowerCase().includes(filter.toLowerCase()) ||
+      (f.email || "").toLowerCase().includes(filter.toLowerCase()) ||
+      (f.phone || "").toLowerCase().includes(filter.toLowerCase())
   );
 
   // Ações
