@@ -1,5 +1,6 @@
 import BaseContent from "../../components/BaseContent";
 import StatusBadge from "../../components/ui/StatusBadge";
+import EnhancedTooltip from "../../components/ui/EnhancedTooltip";
 import {
   Download,
   FileText,
@@ -407,8 +408,25 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                   <MapPin className="w-4 h-4 text-gray-500" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-gray-500">Bairros</p>
-                    <div className="relative group">
-                      <p className="text-sm font-medium truncate">
+                    <EnhancedTooltip
+                      type="location"
+                      richContent={{
+                        title: "Bairros Associados",
+                        sections: [
+                          {
+                            label: "Localização",
+                            items:
+                              Array.isArray(project.bairro) &&
+                              project.bairro.length > 0
+                                ? project.bairro.map((b) => b.name)
+                                : ["Nenhum bairro associado"],
+                          },
+                        ],
+                        footer:
+                          "Estes são os bairros onde o projeto será executado",
+                      }}
+                    >
+                      <p className="text-sm font-medium truncate cursor-help">
                         {Array.isArray(project.bairro) &&
                         project.bairro.length > 0
                           ? project.bairro.length === 1
@@ -416,16 +434,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                             : `${project.bairro.length} bairros associados`
                           : "Não informado"}
                       </p>
-                      {Array.isArray(project.bairro) &&
-                        project.bairro.length > 0 && (
-                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                            {Array.isArray(project.bairro)
-                              ? project.bairro.map((b) => b.name).join(", ")
-                              : project.bairro.name}
-                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                          </div>
-                        )}
-                    </div>
+                    </EnhancedTooltip>
                   </div>
                 </div>
 
@@ -433,8 +442,25 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                   <Building className="w-4 h-4 text-gray-500" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-gray-500">Empresas</p>
-                    <div className="relative group">
-                      <p className="text-sm font-medium truncate">
+                    <EnhancedTooltip
+                      type="company"
+                      richContent={{
+                        title: "Empresas Executoras",
+                        sections: [
+                          {
+                            label: "Contratadas",
+                            items:
+                              Array.isArray(project.empresa) &&
+                              project.empresa.length > 0
+                                ? project.empresa.map((e) => e.name)
+                                : ["Nenhuma empresa contratada"],
+                          },
+                        ],
+                        footer:
+                          "Empresas responsáveis pela execução do projeto",
+                      }}
+                    >
+                      <p className="text-sm font-medium truncate cursor-help">
                         {Array.isArray(project.empresa) &&
                         project.empresa.length > 0
                           ? project.empresa.length === 1
@@ -442,16 +468,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                             : `${project.empresa.length} empresas associadas`
                           : "Não informado"}
                       </p>
-                      {Array.isArray(project.empresa) &&
-                        project.empresa.length > 0 && (
-                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                            {Array.isArray(project.empresa)
-                              ? project.empresa.map((e) => e.name).join(", ")
-                              : project.empresa.name}
-                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                          </div>
-                        )}
-                    </div>
+                    </EnhancedTooltip>
                   </div>
                 </div>
 
@@ -459,8 +476,24 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                   <Flag className="w-4 h-4 text-gray-500" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-gray-500">Tipos</p>
-                    <div className="relative group">
-                      <p className="text-sm font-medium truncate">
+                    <EnhancedTooltip
+                      type="type"
+                      richContent={{
+                        title: "Tipos de Projeto",
+                        sections: [
+                          {
+                            label: "Categorias",
+                            items:
+                              Array.isArray(project.types) &&
+                              project.types.length > 0
+                                ? project.types.map((t) => t.name)
+                                : ["Nenhum tipo definido"],
+                          },
+                        ],
+                        footer: "Categorias que classificam este projeto",
+                      }}
+                    >
+                      <p className="text-sm font-medium truncate cursor-help">
                         {Array.isArray(project.types) &&
                         project.types.length > 0
                           ? project.types.length === 1
@@ -468,16 +501,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                             : `${project.types.length} tipos associados`
                           : "Não informado"}
                       </p>
-                      {Array.isArray(project.types) &&
-                        project.types.length > 0 && (
-                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                            {Array.isArray(project.types)
-                              ? project.types.map((t) => t.name).join(", ")
-                              : project.types.name}
-                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                          </div>
-                        )}
-                    </div>
+                    </EnhancedTooltip>
                   </div>
                 </div>
 
@@ -485,8 +509,25 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                   <User className="w-4 h-4 text-gray-500" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-gray-500">Fiscais</p>
-                    <div className="relative group">
-                      <p className="text-sm font-medium truncate">
+                    <EnhancedTooltip
+                      type="user"
+                      richContent={{
+                        title: "Fiscais Responsáveis",
+                        sections: [
+                          {
+                            label: "Supervisores",
+                            items:
+                              Array.isArray(project.fiscal) &&
+                              project.fiscal.length > 0
+                                ? project.fiscal.map((f) => f.name)
+                                : ["Nenhum fiscal designado"],
+                          },
+                        ],
+                        footer:
+                          "Fiscais responsáveis pela supervisão do projeto",
+                      }}
+                    >
+                      <p className="text-sm font-medium truncate cursor-help">
                         {Array.isArray(project.fiscal) &&
                         project.fiscal.length > 0
                           ? project.fiscal.length === 1
@@ -494,16 +535,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                             : `${project.fiscal.length} fiscais associados`
                           : "Não informado"}
                       </p>
-                      {Array.isArray(project.fiscal) &&
-                        project.fiscal.length > 0 && (
-                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                            {Array.isArray(project.fiscal)
-                              ? project.fiscal.map((f) => f.name).join(", ")
-                              : project.fiscal.name}
-                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                          </div>
-                        )}
-                    </div>
+                    </EnhancedTooltip>
                   </div>
                 </div>
 
@@ -511,17 +543,33 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                   <Users className="w-4 h-4 text-gray-500" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-gray-500">Vereador</p>
-                    <div className="relative group">
-                      <p className="text-sm font-medium truncate">
+                    <EnhancedTooltip
+                      type="users"
+                      richContent={{
+                        title: "Vereador Responsável",
+                        sections: [
+                          {
+                            label: "Representante",
+                            items: project.user?.name
+                              ? [project.user.name]
+                              : ["Não informado"],
+                          },
+                          ...(project.user?.cpf
+                            ? [
+                                {
+                                  label: "CPF",
+                                  content: `***${project.user.cpf.slice(-5)}`,
+                                },
+                              ]
+                            : []),
+                        ],
+                        footer: "Vereador responsável por este projeto",
+                      }}
+                    >
+                      <p className="text-sm font-medium truncate cursor-help">
                         {project.user?.name || "Não informado"}
                       </p>
-                      {project.user?.name && project.user.name.length > 25 && (
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                          {project.user.name}
-                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                        </div>
-                      )}
-                    </div>
+                    </EnhancedTooltip>
                   </div>
                 </div>
               </div>
