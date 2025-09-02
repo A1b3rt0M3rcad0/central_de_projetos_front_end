@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import BasePage from "../../components/layout/BasePage";
 import ProjectContent from "../../features/contents/ProjectContent";
+import LoadingContent from "../../features/contents/LoadingContent";
 import projectApi from "../../services/api/project";
 import documentsApi from "../../services/api/documents";
 import Swal from "sweetalert2";
@@ -68,8 +69,8 @@ export default function ProjectPage() {
 
   if (loading) {
     return (
-      <BasePage pageTitle="Carregando Projeto...">
-        <div className="text-center text-gray-600 mt-10">Carregando...</div>
+      <BasePage pageTitle="">
+        <LoadingContent pageTitle="Carregando Projeto..." />
       </BasePage>
     );
   }
