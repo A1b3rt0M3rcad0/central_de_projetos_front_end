@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import BasePage from "../../components/layout/BasePage";
 import EmpresaListContent from "../../features/contents/EmpresaListContent";
 import LoadingContent from "../../features/contents/LoadingContent";
@@ -8,39 +8,84 @@ import Swal from "sweetalert2";
 
 export default function EmpresaListPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  // Dados mockados
   const [companies, setCompanies] = useState([]);
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(searchParams.get("page")) || 1
+  );
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalCompanies, setTotalCompanies] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
+
+  const pageSize = 10;
+
+  const fetchEmpresas = async (page = 1) => {
+    try {
+      const loadingState = page === 1 ? setLoading : setLoadingMore;
+      loadingState(true);
+
+      const response = await empresaAPI.getEmpresasWithPagination(
+        pageSize,
+        page
+      );
+
+      const paginationData = response.data?.content || {};
+      const companiesData = paginationData.empresas || [];
+      const totalCompaniesCount = paginationData.total_items || 0;
+      const totalPagesCount = paginationData.total_pages || 0;
+
+      setCompanies(companiesData);
+      setTotalPages(totalPagesCount || 0);
+      setTotalCompanies(totalCompaniesCount || 0);
+      setHasMore(currentPage < totalPagesCount);
+
+      setSearchParams({ page: page.toString() });
+    } catch (error) {
+      console.error("Erro ao buscar empresas:", error);
+      setCompanies([]);
+      setTotalPages(0);
+      setTotalCompanies(0);
+      setHasMore(false);
+
+      if (!(error.response && error.response.status === 404)) {
+        Swal.fire({
+          icon: "error",
+          title: "Erro ao buscar empresas",
+          text: error.message || "Ocorreu um erro inesperado.",
+        });
+      }
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchEmpresas = async () => {
-      try {
-        const response = await empresaAPI.getAllEmpresas();
-        const content = response.data.content;
-        setCompanies(content);
-      } catch (error) {
-        if (!(error.response && error.response.status === 404)) {
-          Swal.fire({
-            icon: "error",
-            title: "Erro ao buscar projetos",
-            text: error.message || "Ocorreu um erro inesperado.",
-          });
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchEmpresas(currentPage);
+  }, [currentPage]);
 
-    fetchEmpresas();
-  }, []);
+  const companiesToShow = Array.isArray(companies) ? companies : [];
 
-  const [filter, setFilter] = useState("");
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages && !loading) {
+      setSearchParams({ page: newPage.toString() });
+    }
+  };
 
-  // Filtragem simples
-  const filteredCompanies = companies.filter((company) =>
-    (company.name || "").toLowerCase().includes(filter.toLowerCase())
-  );
+  const handleNextPage = () => {
+    if (currentPage < totalPages && !loading) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1 && !loading) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   // Ações
   const handleCreate = () => {
@@ -66,6 +111,7 @@ export default function EmpresaListPage() {
     try {
       await empresaAPI.deleteEmpresa({ name: company.name });
       setCompanies((prev) => prev.filter((c) => c.id !== company.id));
+      fetchEmpresas(currentPage); // Recarregar a página atual após exclusão
       Swal.fire("Excluído!", "A empresa foi removido com sucesso.", "success");
     } catch (error) {
       if (error.status != 409) {
@@ -80,22 +126,24 @@ export default function EmpresaListPage() {
     }
   };
 
-  const handleFilter = (value) => {
-    setFilter(value);
-  };
-
   return (
     <BasePage pageTitle="">
       {loading ? (
         <LoadingContent pageTitle="" />
       ) : (
         <EmpresaListContent
-          companies={filteredCompanies}
+          companies={companiesToShow}
           onCreate={handleCreate}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          onFilter={handleFilter}
           onBack={() => navigate(-1)}
+          onPageChange={handlePageChange}
+          onNextPage={handleNextPage}
+          onPrevPage={handlePrevPage}
+          loading={loading}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalCompanies={totalCompanies}
         />
       )}
     </BasePage>

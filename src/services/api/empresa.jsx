@@ -2,6 +2,8 @@ import api from "../../config/api";
 
 const empresaAPI = {
   getAllEmpresas: () => api.get("/empresa/empresa/all"),
+  getEmpresasWithPagination: (pageSize, page) =>
+    api.get(`/empresa/empresa/pagination/${pageSize}/${page}`),
   deleteEmpresa: (data) => api.delete("/empresa", { data }),
   postEmpresa: (data) => api.post("/empresa", data),
   patchEmpresa: (data) => api.patch("/empresa", data),

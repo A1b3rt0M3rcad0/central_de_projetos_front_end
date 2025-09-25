@@ -2,6 +2,8 @@ import api from "../../config/api";
 
 const bairroAPI = {
   getAllBairro: () => api.get("/bairro/bairro/all"),
+  getBairrosWithPagination: (pageSize, page) =>
+    api.get(`/bairro/bairro/pagination/${pageSize}/${page}`),
   postBairro: (data) => api.post("/bairro", data),
   patchBairro: (data) => api.patch("/bairro/name", data),
   deleteBairro: (data) => api.delete("/bairro", { data }),
