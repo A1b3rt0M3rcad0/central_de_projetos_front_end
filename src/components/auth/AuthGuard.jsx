@@ -1,5 +1,5 @@
 import { useAuth } from "../../hooks/useAuth";
-import LoadingSpinner from "../ui/LoadingSpinner";
+import LoadingSpinner, { TopProgressBar } from "../ui/LoadingSpinner";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../config/constants";
@@ -19,15 +19,30 @@ export const AuthGuard = ({ children, requireAuth = true }) => {
   }, [isAuthenticated, loading, requireAuth, navigate]);
 
   if (loading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
+        <TopProgressBar active className="bg-transparent" />
+        <LoadingSpinner subtle size="sm" text="" />
+      </div>
+    );
   }
 
   if (requireAuth && !isAuthenticated) {
-    return <LoadingSpinner />;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
+        <TopProgressBar active className="bg-transparent" />
+        <LoadingSpinner subtle size="sm" text="" />
+      </div>
+    );
   }
 
   if (!requireAuth && isAuthenticated) {
-    return <LoadingSpinner />;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
+        <TopProgressBar active className="bg-transparent" />
+        <LoadingSpinner subtle size="sm" text="" />
+      </div>
+    );
   }
 
   return children;

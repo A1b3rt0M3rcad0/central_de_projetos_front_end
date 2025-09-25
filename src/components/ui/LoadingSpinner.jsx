@@ -4,6 +4,7 @@ export function LoadingSpinner({
   size = "md",
   className = "",
   text = "Carregando...",
+  subtle = false,
 }) {
   const sizeClasses = {
     sm: "w-4 h-4",
@@ -14,19 +15,31 @@ export function LoadingSpinner({
 
   return (
     <div
-      className={`flex flex-col justify-center items-center gap-4 ${className}`}
+      className={`flex flex-col justify-center items-center gap-3 ${className}`}
     >
       <div className="relative">
         <div
-          className={`${sizeClasses[size]} animate-spin rounded-full border-4 border-gray-200 border-t-blue-600`}
+          className={`${sizeClasses[size]} animate-spin rounded-full ${
+            subtle ? "border-2" : "border-4"
+          } border-gray-200 border-t-blue-600`}
         />
         <div
-          className={`${sizeClasses[size]} absolute top-0 left-0 animate-spin rounded-full border-4 border-transparent border-r-blue-400 animate-pulse`}
+          className={`${
+            sizeClasses[size]
+          } absolute top-0 left-0 animate-spin rounded-full ${
+            subtle ? "border-2" : "border-4"
+          } border-transparent border-r-blue-400 ${
+            subtle ? "" : "animate-pulse"
+          }`}
           style={{ animationDelay: "0.1s" }}
         />
       </div>
-      {text && (
-        <p className="text-sm text-gray-600 font-medium animate-pulse">
+      {text !== "" && text !== null && (
+        <p
+          className={`text-sm text-gray-600 font-medium ${
+            subtle ? "opacity-60" : "animate-pulse"
+          }`}
+        >
           {text}
         </p>
       )}
@@ -36,6 +49,16 @@ export function LoadingSpinner({
 
 // Default export para compatibilidade
 export default LoadingSpinner;
+
+// Barra de progresso sutil no topo da página
+export function TopProgressBar({ active = true, className = "" }) {
+  if (!active) return null;
+  return (
+    <div className={`fixed top-0 left-0 w-full h-0.5 z-50 ${className}`}>
+      <div className="w-full h-full bg-gradient-to-r from-blue-400 via-blue-600 to-blue-400 animate-pulse" />
+    </div>
+  );
+}
 
 // Componente de loading para cards
 export function CardSkeleton({ className = "" }) {
