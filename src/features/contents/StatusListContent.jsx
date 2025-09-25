@@ -1,6 +1,15 @@
 import BaseContent from "../../components/BaseContent";
 import DataTable from "../../components/ui/DataTable";
-import { Tag, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+import {
+  Tag,
+  ChevronLeft,
+  ChevronRight,
+  MoreHorizontal,
+  Eye,
+  Trash2,
+  Pencil,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function StatusListContent({
   status,
@@ -16,6 +25,16 @@ export default function StatusListContent({
   totalPages,
   totalStatus,
 }) {
+  const [role, setRole] = useState();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const userInfo = localStorage.getItem("user_info");
+      const userInfoParsed = JSON.parse(userInfo);
+      setRole(userInfoParsed.role);
+    };
+    fetchData();
+  }, []);
   // Função para gerar números de página com ellipsis
   const generatePageNumbers = () => {
     const pages = [];
@@ -93,6 +112,63 @@ export default function StatusListContent({
     showSearch: true,
     showPagination: false, // Desabilitamos a paginação do DataTable pois já temos a nossa própria
     showRefresh: true,
+    showBulkActions: role?.toUpperCase() === "ADMIN",
+    showExport: true,
+    loading: loading,
+  };
+
+  // Ações da tabela
+  const actions = {
+    bulk:
+      role?.toUpperCase() === "ADMIN"
+        ? [
+            {
+              label: "Exportar Selecionados",
+              icon: <Eye className="w-4 h-4" />,
+              onClick: (selectedItems) => {
+                console.log("Exportar status:", selectedItems);
+                // Implementar exportação
+              },
+            },
+          ]
+        : [],
+    row: [
+      {
+        label: "Visualizar",
+        icon: <Eye className="w-4 h-4" />,
+        className: "text-blue-600 hover:bg-blue-50",
+        onClick: (status) => {
+          console.log("Visualizar status:", status);
+          // Implementar visualização
+        },
+      },
+      ...(role?.toUpperCase() === "ADMIN"
+        ? [
+            {
+              label: "Editar",
+              icon: <Pencil className="w-4 h-4" />,
+              className: "text-green-600 hover:bg-green-50",
+              onClick: (status) => {
+                onEdit(status);
+              },
+            },
+            {
+              label: "Excluir",
+              icon: <Trash2 className="w-4 h-4" />,
+              className: "text-red-600 hover:bg-red-50",
+              onClick: (status) => {
+                onDelete(status);
+              },
+            },
+          ]
+        : []),
+    ],
+    export: {
+      onClick: () => {
+        console.log("Exportar todos os status");
+        // Implementar exportação completa
+      },
+    },
   };
 
   return (
@@ -105,9 +181,8 @@ export default function StatusListContent({
             columns={columns}
             config={config}
             onCreate={onCreate}
-            onEdit={onEdit}
-            onDelete={onDelete}
             onRefresh={() => window.location.reload()}
+            actions={actions}
           />
         </div>
 

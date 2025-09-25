@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import BasePage from "../../components/layout/BasePage";
 import TipoListContent from "../../features/contents/TipoListContent";
 import LoadingContent from "../../features/contents/LoadingContent";
@@ -8,39 +8,89 @@ import Swal from "sweetalert2";
 
 export default function TipoListPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  // Dados mockados
+  // Estados para paginação
   const [tipos, setTipos] = useState([]);
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(searchParams.get("page")) || 1
+  );
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalTipos, setTotalTipos] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
+
+  const pageSize = 10; // Valor constante para simplificar
+
+  const fetchTipos = async (page = 1) => {
+    try {
+      const loadingState = page === 1 ? setLoading : setLoadingMore;
+      loadingState(true);
+
+      // Usando a rota de paginação
+      const response = await tipoAPI.getTiposWithPagination(pageSize, page);
+
+      // Processando dados da rota de paginação
+      const paginationData = response.data?.content || {};
+      const tiposData = paginationData.types || [];
+      const totalTiposCount = paginationData.total_items || 0;
+      const totalPagesCount = paginationData.total_pages || 0;
+
+      setTipos(tiposData);
+      setTotalPages(totalPagesCount || 0);
+      setTotalTipos(totalTiposCount || 0);
+      setHasMore(currentPage < totalPagesCount);
+
+      // Atualizar a URL com a nova página
+      setSearchParams({ page: page.toString() });
+    } catch (error) {
+      console.error("Erro ao buscar tipos:", error);
+
+      // Em caso de erro, garantir que tipos seja um array vazio
+      setTipos([]);
+      setTotalPages(0);
+      setTotalTipos(0);
+      setHasMore(false);
+
+      if (!(error.response && error.response.status === 404)) {
+        Swal.fire({
+          icon: "error",
+          title: "Erro ao buscar tipos",
+          text: error.message || "Ocorreu um erro inesperado.",
+        });
+      }
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchTipos = async () => {
-      try {
-        const response = await tipoAPI.getAllTipos();
-        const content = response.data.content;
-        setTipos(content);
-      } catch (error) {
-        if (!(error.response && error.response.status === 404)) {
-          Swal.fire({
-            icon: "error",
-            title: "Erro ao buscar tipos",
-            text: error.message || "Ocorreu um erro inesperado.",
-          });
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+    // Carregar tipos quando a página mudar na URL
+    fetchTipos(currentPage);
+  }, [currentPage]);
 
-    fetchTipos();
-  }, []);
+  // Removendo filtro por enquanto - usando todos os tipos
+  const tiposToShow = Array.isArray(tipos) ? tipos : [];
 
-  const [filter, setFilter] = useState("");
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages && !loading) {
+      setSearchParams({ page: newPage.toString() });
+    }
+  };
 
-  // Filtragem simples
-  const filteredTipos = tipos.filter((tipo) =>
-    (tipo.name || "").toLowerCase().includes(filter.toLowerCase())
-  );
+  const handleNextPage = () => {
+    if (currentPage < totalPages && !loading) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1 && !loading) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   // Ações
   const handleCreate = () => {
@@ -65,7 +115,8 @@ export default function TipoListPage() {
 
     try {
       await tipoAPI.deleteTipo({ name: tipo.name });
-      setTipos((prev) => prev.filter((c) => c.id !== tipo.id));
+      // Recarregar a página atual após exclusão
+      fetchTipos(currentPage);
       Swal.fire("Excluído!", "O Tipo foi removido com sucesso.", "success");
     } catch (error) {
       if (error.status != 409) {
@@ -80,22 +131,24 @@ export default function TipoListPage() {
     }
   };
 
-  const handleFilter = (value) => {
-    setFilter(value);
-  };
-
   return (
     <BasePage pageTitle="">
       {loading ? (
         <LoadingContent pageTitle="" />
       ) : (
         <TipoListContent
-          tipos={filteredTipos}
+          tipos={tiposToShow}
           onCreate={handleCreate}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          onFilter={handleFilter}
           onBack={() => navigate(-1)}
+          onPageChange={handlePageChange}
+          onNextPage={handleNextPage}
+          onPrevPage={handlePrevPage}
+          loading={loading}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalTipos={totalTipos}
         />
       )}
     </BasePage>
