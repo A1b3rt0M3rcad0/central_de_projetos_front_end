@@ -4,6 +4,8 @@ const userApi = {
   // Endpoints existentes
   getWhoAmI: (token) => api.post("/users/who_am_i", { token }),
   getAllUser: () => api.get("users/users/all"),
+  getUsersWithPagination: (pageSize, page) =>
+    api.get(`/users/users/pagination/${pageSize}/${page}`),
   deleteUser: (data) => api.delete("/users", { data }),
   postUser: (data) => api.post("/users", data),
   patchUserEmail: (data) => api.patch("/users/email", data),

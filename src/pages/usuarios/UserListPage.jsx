@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import BasePage from "../../components/layout/BasePage";
 import UserListContent from "../../features/contents/UserListContent";
 import LoadingContent from "../../features/contents/LoadingContent";
@@ -8,38 +8,81 @@ import Swal from "sweetalert2";
 
 export default function UserListPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const [users, setUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(searchParams.get("page")) || 1
+  );
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
+
+  const pageSize = 10;
+
+  const fetchUsers = async (page = 1) => {
+    try {
+      const loadingState = page === 1 ? setLoading : setLoadingMore;
+      loadingState(true);
+
+      const response = await userApi.getUsersWithPagination(pageSize, page);
+
+      const paginationData = response.data?.content || {};
+      const usersData = paginationData.users || [];
+      const totalUsersCount = paginationData.total_items || 0;
+      const totalPagesCount = paginationData.total_pages || 0;
+
+      setUsers(usersData);
+      setTotalPages(totalPagesCount || 0);
+      setTotalUsers(totalUsersCount || 0);
+      setHasMore(currentPage < totalPagesCount);
+
+      setSearchParams({ page: page.toString() });
+    } catch (error) {
+      console.error("Erro ao buscar usuários:", error);
+      setUsers([]);
+      setTotalPages(0);
+      setTotalUsers(0);
+      setHasMore(false);
+
+      if (!(error.response && error.response.status === 404)) {
+        Swal.fire({
+          icon: "error",
+          title: "Erro ao buscar usuários",
+          text: error.message || "Ocorreu um erro inesperado.",
+        });
+      }
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await userApi.getAllUser();
-        const content = response.data.content;
-        setUsers(content);
-      } catch (error) {
-        if (!(error.response && error.response.status === 404)) {
-          Swal.fire({
-            icon: "error",
-            title: "Erro ao buscar usuários",
-            text: error.message || "Ocorreu um erro inesperado.",
-          });
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchUsers(currentPage);
+  }, [currentPage]);
 
-    fetchUsers();
-  }, []);
+  const usersToShow = Array.isArray(users) ? users : [];
 
-  const [filter, setFilter] = useState("");
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages && !loading) {
+      setSearchParams({ page: newPage.toString() });
+    }
+  };
 
-  // Filtragem simples
-  const filteredUsers = users.filter((user) =>
-    (user?.name || "").toLowerCase().includes(filter.toLowerCase())
-  );
+  const handleNextPage = () => {
+    if (currentPage < totalPages && !loading) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1 && !loading) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   // Ações
   const handleCreate = () => {
@@ -64,7 +107,7 @@ export default function UserListPage() {
 
     try {
       await userApi.deleteUser({ cpf: user.cpf });
-      setUsers((prev) => prev.filter((c) => c.cpf !== user.cpf));
+      fetchUsers(currentPage);
       Swal.fire("Excluído!", "O Usuário foi removido com sucesso.", "success");
     } catch (error) {
       if (error.status != 409) {
@@ -79,22 +122,24 @@ export default function UserListPage() {
     }
   };
 
-  const handleFilter = (value) => {
-    setFilter(value);
-  };
-
   return (
     <BasePage pageTitle="">
       {loading ? (
         <LoadingContent pageTitle="" />
       ) : (
         <UserListContent
-          users={filteredUsers}
+          users={usersToShow}
           onCreate={handleCreate}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          onFilter={handleFilter}
           onBack={() => navigate(-1)}
+          onPageChange={handlePageChange}
+          onNextPage={handleNextPage}
+          onPrevPage={handlePrevPage}
+          loading={loading}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalUsers={totalUsers}
         />
       )}
     </BasePage>
