@@ -21,8 +21,8 @@ export default function DashboardPage() {
   const [totalFiscais, setTotalFiscais] = useState(0);
 
   // Charts
-  const [countProjectsByBairro, setCountProjectsByBairro] = useState({});
-  const [orcamentoProjectByBairro, setOrcamentoProjectByBairro] = useState({});
+  const [countProjectsByBairro, setCountProjectsByBairro] = useState([]);
+  const [orcamentoProjectByBairro, setOrcamentoProjectByBairro] = useState([]);
   const [countProjectByBairroAndType, setCountProjectByBairroAndType] =
     useState({});
   const [countProjectStatusByBairro, setCountProjectStatusByBairro] = useState(
@@ -30,9 +30,9 @@ export default function DashboardPage() {
   );
 
   // Tables
-  const [countProjectByFiscal, setCountProjectByFiscal] = useState({});
-  const [countProjectByEmpresa, setCountProjectByEmpresa] = useState({});
-  const [countProjectByUser, setCountProjectByUser] = useState({});
+  const [countProjectByFiscal, setCountProjectByFiscal] = useState([]);
+  const [countProjectByEmpresa, setCountProjectByEmpresa] = useState([]);
+  const [countProjectByUser, setCountProjectByUser] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {

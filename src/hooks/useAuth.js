@@ -42,6 +42,7 @@ export const useAuth = () => {
       const newUserInfo = {
         name: response.data.content.name,
         role: response.data.content.role,
+        cpf: response.data.content.cpf,
         token: updatedToken,
       };
 

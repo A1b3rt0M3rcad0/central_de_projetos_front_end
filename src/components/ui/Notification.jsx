@@ -117,9 +117,9 @@ export function NotificationContainer({ notifications, onRemove }) {
     <div className="fixed top-4 right-4 z-50 space-y-2">
       {notifications.map((notification) => (
         <Notification
-          key={notification.id}
+          key={notification.notification_id}
           {...notification}
-          onClose={() => onRemove(notification.id)}
+          onClose={() => onRemove(notification.notification_id)}
         />
       ))}
     </div>

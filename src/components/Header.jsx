@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Settings, Bell, Search, Menu } from "lucide-react";
+import { Settings, Search, Menu } from "lucide-react";
+import NotificationBell from "./NotificationBell";
 
 export default function Header({ pageTitle }) {
   const [showSearchMobile, setShowSearchMobile] = useState(false);
@@ -29,13 +30,7 @@ export default function Header({ pageTitle }) {
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              aria-label="Notificações"
-              className="relative p-2.5 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group"
-            >
-              <Bell className="w-5 h-5 text-gray-600 group-hover:text-blue-600" />
-              <span className="absolute top-1.5 right-1.5 inline-block w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-            </button>
+            <NotificationBell />
 
             <button
               aria-label="Configurações"
@@ -56,13 +51,7 @@ export default function Header({ pageTitle }) {
             <Search className="w-5 h-5 text-gray-600" />
           </button>
 
-          <button
-            aria-label="Notificações"
-            className="relative p-2.5 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200"
-          >
-            <Bell className="w-5 h-5 text-gray-600" />
-            <span className="absolute top-1.5 right-1.5 inline-block w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-          </button>
+          <NotificationBell />
 
           <button
             aria-label="Menu"

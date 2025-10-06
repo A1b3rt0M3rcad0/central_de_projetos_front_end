@@ -50,6 +50,9 @@ import DocumentFormPage from "../pages/documents/DocumentFormPage";
 // Association Pages
 import ProjectAssociationFormPage from "../pages/associations/ProjectAssociationFormPage";
 
+// Notification Pages
+import NotificationPage from "../pages/notifications/NotificationPage";
+
 const router = createBrowserRouter([
   {
     path: ROUTES.LOGIN,
@@ -296,6 +299,17 @@ const router = createBrowserRouter([
       <AuthGuard>
         <ProjectAssociationFormPage />
       </AuthGuard>
+    ),
+  },
+  // Notification Routes
+  {
+    path: ROUTES.NOTIFICATIONS.LIST,
+    element: (
+      <ErrorBoundary>
+        <AuthGuard>
+          <NotificationPage />
+        </AuthGuard>
+      </ErrorBoundary>
     ),
   },
 ]);
