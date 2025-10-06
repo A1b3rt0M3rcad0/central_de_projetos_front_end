@@ -10,8 +10,9 @@ import {
   Eye,
   Trash2,
   Pencil,
+  Search,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export default function FiscalListContent({
   fiscais,
@@ -22,12 +23,16 @@ export default function FiscalListContent({
   onPageChange,
   onNextPage,
   onPrevPage,
+  onSearch,
   loading,
   currentPage,
   totalPages,
   totalFiscais,
+  searchTerm,
 }) {
   const [role, setRole] = useState();
+  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm || "");
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,6 +42,25 @@ export default function FiscalListContent({
     };
     fetchData();
   }, []);
+
+  // Sincronizar estado local com prop
+  useEffect(() => {
+    setLocalSearchTerm(searchTerm || "");
+  }, [searchTerm]);
+
+  // Debounce para busca
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (localSearchTerm !== searchTerm) {
+        setIsSearching(true);
+        onSearch(localSearchTerm);
+        // Reset do indicador após um tempo
+        setTimeout(() => setIsSearching(false), 1000);
+      }
+    }, 500); // 500ms de delay
+
+    return () => clearTimeout(timeoutId);
+  }, [localSearchTerm, searchTerm, onSearch]);
 
   // Função para gerar números de página com ellipsis
   const generatePageNumbers = () => {
@@ -164,7 +188,7 @@ export default function FiscalListContent({
     createButtonText: "Criar Fiscal",
     searchPlaceholder: "Buscar por nome, email ou telefone...",
     emptyMessage: "Nenhum fiscal encontrado.",
-    showSearch: true,
+    showSearch: false, // Desabilitado pois usamos busca global
     showPagination: false, // Desabilitamos a paginação do DataTable pois já temos a nossa própria
     showRefresh: true,
     showBulkActions: role?.toUpperCase() === "ADMIN",
@@ -241,6 +265,37 @@ export default function FiscalListContent({
   return (
     <BaseContent pageTitle="Fiscais" onBack={onBack}>
       <div className="space-y-6">
+        {/* Campo de busca personalizado */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex-1 relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Buscar por nome do fiscal..."
+                value={localSearchTerm}
+                onChange={(e) => setLocalSearchTerm(e.target.value)}
+                className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              />
+              {isSearching && (
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+            </div>
+            {localSearchTerm && (
+              <button
+                onClick={() => setLocalSearchTerm("")}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              >
+                Limpar
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* DataTable */}
         <div className="overflow-x-auto">
           <DataTable

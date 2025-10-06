@@ -20,16 +20,21 @@ export default function TipoListPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalTipos, setTotalTipos] = useState(0);
   const [hasMore, setHasMore] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const pageSize = 10; // Valor constante para simplificar
 
-  const fetchTipos = async (page = 1) => {
+  const fetchTipos = async (page = 1, search = "") => {
     try {
       const loadingState = page === 1 ? setLoading : setLoadingMore;
       loadingState(true);
 
-      // Usando a rota de paginação
-      const response = await tipoAPI.getTiposWithPagination(pageSize, page);
+      // Usando a rota de paginação com filtro
+      const response = await tipoAPI.getTiposWithPaginationAndFilter(
+        pageSize,
+        page,
+        search
+      );
 
       // Processando dados da rota de paginação
       const paginationData = response.data?.content || {};
@@ -66,30 +71,49 @@ export default function TipoListPage() {
     }
   };
 
+  // Sincronizar estado interno com URL
+  useEffect(() => {
+    const urlPage = parseInt(searchParams.get("page") || "1");
+    if (urlPage !== currentPage) {
+      setCurrentPage(urlPage);
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     // Carregar tipos quando a página mudar na URL
-    fetchTipos(currentPage);
-  }, [currentPage]);
+    fetchTipos(currentPage, searchTerm);
+  }, [currentPage, searchTerm]);
 
   // Removendo filtro por enquanto - usando todos os tipos
   const tiposToShow = Array.isArray(tipos) ? tipos : [];
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages && !loading) {
+      setCurrentPage(newPage);
       setSearchParams({ page: newPage.toString() });
     }
   };
 
   const handleNextPage = () => {
     if (currentPage < totalPages && !loading) {
-      setCurrentPage(currentPage + 1);
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage);
+      setSearchParams({ page: newPage.toString() });
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 1 && !loading) {
-      setCurrentPage(currentPage - 1);
+      const newPage = currentPage - 1;
+      setCurrentPage(newPage);
+      setSearchParams({ page: newPage.toString() });
     }
+  };
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    setCurrentPage(1); // Reset para primeira página quando buscar
+    setSearchParams({ page: "1" }); // Atualizar URL para página 1
   };
 
   // Ações
@@ -116,7 +140,7 @@ export default function TipoListPage() {
     try {
       await tipoAPI.deleteTipo({ name: tipo.name });
       // Recarregar a página atual após exclusão
-      fetchTipos(currentPage);
+      fetchTipos(currentPage, searchTerm);
       Swal.fire("Excluído!", "O Tipo foi removido com sucesso.", "success");
     } catch (error) {
       if (error.status != 409) {
@@ -145,10 +169,12 @@ export default function TipoListPage() {
           onPageChange={handlePageChange}
           onNextPage={handleNextPage}
           onPrevPage={handlePrevPage}
+          onSearch={handleSearch}
           loading={loading}
           currentPage={currentPage}
           totalPages={totalPages}
           totalTipos={totalTipos}
+          searchTerm={searchTerm}
         />
       )}
     </BasePage>

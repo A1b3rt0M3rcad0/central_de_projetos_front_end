@@ -19,15 +19,20 @@ export default function UserListPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
   const [hasMore, setHasMore] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const pageSize = 10;
 
-  const fetchUsers = async (page = 1) => {
+  const fetchUsers = async (page = 1, search = "") => {
     try {
       const loadingState = page === 1 ? setLoading : setLoadingMore;
       loadingState(true);
 
-      const response = await userApi.getUsersWithPagination(pageSize, page);
+      const response = await userApi.getUsersWithPaginationAndFilter(
+        pageSize,
+        page,
+        search
+      );
 
       const paginationData = response.data?.content || {};
       const usersData = paginationData.users || [];
@@ -61,26 +66,39 @@ export default function UserListPage() {
   };
 
   useEffect(() => {
-    fetchUsers(currentPage);
-  }, [currentPage]);
+    fetchUsers(currentPage, searchTerm);
+  }, [currentPage, searchTerm]);
+
+  // Sincronizar estado interno com URL
+  useEffect(() => {
+    const urlPage = parseInt(searchParams.get("page") || "1");
+    if (urlPage !== currentPage) {
+      setCurrentPage(urlPage);
+    }
+  }, [searchParams]);
 
   const usersToShow = Array.isArray(users) ? users : [];
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages && !loading) {
+      setCurrentPage(newPage);
       setSearchParams({ page: newPage.toString() });
     }
   };
 
   const handleNextPage = () => {
     if (currentPage < totalPages && !loading) {
-      setCurrentPage(currentPage + 1);
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage);
+      setSearchParams({ page: newPage.toString() });
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 1 && !loading) {
-      setCurrentPage(currentPage - 1);
+      const newPage = currentPage - 1;
+      setCurrentPage(newPage);
+      setSearchParams({ page: newPage.toString() });
     }
   };
 
@@ -107,7 +125,7 @@ export default function UserListPage() {
 
     try {
       await userApi.deleteUser({ cpf: user.cpf });
-      fetchUsers(currentPage);
+      fetchUsers(currentPage, searchTerm);
       Swal.fire("Excluído!", "O Usuário foi removido com sucesso.", "success");
     } catch (error) {
       if (error.status != 409) {
@@ -120,6 +138,12 @@ export default function UserListPage() {
         );
       }
     }
+  };
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    setCurrentPage(1); // Reset para primeira página quando buscar
+    setSearchParams({ page: "1" }); // Atualizar URL para página 1
   };
 
   return (
@@ -136,10 +160,12 @@ export default function UserListPage() {
           onPageChange={handlePageChange}
           onNextPage={handleNextPage}
           onPrevPage={handlePrevPage}
+          onSearch={handleSearch}
           loading={loading}
           currentPage={currentPage}
           totalPages={totalPages}
           totalUsers={totalUsers}
+          searchTerm={searchTerm}
         />
       )}
     </BasePage>

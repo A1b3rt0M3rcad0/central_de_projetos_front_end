@@ -19,15 +19,20 @@ export default function FiscalListPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalFiscais, setTotalFiscais] = useState(0);
   const [hasMore, setHasMore] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const pageSize = 10;
 
-  const fetchFiscais = async (page = 1) => {
+  const fetchFiscais = async (page = 1, search = "") => {
     try {
       const loadingState = page === 1 ? setLoading : setLoadingMore;
       loadingState(true);
 
-      const response = await fiscalAPI.getFiscaisWithPagination(pageSize, page);
+      const response = await fiscalAPI.getFiscaisWithPaginationAndFilter(
+        pageSize,
+        page,
+        search
+      );
 
       const paginationData = response.data?.content || {};
       const fiscaisData = paginationData.fiscais || [];
@@ -60,28 +65,47 @@ export default function FiscalListPage() {
     }
   };
 
+  // Sincronizar estado interno com URL
   useEffect(() => {
-    fetchFiscais(currentPage);
-  }, [currentPage]);
+    const urlPage = parseInt(searchParams.get("page") || "1");
+    if (urlPage !== currentPage) {
+      setCurrentPage(urlPage);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    fetchFiscais(currentPage, searchTerm);
+  }, [currentPage, searchTerm]);
 
   const fiscaisToShow = Array.isArray(fiscais) ? fiscais : [];
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages && !loading) {
+      setCurrentPage(newPage);
       setSearchParams({ page: newPage.toString() });
     }
   };
 
   const handleNextPage = () => {
     if (currentPage < totalPages && !loading) {
-      setCurrentPage(currentPage + 1);
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage);
+      setSearchParams({ page: newPage.toString() });
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 1 && !loading) {
-      setCurrentPage(currentPage - 1);
+      const newPage = currentPage - 1;
+      setCurrentPage(newPage);
+      setSearchParams({ page: newPage.toString() });
     }
+  };
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    setCurrentPage(1); // Reset para primeira página quando buscar
+    setSearchParams({ page: "1" }); // Atualizar URL para página 1
   };
 
   // Ações
@@ -107,7 +131,7 @@ export default function FiscalListPage() {
 
     try {
       await fiscalAPI.deleteFiscal({ name: fiscal.name });
-      fetchFiscais(currentPage); // Recarregar a página atual após exclusão
+      fetchFiscais(currentPage, searchTerm); // Recarregar a página atual após exclusão
       Swal.fire("Excluído!", "O fiscal foi removido com sucesso.", "success");
     } catch (error) {
       if (error.status != 409) {
@@ -136,10 +160,12 @@ export default function FiscalListPage() {
           onPageChange={handlePageChange}
           onNextPage={handleNextPage}
           onPrevPage={handlePrevPage}
+          onSearch={handleSearch}
           loading={loading}
           currentPage={currentPage}
           totalPages={totalPages}
           totalFiscais={totalFiscais}
+          searchTerm={searchTerm}
         />
       )}
     </BasePage>

@@ -19,15 +19,20 @@ export default function BairroListPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalBairros, setTotalBairros] = useState(0);
   const [hasMore, setHasMore] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const pageSize = 10;
 
-  const fetchBairros = async (page = 1) => {
+  const fetchBairros = async (page = 1, search = "") => {
     try {
       const loadingState = page === 1 ? setLoading : setLoadingMore;
       loadingState(true);
 
-      const response = await bairroAPI.getBairrosWithPagination(pageSize, page);
+      const response = await bairroAPI.getBairrosWithPaginationAndFilter(
+        pageSize,
+        page,
+        search
+      );
 
       const paginationData = response.data?.content || {};
       const bairrosData = paginationData.bairros || [];
@@ -60,28 +65,47 @@ export default function BairroListPage() {
     }
   };
 
+  // Sincronizar estado interno com URL
   useEffect(() => {
-    fetchBairros(currentPage);
-  }, [currentPage]);
+    const urlPage = parseInt(searchParams.get("page") || "1");
+    if (urlPage !== currentPage) {
+      setCurrentPage(urlPage);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    fetchBairros(currentPage, searchTerm);
+  }, [currentPage, searchTerm]);
 
   const bairrosToShow = Array.isArray(bairros) ? bairros : [];
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages && !loading) {
+      setCurrentPage(newPage);
       setSearchParams({ page: newPage.toString() });
     }
   };
 
   const handleNextPage = () => {
     if (currentPage < totalPages && !loading) {
-      setCurrentPage(currentPage + 1);
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage);
+      setSearchParams({ page: newPage.toString() });
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 1 && !loading) {
-      setCurrentPage(currentPage - 1);
+      const newPage = currentPage - 1;
+      setCurrentPage(newPage);
+      setSearchParams({ page: newPage.toString() });
     }
+  };
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    setCurrentPage(1); // Reset para primeira página quando buscar
+    setSearchParams({ page: "1" }); // Atualizar URL para página 1
   };
 
   // Ações
@@ -107,7 +131,7 @@ export default function BairroListPage() {
 
     try {
       await bairroAPI.deleteBairro({ name: bairro.name });
-      fetchBairros(currentPage); // Recarregar a página atual após exclusão
+      fetchBairros(currentPage, searchTerm); // Recarregar a página atual após exclusão
       Swal.fire("Excluído!", "O Bairro foi removido com sucesso.", "success");
     } catch (error) {
       if (error.status != 409) {
@@ -136,10 +160,12 @@ export default function BairroListPage() {
           onPageChange={handlePageChange}
           onNextPage={handleNextPage}
           onPrevPage={handlePrevPage}
+          onSearch={handleSearch}
           loading={loading}
           currentPage={currentPage}
           totalPages={totalPages}
           totalBairros={totalBairros}
+          searchTerm={searchTerm}
         />
       )}
     </BasePage>

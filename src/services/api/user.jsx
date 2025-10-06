@@ -6,6 +6,13 @@ const userApi = {
   getAllUser: () => api.get("users/users/all"),
   getUsersWithPagination: (pageSize, page) =>
     api.get(`/users/users/pagination/${pageSize}/${page}`),
+  getUsersWithPaginationAndFilter: (pageSize, page, search) => {
+    const params = new URLSearchParams();
+    if (search) params.append("search", search);
+    return api.get(
+      `/users/users/pagination-filter/${pageSize}/${page}?${params.toString()}`
+    );
+  },
   deleteUser: (data) => api.delete("/users", { data }),
   postUser: (data) => api.post("/users", data),
   patchUserEmail: (data) => api.patch("/users/email", data),

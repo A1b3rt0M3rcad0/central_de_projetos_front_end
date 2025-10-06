@@ -19,17 +19,19 @@ export default function EmpresaListPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalCompanies, setTotalCompanies] = useState(0);
   const [hasMore, setHasMore] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const pageSize = 10;
 
-  const fetchEmpresas = async (page = 1) => {
+  const fetchEmpresas = async (page = 1, search = "") => {
     try {
       const loadingState = page === 1 ? setLoading : setLoadingMore;
       loadingState(true);
 
-      const response = await empresaAPI.getEmpresasWithPagination(
+      const response = await empresaAPI.getEmpresasWithPaginationAndFilter(
         pageSize,
-        page
+        page,
+        search
       );
 
       const paginationData = response.data?.content || {};
@@ -64,26 +66,39 @@ export default function EmpresaListPage() {
   };
 
   useEffect(() => {
-    fetchEmpresas(currentPage);
-  }, [currentPage]);
+    fetchEmpresas(currentPage, searchTerm);
+  }, [currentPage, searchTerm]);
+
+  // Sincronizar estado interno com URL
+  useEffect(() => {
+    const urlPage = parseInt(searchParams.get("page") || "1");
+    if (urlPage !== currentPage) {
+      setCurrentPage(urlPage);
+    }
+  }, [searchParams]);
 
   const companiesToShow = Array.isArray(companies) ? companies : [];
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages && !loading) {
+      setCurrentPage(newPage);
       setSearchParams({ page: newPage.toString() });
     }
   };
 
   const handleNextPage = () => {
     if (currentPage < totalPages && !loading) {
-      setCurrentPage(currentPage + 1);
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage);
+      setSearchParams({ page: newPage.toString() });
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 1 && !loading) {
-      setCurrentPage(currentPage - 1);
+      const newPage = currentPage - 1;
+      setCurrentPage(newPage);
+      setSearchParams({ page: newPage.toString() });
     }
   };
 
@@ -111,7 +126,7 @@ export default function EmpresaListPage() {
     try {
       await empresaAPI.deleteEmpresa({ name: company.name });
       setCompanies((prev) => prev.filter((c) => c.id !== company.id));
-      fetchEmpresas(currentPage); // Recarregar a página atual após exclusão
+      fetchEmpresas(currentPage, searchTerm); // Recarregar a página atual após exclusão
       Swal.fire("Excluído!", "A empresa foi removido com sucesso.", "success");
     } catch (error) {
       if (error.status != 409) {
@@ -124,6 +139,12 @@ export default function EmpresaListPage() {
         );
       }
     }
+  };
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    setCurrentPage(1); // Reset para primeira página quando buscar
+    setSearchParams({ page: "1" }); // Atualizar URL para página 1
   };
 
   return (
@@ -140,10 +161,12 @@ export default function EmpresaListPage() {
           onPageChange={handlePageChange}
           onNextPage={handleNextPage}
           onPrevPage={handlePrevPage}
+          onSearch={handleSearch}
           loading={loading}
           currentPage={currentPage}
           totalPages={totalPages}
           totalCompanies={totalCompanies}
+          searchTerm={searchTerm}
         />
       )}
     </BasePage>

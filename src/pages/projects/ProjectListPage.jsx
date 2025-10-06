@@ -16,22 +16,26 @@ export default function ProjectListPage() {
   const [projects, setProjects] = useState([]);
 
   // Obter página atual da URL ou usar 1 como padrão
-  const currentPage = parseInt(searchParams.get("page") || "1");
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(searchParams.get("page") || "1")
+  );
   const [totalPages, setTotalPages] = useState(0);
   const [totalProjects, setTotalProjects] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const pageSize = 10; // Valor constante para simplificar
 
-  const fetchProjects = async (page = 1) => {
+  const fetchProjects = async (page = 1, search = "") => {
     try {
       const loadingState = page === 1 ? setLoading : setLoadingMore;
       loadingState(true);
 
-      // Usando a rota de paginação
-      const response = await projectApi.getProjectsWithPagination(
+      // Usando a rota de paginação com filtro
+      const response = await projectApi.getProjectsWithPaginationAndFilter(
         pageSize,
-        page
+        page,
+        search
       );
 
       // Processando dados da rota de paginação
@@ -70,29 +74,42 @@ export default function ProjectListPage() {
     }
   };
 
+  // Sincronizar estado interno com URL
+  useEffect(() => {
+    const urlPage = parseInt(searchParams.get("page") || "1");
+    if (urlPage !== currentPage) {
+      setCurrentPage(urlPage);
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     // Carregar projetos quando a página mudar na URL
-    fetchProjects(currentPage);
-  }, [currentPage]);
+    fetchProjects(currentPage, searchTerm);
+  }, [currentPage, searchTerm]);
 
   // Removendo filtro por enquanto - usando todos os projetos
   const projectsToShow = Array.isArray(projects) ? projects : [];
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages && !loading) {
+      setCurrentPage(newPage);
       setSearchParams({ page: newPage.toString() });
     }
   };
 
   const handleNextPage = () => {
     if (currentPage < totalPages && !loading) {
-      setSearchParams({ page: (currentPage + 1).toString() });
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage);
+      setSearchParams({ page: newPage.toString() });
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 1 && !loading) {
-      setSearchParams({ page: (currentPage - 1).toString() });
+      const newPage = currentPage - 1;
+      setCurrentPage(newPage);
+      setSearchParams({ page: newPage.toString() });
     }
   };
 
@@ -125,11 +142,17 @@ export default function ProjectListPage() {
       await projectApi.deleteProject({ project_id: project.id });
       Swal.fire("Excluído!", "O projeto foi removido com sucesso.", "success");
       // Recarregar os dados após exclusão
-      fetchProjects(currentPage);
+      fetchProjects(currentPage, searchTerm);
     } catch (error) {
       console.error("Erro ao deletar projeto:", error);
       Swal.fire("Erro!", "Erro ao deletar projeto.", "error");
     }
+  };
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    setCurrentPage(1); // Reset para primeira página quando buscar
+    setSearchParams({ page: "1" }); // Atualizar URL para página 1
   };
 
   return (
@@ -147,10 +170,12 @@ export default function ProjectListPage() {
           onPageChange={handlePageChange}
           onNextPage={handleNextPage}
           onPrevPage={handlePrevPage}
+          onSearch={handleSearch}
           loading={loading}
           currentPage={currentPage}
           totalPages={totalPages}
           totalProjects={totalProjects}
+          searchTerm={searchTerm}
         />
       )}
     </BasePage>

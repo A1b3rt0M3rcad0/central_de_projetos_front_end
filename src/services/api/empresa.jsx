@@ -4,6 +4,13 @@ const empresaAPI = {
   getAllEmpresas: () => api.get("/empresa/empresa/all"),
   getEmpresasWithPagination: (pageSize, page) =>
     api.get(`/empresa/empresa/pagination/${pageSize}/${page}`),
+  getEmpresasWithPaginationAndFilter: (pageSize, page, search) => {
+    const params = new URLSearchParams();
+    if (search) params.append("search", search);
+    return api.get(
+      `/empresa/empresa/pagination-filter/${pageSize}/${page}?${params.toString()}`
+    );
+  },
   deleteEmpresa: (data) => api.delete("/empresa", { data }),
   postEmpresa: (data) => api.post("/empresa", data),
   patchEmpresa: (data) => api.patch("/empresa", data),

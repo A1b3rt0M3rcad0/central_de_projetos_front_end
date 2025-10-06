@@ -93,6 +93,13 @@ const projectApi = {
   getCountProjects: () => api.get("/project/count/all"),
   getProjectsWithPagination: (pageSize, page) =>
     api.get(`/project/projects/pagination/${pageSize}/${page}`),
+  getProjectsWithPaginationAndFilter: (pageSize, page, search) => {
+    const params = new URLSearchParams();
+    if (search) params.append("search", search);
+    return api.get(
+      `/project/projects/pagination-filter/${pageSize}/${page}?${params.toString()}`
+    );
+  },
 };
 
 export default projectApi;
