@@ -34,6 +34,8 @@ export default function HomeContent({
   countProjectByFiscal,
   countProjectByEmpresa,
   countProjectByUser,
+  countProjectByType,
+  countProjectByStatus,
   countProjectByBairroAndType,
   countProjectStatusByBairro,
   onBack = () => {},
@@ -90,6 +92,19 @@ export default function HomeContent({
   }, [orcamentoProjectByBairro]);
 
   const filteredStatusDistribution = useMemo(() => {
+    // Se filtro for "all" e temos dados simples de status, usa eles (mais eficiente)
+    if (
+      statusFilterBairro === "all" &&
+      countProjectByStatus &&
+      countProjectByStatus.length > 0
+    ) {
+      return countProjectByStatus.map((item) => ({
+        name: item.status,
+        value: item.quantidade,
+      }));
+    }
+
+    // Caso contrário, usa os dados complexos por bairro
     const data = countProjectStatusByBairro?.status;
     if (!data) return [];
 
@@ -107,7 +122,7 @@ export default function HomeContent({
     });
 
     return Object.entries(statusMap).map(([name, value]) => ({ name, value }));
-  }, [countProjectStatusByBairro, statusFilterBairro]);
+  }, [countProjectStatusByBairro, countProjectByStatus, statusFilterBairro]);
 
   const bairroOptions = useMemo(() => {
     if (!countProjectStatusByBairro?.bairros)
@@ -156,12 +171,25 @@ export default function HomeContent({
   }, [countProjectByBairroAndType]);
 
   const filteredProjetosPorTipo = useMemo(() => {
+    // Se filtro for "all" e temos dados simples de tipo, usa eles quando não há fullData
+    if (
+      tipoFilterBairro === "all" &&
+      projetosPorTipoTransformado.length === 0 &&
+      countProjectByType &&
+      countProjectByType.length > 0
+    ) {
+      return countProjectByType.map((item) => ({
+        tipo: item.tipo,
+        quantidade: item.quantidade,
+      }));
+    }
+
     if (tipoFilterBairro === "all") return projetosPorTipoTransformado;
     return projetosPorTipoTransformado.map((item) => ({
       tipo: item.tipo,
       quantidade: item[tipoFilterBairro] || 0,
     }));
-  }, [projetosPorTipoTransformado, tipoFilterBairro]);
+  }, [projetosPorTipoTransformado, countProjectByType, tipoFilterBairro]);
 
   return (
     <>

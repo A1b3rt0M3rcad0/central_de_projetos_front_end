@@ -2,12 +2,8 @@ import { useEffect, useState } from "react";
 import BasePage from "../../components/layout/BasePage";
 import HomeContent from "../../features/contents/HomeContent";
 import { useNavigate } from "react-router-dom";
-import projectApi from "../../services/api/project";
-import empresaAPI from "../../services/api/empresa";
-import fiscalAPI from "../../services/api/fiscal";
-import bairroAPI from "../../services/api/bairro";
+import dashboardAPI from "../../services/api/dashboard";
 import LoadingContent from "../../features/contents/LoadingContent";
-import userApi from "../../services/api/user";
 
 // Página principal do dashboard com dados mockados
 export default function DashboardPage() {
@@ -34,96 +30,61 @@ export default function DashboardPage() {
   const [countProjectByEmpresa, setCountProjectByEmpresa] = useState([]);
   const [countProjectByUser, setCountProjectByUser] = useState([]);
 
+  // Novos dados adicionados
+  const [countProjectByType, setCountProjectByType] = useState([]);
+  const [countProjectByStatus, setCountProjectByStatus] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // 🚀 UMA ÚNICA REQUISIÇÃO para buscar todos os dados do dashboard
+        const response = await dashboardAPI.getAllData();
+        const data = response.data.content;
+
         // Card Infos
-        const bairroCount = (await bairroAPI.getCountBairros()).data.content
-          .bairros;
-        setTotalBairros(bairroCount);
-
-        const projectCount = (await projectApi.getCountProjects()).data.content
-          .projects;
-        setTotalProjects(projectCount);
-
-        const empresaCount = (await empresaAPI.getCountEmpresas()).data.content
-          .empresas;
-        setTotalEmpresas(empresaCount);
-
-        const fiscalCount = (await fiscalAPI.getCountFiscal()).data.content
-          .fiscals;
-        setTotalFiscais(fiscalCount);
+        setTotalProjects(data.counts?.projects || 0);
+        setTotalBairros(data.counts?.bairros || 0);
+        setTotalEmpresas(data.counts?.empresas || 0);
+        setTotalFiscais(data.counts?.fiscais || 0);
 
         // Número de projetos por Bairro
-        const rawProjectByBairro = (await bairroAPI.getCountProjectsByBairro())
-          .data.content.counts;
-        const parsedProjectByBairro = Object.entries(rawProjectByBairro).map(
-          ([nome, quantidade]) => ({ nome, quantidade })
-        );
-        setCountProjectsByBairro(parsedProjectByBairro);
+        setCountProjectsByBairro(data.projects_by_bairro || []);
 
         // Orçamento por bairro
-        const rawOrcamentoByBairro = (await bairroAPI.getProjectVerbaByBairro())
-          .data.content.verba;
-        const parsedOrcamentoByBairro = Object.values(rawOrcamentoByBairro).map(
-          (bairroObj) => {
-            const [nome, orcamento] = Object.entries(bairroObj)[0];
-            return { nome, orcamento };
-          }
-        );
-        setOrcamentoProjectByBairro(parsedOrcamentoByBairro);
+        setOrcamentoProjectByBairro(data.budget_by_bairro || []);
+
         // Count Project By Fiscal
-        const rawCountProjectByFiscal = (
-          await fiscalAPI.getCountProjectByFiscal()
-        ).data.content;
-
-        const parsedCountProjectByFiscal = Object.entries(
-          rawCountProjectByFiscal
-        ).map(([nome, projetos]) => ({
-          nome,
-          projetos,
-        }));
-
-        setCountProjectByFiscal(parsedCountProjectByFiscal);
+        setCountProjectByFiscal(data.projects_by_fiscal || []);
 
         // Count Project By Empresa
-        const rawCountProjectByEmpresa = (
-          await empresaAPI.getCountProjectsbyEmpresas()
-        ).data.content;
+        setCountProjectByEmpresa(data.projects_by_empresa || []);
 
-        const parsedCountProjectByEmpresa = Object.entries(
-          rawCountProjectByEmpresa
-        ).map(([nome, projetos]) => ({
-          nome,
-          projetos,
-        }));
+        // Count Project By User (Vereador)
+        setCountProjectByUser(data.projects_by_user || []);
 
-        setCountProjectByEmpresa(parsedCountProjectByEmpresa);
+        // Count project by type (simples)
+        setCountProjectByType(data.projects_by_type || []);
 
-        // Count Project By Empresa
-        const rawCountProjectByUser = (await userApi.getCountProjectsByUser())
-          .data.content;
-
-        const parsedCountProjectByUser = Object.entries(
-          rawCountProjectByUser
-        ).map(([nome, projetos]) => ({
-          nome,
-          projetos,
-        }));
-
-        setCountProjectByUser(parsedCountProjectByUser);
+        // Count project by status (simples)
+        setCountProjectByStatus(data.projects_by_status || []);
 
         // Count project by bairro and type
-        const countProjectByBairroAndType = (
-          await bairroAPI.getCountProjectByBairroAndType()
-        ).data.content;
-        setCountProjectByBairroAndType(countProjectByBairroAndType);
+        setCountProjectByBairroAndType(data.projects_by_bairro_and_type || {});
 
         // Count project by bairro and status
-        const countProjectStatusByBairro = (
-          await bairroAPI.getCountProjectStatusByBairro()
-        ).data.content;
-        setCountProjectStatusByBairro(countProjectStatusByBairro);
+        setCountProjectStatusByBairro(data.projects_by_bairro_and_status || {});
+
+        console.log(
+          "✅ Dashboard carregado com sucesso em 1 requisição única!"
+        );
+        console.log(
+          "📊 Status excluídos:",
+          response.data.metadata?.excluded_status
+        );
+        console.log(
+          "📈 Módulos carregados:",
+          response.data.metadata?.total_modules
+        );
       } catch (error) {
         console.error("Erro ao carregar dados do dashboard:", error);
       } finally {
@@ -149,6 +110,8 @@ export default function DashboardPage() {
           countProjectByFiscal={countProjectByFiscal}
           countProjectByEmpresa={countProjectByEmpresa}
           countProjectByUser={countProjectByUser}
+          countProjectByType={countProjectByType}
+          countProjectByStatus={countProjectByStatus}
           countProjectByBairroAndType={countProjectByBairroAndType}
           countProjectStatusByBairro={countProjectStatusByBairro}
           onBack={() => navigate(-1)}
