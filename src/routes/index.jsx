@@ -53,6 +53,9 @@ import ProjectAssociationFormPage from "../pages/associations/ProjectAssociation
 // Notification Pages
 import NotificationPage from "../pages/notifications/NotificationPage";
 
+// Settings Pages
+import SettingsPage from "../pages/settings/SettingsPage";
+
 const router = createBrowserRouter([
   {
     path: ROUTES.LOGIN,
@@ -308,6 +311,17 @@ const router = createBrowserRouter([
       <ErrorBoundary>
         <AuthGuard>
           <NotificationPage />
+        </AuthGuard>
+      </ErrorBoundary>
+    ),
+  },
+  // Settings Routes
+  {
+    path: "/settings",
+    element: (
+      <ErrorBoundary>
+        <AuthGuard>
+          <SettingsPage />
         </AuthGuard>
       </ErrorBoundary>
     ),

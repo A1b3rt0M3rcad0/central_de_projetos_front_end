@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Settings, Search, Menu } from "lucide-react";
 import NotificationBell from "./NotificationBell";
 
 export default function Header({ pageTitle }) {
+  const navigate = useNavigate();
   const [showSearchMobile, setShowSearchMobile] = useState(false);
 
   return (
@@ -34,9 +36,10 @@ export default function Header({ pageTitle }) {
 
             <button
               aria-label="Configurações"
+              onClick={() => navigate("/settings")}
               className="p-2.5 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group"
             >
-              <Settings className="w-5 h-5 text-gray-600 group-hover:text-blue-600" />
+              <Settings className="w-5 h-5 text-gray-600 group-hover:text-blue-600 group-hover:rotate-90 transition-transform duration-300" />
             </button>
           </div>
         </div>
