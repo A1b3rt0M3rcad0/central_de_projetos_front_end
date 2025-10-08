@@ -20,6 +20,8 @@ function FiscalWorkProjectsPage() {
   const [workProjects, setWorkProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [localSearchTerm, setLocalSearchTerm] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [hasMore, setHasMore] = useState(false);
@@ -29,16 +31,44 @@ function FiscalWorkProjectsPage() {
 
   useEffect(() => {
     loadWorkProjects();
-  }, [page, projectId]);
+  }, [page, projectId, searchTerm]);
+
+  // Função para executar a busca
+  const handleSearch = () => {
+    if (localSearchTerm !== searchTerm) {
+      setIsSearching(true);
+      setSearchTerm(localSearchTerm);
+      setPage(1);
+      setTimeout(() => setIsSearching(false), 1000);
+    }
+  };
+
+  // Handler para tecla Enter
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  // Limpar busca
+  const handleClearSearch = () => {
+    setLocalSearchTerm("");
+    setSearchTerm("");
+    setPage(1);
+  };
 
   const loadWorkProjects = async () => {
     try {
       setLoading(true);
-      console.log("🔍 Buscando fiscalizações do projeto:", projectId);
+      console.log("🔍 Buscando fiscalizações do projeto:", projectId, {
+        page,
+        searchTerm,
+      });
       const response = await fiscalApiService.getWorkProjects(
         projectId,
         10,
-        page
+        page,
+        searchTerm || null
       );
       console.log("✅ Resposta recebida:", response.data);
 
@@ -126,21 +156,27 @@ function FiscalWorkProjectsPage() {
             </div>
           </div>
 
-          {/* Busca Melhorada */}
+          {/* Busca com Confirmação */}
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
-            <div className="relative flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-orange-200" />
                 <input
                   type="text"
-                  placeholder="Buscar por título, descrição..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Buscar por título, descrição... (Enter)"
+                  value={localSearchTerm}
+                  onChange={(e) => setLocalSearchTerm(e.target.value)}
+                  onKeyPress={handleKeyPress}
                   className="w-full pl-10 pr-10 py-3 rounded-lg text-gray-800 placeholder-gray-400 bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-all"
                 />
-                {searchTerm && (
+                {isSearching && (
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                    <div className="w-4 h-4 border-2 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                )}
+                {localSearchTerm && !isSearching && (
                   <button
-                    onClick={() => setSearchTerm("")}
+                    onClick={handleClearSearch}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   >
                     <X className="w-4 h-4" />

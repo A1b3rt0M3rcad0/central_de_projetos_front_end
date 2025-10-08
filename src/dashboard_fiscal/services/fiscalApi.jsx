@@ -52,19 +52,30 @@ export const fiscalApiService = {
     }),
 
   // Projetos
-  getProjects: (pageSize = 10, page = 1) =>
-    fiscalApi.get(`/mobile/fiscal/projects/pagination/${pageSize}/${page}`),
+  getProjects: (pageSize = 10, page = 1, search = null) => {
+    const endpoint = search
+      ? `/mobile/fiscal/projects/pagination-filter/${pageSize}/${page}`
+      : `/mobile/fiscal/projects/pagination/${pageSize}/${page}`;
+    const params = search ? { search } : {};
+    return fiscalApi.get(endpoint, { params });
+  },
 
   // Work Projects
-  getWorkProjects: (projectId, pageSize = 10, page = 1) =>
-    fiscalApi.get(
-      `/mobile/fiscal/work_projects/pagination/${projectId}/${pageSize}/${page}`
-    ),
+  getWorkProjects: (projectId, pageSize = 10, page = 1, search = null) => {
+    const endpoint = search
+      ? `/mobile/fiscal/work_projects/pagination-filter/${projectId}/${pageSize}/${page}`
+      : `/mobile/fiscal/work_projects/pagination/${projectId}/${pageSize}/${page}`;
+    const params = search ? { search } : {};
+    return fiscalApi.get(endpoint, { params });
+  },
 
-  getAllWorkProjects: (pageSize = 10, page = 1) =>
-    fiscalApi.get(
-      `/mobile/fiscal/work_projects/all/pagination/${pageSize}/${page}`
-    ),
+  getAllWorkProjects: (pageSize = 10, page = 1, search = null) => {
+    const endpoint = search
+      ? `/mobile/fiscal/work_projects/all/pagination-filter/${pageSize}/${page}`
+      : `/mobile/fiscal/work_projects/all/pagination/${pageSize}/${page}`;
+    const params = search ? { search } : {};
+    return fiscalApi.get(endpoint, { params });
+  },
 
   getLatestWorkProjects: (pageSize = 10, page = 1, startDate, endDate) =>
     fiscalApi.get(
@@ -90,9 +101,13 @@ export const fiscalApiService = {
     files.forEach((file) => {
       formData.append("files", file);
     });
-    return fiscalApi.post("/mobile/fiscal/add_documents_to_work_project", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    return fiscalApi.post(
+      "/mobile/fiscal/add_documents_to_work_project",
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
   },
 
   deleteDocument: (workProjectId, documentName) =>
@@ -113,4 +128,3 @@ export const fiscalApiService = {
 };
 
 export default fiscalApi;
-
