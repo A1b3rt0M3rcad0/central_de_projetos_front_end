@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Camera,
-  Image as ImageIcon,
   X,
   Upload,
   FileText,
@@ -23,7 +22,6 @@ function CreateWorkProjectPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const fileInputRef = useRef(null);
-  const cameraInputRef = useRef(null);
 
   const handleFileSelect = (e) => {
     const selectedFiles = Array.from(e.target.files);
@@ -117,7 +115,9 @@ function CreateWorkProjectPage() {
         <div className="px-4 py-4">
           <div className="flex items-center gap-3">
             <button
-              onClick={() => navigate(`/fiscal/project/${projectId}/work-projects`)}
+              onClick={() =>
+                navigate(`/fiscal/project/${projectId}/work-projects`)
+              }
               className="p-2 hover:bg-orange-700 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-6 h-6" />
@@ -184,36 +184,17 @@ function CreateWorkProjectPage() {
             Fotos e Documentos
           </label>
 
-          {/* Botões de Adicionar Fotos */}
-          <div className="grid grid-cols-2 gap-3 mb-4">
-            <button
-              type="button"
-              onClick={() => cameraInputRef.current?.click()}
-              className="bg-gradient-to-br from-blue-600 to-blue-700 text-white p-4 rounded-xl shadow-lg active:scale-95 transition-transform flex flex-col items-center gap-2"
-            >
-              <Camera className="w-8 h-8" />
-              <span className="font-semibold text-sm">Tirar Foto</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="bg-gradient-to-br from-green-600 to-green-700 text-white p-4 rounded-xl shadow-lg active:scale-95 transition-transform flex flex-col items-center gap-2"
-            >
-              <ImageIcon className="w-8 h-8" />
-              <span className="font-semibold text-sm">Da Galeria</span>
-            </button>
-          </div>
+          {/* Botão de Adicionar Fotos/Documentos */}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full bg-gradient-to-br from-green-600 to-green-700 text-white p-4 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-3 mb-4"
+          >
+            <Upload className="w-6 h-6" />
+            <span className="font-semibold">Adicionar Fotos/Documentos</span>
+          </button>
 
-          {/* Inputs escondidos */}
-          <input
-            ref={cameraInputRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            multiple
-            onChange={handleFileSelect}
-            className="hidden"
-          />
+          {/* Input escondido */}
           <input
             ref={fileInputRef}
             type="file"
@@ -300,4 +281,3 @@ function CreateWorkProjectPage() {
 }
 
 export default CreateWorkProjectPage;
-
