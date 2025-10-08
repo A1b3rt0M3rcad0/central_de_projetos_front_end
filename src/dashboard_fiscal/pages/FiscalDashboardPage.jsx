@@ -147,87 +147,126 @@ function FiscalDashboardPage() {
         )}
       </div>
 
-      {/* Estatísticas Cards */}
+      {/* Estatísticas Cards - Redesign com Gradientes */}
       <div className="px-4 py-6">
-        <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-orange-600" />
-          Estatísticas
+        <h2 className="text-xl font-bold text-gray-800 mb-5 flex items-center gap-2">
+          <TrendingUp className="w-6 h-6 text-orange-600" />
+          Visão Geral
         </h2>
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white rounded-xl p-4 shadow-md border border-gray-100">
-            <div className="flex items-center justify-between mb-2">
-              <FolderOpen className="w-8 h-8 text-blue-600" />
+          {/* Card Projetos */}
+          <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-5 rounded-2xl shadow-lg text-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-3">
+              <div className="p-2.5 bg-white/20 rounded-xl">
+                <FolderOpen className="w-6 h-6" />
+              </div>
             </div>
-            <p className="text-2xl font-bold text-gray-800">
+            <p className="text-3xl font-bold mb-1">
               {summary?.total_projetos_vinculados || 0}
             </p>
-            <p className="text-xs text-gray-600 font-medium">Projetos</p>
+            <p className="text-xs opacity-90 font-medium">
+              Projetos Vinculados
+            </p>
           </div>
 
-          <div className="bg-white rounded-xl p-4 shadow-md border border-gray-100">
-            <div className="flex items-center justify-between mb-2">
-              <FileText className="w-8 h-8 text-green-600" />
+          {/* Card Fiscalizações */}
+          <div className="bg-gradient-to-br from-green-500 to-green-600 p-5 rounded-2xl shadow-lg text-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-3">
+              <div className="p-2.5 bg-white/20 rounded-xl">
+                <FileText className="w-6 h-6" />
+              </div>
             </div>
-            <p className="text-2xl font-bold text-gray-800">
+            <p className="text-3xl font-bold mb-1">
               {summary?.total_fiscalizacoes || 0}
             </p>
-            <p className="text-xs text-gray-600 font-medium">Fiscalizações</p>
+            <p className="text-xs opacity-90 font-medium">
+              Fiscalizações Feitas
+            </p>
           </div>
 
-          <div className="bg-white rounded-xl p-4 shadow-md border border-gray-100">
-            <div className="flex items-center justify-between mb-2">
-              <Camera className="w-8 h-8 text-purple-600" />
+          {/* Card Documentos */}
+          <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-5 rounded-2xl shadow-lg text-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-3">
+              <div className="p-2.5 bg-white/20 rounded-xl">
+                <Camera className="w-6 h-6" />
+              </div>
             </div>
-            <p className="text-2xl font-bold text-gray-800">
+            <p className="text-3xl font-bold mb-1">
               {summary?.documentos_enviados || 0}
             </p>
-            <p className="text-xs text-gray-600 font-medium">Documentos</p>
+            <p className="text-xs opacity-90 font-medium">
+              Documentos Enviados
+            </p>
           </div>
 
-          <div className="bg-white rounded-xl p-4 shadow-md border border-gray-100">
-            <div className="flex items-center justify-between mb-2">
-              <Clock className="w-8 h-8 text-orange-600" />
+          {/* Card Últimos 7 dias */}
+          <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-5 rounded-2xl shadow-lg text-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-3">
+              <div className="p-2.5 bg-white/20 rounded-xl">
+                <Clock className="w-6 h-6" />
+              </div>
             </div>
-            <p className="text-2xl font-bold text-gray-800">
+            <p className="text-3xl font-bold mb-1">
               {summary?.fiscalizacoes_no_periodo || 0}
             </p>
-            <p className="text-xs text-gray-600 font-medium">Últimos 7 dias</p>
+            <p className="text-xs opacity-90 font-medium">Últimos 7 dias</p>
           </div>
         </div>
       </div>
 
-      {/* Ações Rápidas */}
-      <div className="px-4 py-6 bg-white border-t border-b border-gray-200">
-        <h2 className="text-lg font-bold text-gray-800 mb-4">Ações Rápidas</h2>
+      {/* Ações Rápidas - Redesign */}
+      <div className="px-4 py-6 bg-gradient-to-br from-gray-50 to-gray-100">
+        <h2 className="text-xl font-bold text-gray-800 mb-5 flex items-center gap-2">
+          <HardHat className="w-6 h-6 text-orange-600" />
+          Ações Rápidas
+        </h2>
         <div className="grid grid-cols-2 gap-4">
+          {/* Meus Projetos */}
           <button
             onClick={() => navigate("/fiscal/projects")}
-            className="bg-gradient-to-br from-blue-600 to-blue-700 text-white p-6 rounded-xl shadow-lg active:scale-95 transition-transform"
+            className="group bg-white p-5 rounded-2xl shadow-md hover:shadow-xl border-2 border-transparent hover:border-blue-200 active:scale-95 transition-all duration-300"
           >
-            <FolderOpen className="w-10 h-10 mx-auto mb-2" />
-            <p className="font-semibold text-sm">Meus Projetos</p>
+            <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl w-fit mx-auto mb-3 group-hover:scale-110 transition-transform">
+              <FolderOpen className="w-8 h-8 text-white" />
+            </div>
+            <p className="font-bold text-sm text-gray-800 group-hover:text-blue-600 transition-colors">
+              Meus Projetos
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              {summary?.total_projetos_vinculados || 0} vinculado
+              {(summary?.total_projetos_vinculados || 0) !== 1 ? "s" : ""}
+            </p>
           </button>
 
+          {/* Minhas Fiscalizações */}
           <button
             onClick={() => navigate("/fiscal/work-projects")}
-            className="bg-gradient-to-br from-green-600 to-green-700 text-white p-6 rounded-xl shadow-lg active:scale-95 transition-transform"
+            className="group bg-white p-5 rounded-2xl shadow-md hover:shadow-xl border-2 border-transparent hover:border-green-200 active:scale-95 transition-all duration-300"
           >
-            <FileText className="w-10 h-10 mx-auto mb-2" />
-            <p className="font-semibold text-sm">Minhas Fiscalizações</p>
+            <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-xl w-fit mx-auto mb-3 group-hover:scale-110 transition-transform">
+              <FileText className="w-8 h-8 text-white" />
+            </div>
+            <p className="font-bold text-sm text-gray-800 group-hover:text-green-600 transition-colors">
+              Fiscalizações
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              {summary?.total_fiscalizacoes || 0} realizada
+              {(summary?.total_fiscalizacoes || 0) !== 1 ? "s" : ""}
+            </p>
           </button>
         </div>
       </div>
 
-      {/* Últimas Fiscalizações */}
-      <div className="px-4 py-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-orange-600" />
+      {/* Últimas Fiscalizações - Redesign */}
+      <div className="px-4 py-6 pb-24">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+            <Clock className="w-6 h-6 text-orange-600" />
             Últimas Fiscalizações
           </h2>
           <button
             onClick={() => navigate("/fiscal/work-projects")}
-            className="text-sm text-orange-600 font-medium flex items-center gap-1"
+            className="text-sm text-orange-600 font-semibold flex items-center gap-1 hover:gap-2 transition-all"
           >
             Ver todas
             <ChevronRight className="w-4 h-4" />
@@ -235,19 +274,22 @@ function FiscalDashboardPage() {
         </div>
 
         {latestWorkProjects.length === 0 ? (
-          <div className="bg-white rounded-xl p-8 text-center shadow-md border border-gray-100">
-            <FileText className="w-16 h-16 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-600 font-medium mb-2">
+          <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-10 text-center shadow-lg border-2 border-dashed border-gray-200">
+            <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FileText className="w-10 h-10 text-orange-600" />
+            </div>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">
               Nenhuma fiscalização ainda
-            </p>
-            <p className="text-sm text-gray-500 mb-4">
-              Comece criando sua primeira fiscalização
+            </h3>
+            <p className="text-sm text-gray-600 mb-6 max-w-xs mx-auto">
+              Comece criando sua primeira fiscalização e contribua para o
+              acompanhamento das obras
             </p>
             <button
               onClick={() => navigate("/fiscal/projects")}
-              className="bg-orange-600 text-white px-6 py-2.5 rounded-lg font-semibold inline-flex items-center gap-2 hover:bg-orange-700 transition-colors"
+              className="bg-gradient-to-r from-orange-600 to-orange-700 text-white px-8 py-3 rounded-xl font-bold inline-flex items-center gap-2 hover:from-orange-700 hover:to-orange-800 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-5 h-5" />
               Nova Fiscalização
             </button>
           </div>
@@ -259,41 +301,47 @@ function FiscalDashboardPage() {
                 onClick={() =>
                   navigate(`/fiscal/work-project/${workProject.id}`)
                 }
-                className="bg-white rounded-xl p-4 shadow-md border border-gray-100 active:scale-98 transition-transform cursor-pointer"
+                className="group bg-white rounded-2xl p-4 shadow-md border border-gray-100 hover:shadow-xl hover:border-orange-200 active:scale-98 transition-all duration-300 cursor-pointer"
               >
-                <div className="flex items-start justify-between mb-2">
+                <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-800 mb-1 line-clamp-2">
+                    <h3 className="font-bold text-gray-800 mb-2 line-clamp-2 text-base group-hover:text-orange-600 transition-colors">
                       {workProject.title}
                     </h3>
-                    <p className="text-xs text-gray-600 line-clamp-1 mb-2">
+                    <p className="text-sm text-gray-600 line-clamp-2 mb-3">
                       {workProject.description}
                     </p>
                     {workProject.project && workProject.project.name && (
-                      <div className="flex items-center gap-1.5 bg-blue-50 px-2.5 py-1.5 rounded-lg inline-flex">
-                        <FolderOpen className="w-3.5 h-3.5 text-blue-600" />
-                        <span className="text-xs font-medium text-blue-700">
+                      <div className="flex items-center gap-1.5 bg-gradient-to-r from-blue-50 to-blue-100 px-3 py-2 rounded-lg inline-flex border border-blue-200">
+                        <FolderOpen className="w-4 h-4 text-blue-600" />
+                        <span className="text-xs font-semibold text-blue-700">
                           {workProject.project.name}
                         </span>
                       </div>
                     )}
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400 flex-shrink-0 ml-2" />
+                  <ChevronRight className="w-6 h-6 text-gray-300 flex-shrink-0 ml-3 group-hover:text-orange-600 group-hover:translate-x-1 transition-all" />
                 </div>
-                <div className="flex items-center gap-4 text-xs text-gray-500 mt-3 pt-3 border-t border-gray-100">
-                  <div className="flex items-center gap-1">
+                <div className="flex items-center gap-4 text-xs mt-4 pt-3 border-t border-gray-100">
+                  <div className="flex items-center gap-1.5 bg-orange-50 px-2.5 py-1.5 rounded-lg">
                     <Calendar className="w-3.5 h-3.5 text-orange-600" />
-                    <span>{formatDate(workProject.created_at)}</span>
+                    <span className="font-medium text-orange-700">
+                      {formatDate(workProject.created_at)}
+                    </span>
                   </div>
                   {(workProject.photo_name ? 1 : 0) +
                     (workProject.additional_documents?.length || 0) >
                     0 && (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5 bg-green-50 px-2.5 py-1.5 rounded-lg">
                       <Camera className="w-3.5 h-3.5 text-green-600" />
-                      <span>
+                      <span className="font-medium text-green-700">
                         {(workProject.photo_name ? 1 : 0) +
                           (workProject.additional_documents?.length || 0)}{" "}
-                        fotos
+                        {(workProject.photo_name ? 1 : 0) +
+                          (workProject.additional_documents?.length || 0) ===
+                        1
+                          ? "foto"
+                          : "fotos"}
                       </span>
                     </div>
                   )}
@@ -304,12 +352,12 @@ function FiscalDashboardPage() {
         )}
       </div>
 
-      {/* Botão Flutuante para Nova Fiscalização */}
+      {/* Botão Flutuante para Nova Fiscalização - Enhanced */}
       <button
         onClick={() => navigate("/fiscal/projects")}
-        className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-orange-600 to-orange-700 text-white rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-transform hover:shadow-xl z-40"
+        className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-all duration-300 hover:shadow-orange-500/50 hover:scale-110 z-40 animate-pulse-slow"
       >
-        <Plus className="w-8 h-8" />
+        <Plus className="w-9 h-9" />
       </button>
     </div>
   );
