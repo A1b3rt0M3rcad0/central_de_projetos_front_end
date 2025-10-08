@@ -11,6 +11,7 @@ const statusAPI = {
       `/status/status/pagination-filter/${pageSize}/${page}?${params.toString()}`
     );
   },
+  getProjectsByStatus: (statusId) => api.get(`/status/projects/${statusId}`),
   postStatus: (data) => api.post("/status", data),
   deleteStatus: (data) => api.delete("/status", { data }),
   patchStatus: (data) => api.patch("/status", data),

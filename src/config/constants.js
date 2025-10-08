@@ -21,6 +21,7 @@ export const ROUTES = {
     LIST: "/empresalistpage",
     CREATE: "/empresaform",
     EDIT: "/empresaform",
+    VIEW: "/empresaview",
   },
   FISCAIS: {
     LIST: "/fiscallist",
@@ -31,6 +32,7 @@ export const ROUTES = {
     LIST: "/bairrolist",
     CREATE: "/bairroform",
     EDIT: "/bairroform",
+    VIEW: "/bairroview",
   },
   USUARIOS: {
     LIST: "/userlist",
@@ -41,11 +43,13 @@ export const ROUTES = {
     LIST: "/statuslist",
     CREATE: "/statusform",
     EDIT: "/statusform",
+    VIEW: "/statusview",
   },
   TIPOS: {
     LIST: "/tipolist",
     CREATE: "/tipoform",
     EDIT: "/tipoform",
+    VIEW: "/tipoview",
   },
   DOCUMENTS: {
     CREATE: "/documentform",

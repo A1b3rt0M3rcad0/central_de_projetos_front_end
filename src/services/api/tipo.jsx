@@ -11,6 +11,7 @@ const tipoAPI = {
       `/types/types/pagination-filter/${pageSize}/${page}?${params.toString()}`
     );
   },
+  getProjectsByTipo: (tipoId) => api.get(`/project_type/type/${tipoId}`),
   deleteTipo: (data) => api.delete("/types", { data }),
   patchTipo: (data) => api.patch("/types", data),
   postTipo: (data) => api.post("/types", data),

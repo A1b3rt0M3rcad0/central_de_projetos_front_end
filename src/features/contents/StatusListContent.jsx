@@ -15,6 +15,7 @@ import { useEffect, useState, useCallback } from "react";
 export default function StatusListContent({
   status,
   onCreate,
+  onView,
   onEdit,
   onDelete,
   onBack,
@@ -165,8 +166,7 @@ export default function StatusListContent({
         icon: <Eye className="w-4 h-4" />,
         className: "text-blue-600 hover:bg-blue-50",
         onClick: (status) => {
-          console.log("Visualizar status:", status);
-          // Implementar visualização
+          onView(status);
         },
       },
       ...(role?.toUpperCase() === "ADMIN"

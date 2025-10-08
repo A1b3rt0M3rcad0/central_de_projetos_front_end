@@ -121,6 +121,10 @@ export default function TipoListPage() {
     navigate("/tipoform");
   };
 
+  const handleView = (tipo) => {
+    navigate("/tipoview", { state: { item: tipo } });
+  };
+
   const handleEdit = (tipo) => {
     navigate(`/tipoform`, { state: { initial_date: tipo } });
   };
@@ -163,6 +167,7 @@ export default function TipoListPage() {
         <TipoListContent
           tipos={tiposToShow}
           onCreate={handleCreate}
+          onView={handleView}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onBack={() => navigate(-1)}

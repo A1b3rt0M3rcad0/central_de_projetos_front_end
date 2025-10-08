@@ -15,6 +15,7 @@ import { useEffect, useState, useCallback } from "react";
 export default function BairroListContent({
   bairros,
   onCreate,
+  onView,
   onEdit,
   onDelete,
   onBack,
@@ -160,8 +161,7 @@ export default function BairroListContent({
         icon: <Eye className="w-4 h-4" />,
         className: "text-blue-600 hover:bg-blue-50",
         onClick: (bairro) => {
-          console.log("Visualizar bairro:", bairro);
-          // Implementar visualização
+          onView(bairro);
         },
       },
       ...(role?.toUpperCase() === "ADMIN"

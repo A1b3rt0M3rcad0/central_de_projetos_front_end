@@ -15,6 +15,7 @@ import { useEffect, useState, useCallback } from "react";
 export default function TipoListContent({
   tipos,
   onCreate,
+  onView,
   onEdit,
   onDelete,
   onBack,
@@ -165,8 +166,7 @@ export default function TipoListContent({
         icon: <Eye className="w-4 h-4" />,
         className: "text-blue-600 hover:bg-blue-50",
         onClick: (tipo) => {
-          console.log("Visualizar tipo:", tipo);
-          // Implementar visualização
+          onView(tipo);
         },
       },
       ...(role?.toUpperCase() === "ADMIN"

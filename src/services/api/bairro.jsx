@@ -11,6 +11,7 @@ const bairroAPI = {
       `/bairro/bairros/pagination-filter/${pageSize}/${page}?${params.toString()}`
     );
   },
+  getProjectsByBairro: (bairroId) => api.get(`/project_bairro/${bairroId}`),
   postBairro: (data) => api.post("/bairro", data),
   patchBairro: (data) => api.patch("/bairro/name", data),
   deleteBairro: (data) => api.delete("/bairro", { data }),

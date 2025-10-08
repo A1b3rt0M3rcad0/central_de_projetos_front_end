@@ -23,6 +23,7 @@ import WorkProjectViewPage from "../pages/projects/WorkProjectViewPage";
 // Empresa Pages
 import EmpresaListPage from "../pages/empresas/EmpresaListPage";
 import EmpresaFormPage from "../pages/empresas/EmpresaFormPage";
+import EmpresaViewPage from "../pages/empresas/EmpresaViewPage";
 
 // Fiscal Pages
 import FiscalListPage from "../pages/fiscais/FiscalListPage";
@@ -31,6 +32,7 @@ import FiscalFormPage from "../pages/fiscais/FiscalFormPage";
 // Bairro Pages
 import BairroListPage from "../pages/bairros/BairroListPage";
 import BairroFormPage from "../pages/bairros/BairroFormPage";
+import BairroViewPage from "../pages/bairros/BairroViewPage";
 
 // User Pages
 import UserListPage from "../pages/usuarios/UserListPage";
@@ -39,10 +41,12 @@ import UserFormPage from "../pages/usuarios/UserFormPage";
 // Status Pages
 import StatusListPage from "../pages/status/StatusListPage";
 import StatusFormPage from "../pages/status/StatusFormPage";
+import StatusViewPage from "../pages/status/StatusViewPage";
 
 // Tipo Pages
 import TipoListPage from "../pages/tipos/TipoListPage";
 import TipoFormPage from "../pages/tipos/TipoFormPage";
+import TipoViewPage from "../pages/tipos/TipoViewPage";
 
 // Document Pages
 import DocumentFormPage from "../pages/documents/DocumentFormPage";
@@ -161,6 +165,14 @@ const router = createBrowserRouter([
       </AuthGuard>
     ),
   },
+  {
+    path: ROUTES.EMPRESAS.VIEW,
+    element: (
+      <AuthGuard>
+        <EmpresaViewPage />
+      </AuthGuard>
+    ),
+  },
   // Fiscal Routes
   {
     path: ROUTES.FISCAIS.LIST,
@@ -208,6 +220,14 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <BairroFormPage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: ROUTES.BAIRROS.VIEW,
+    element: (
+      <AuthGuard>
+        <BairroViewPage />
       </AuthGuard>
     ),
   },
@@ -261,6 +281,14 @@ const router = createBrowserRouter([
       </AuthGuard>
     ),
   },
+  {
+    path: ROUTES.STATUS.VIEW,
+    element: (
+      <AuthGuard>
+        <StatusViewPage />
+      </AuthGuard>
+    ),
+  },
   // Tipo Routes
   {
     path: ROUTES.TIPOS.LIST,
@@ -283,6 +311,14 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <TipoFormPage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: ROUTES.TIPOS.VIEW,
+    element: (
+      <AuthGuard>
+        <TipoViewPage />
       </AuthGuard>
     ),
   },

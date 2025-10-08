@@ -11,6 +11,8 @@ const empresaAPI = {
       `/empresa/empresa/pagination-filter/${pageSize}/${page}?${params.toString()}`
     );
   },
+  getProjectsByEmpresa: (empresaId) =>
+    api.get(`/project_empresa/${empresaId}`),
   deleteEmpresa: (data) => api.delete("/empresa", { data }),
   postEmpresa: (data) => api.post("/empresa", data),
   patchEmpresa: (data) => api.patch("/empresa", data),

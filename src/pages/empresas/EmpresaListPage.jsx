@@ -107,6 +107,10 @@ export default function EmpresaListPage() {
     navigate("/empresaform");
   };
 
+  const handleView = (company) => {
+    navigate("/empresaview", { state: { item: company } });
+  };
+
   const handleEdit = (company) => {
     navigate(`/empresaform`, { state: { initial_date: company } });
   };
@@ -155,6 +159,7 @@ export default function EmpresaListPage() {
         <EmpresaListContent
           companies={companiesToShow}
           onCreate={handleCreate}
+          onView={handleView}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onBack={() => navigate(-1)}

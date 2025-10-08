@@ -15,6 +15,7 @@ import { useEffect, useState, useCallback } from "react";
 export default function EmpresaListContent({
   companies,
   onCreate,
+  onView,
   onEdit,
   onDelete,
   onBack,
@@ -161,8 +162,7 @@ export default function EmpresaListContent({
         icon: <Eye className="w-4 h-4" />,
         className: "text-blue-600 hover:bg-blue-50",
         onClick: (company) => {
-          console.log("Visualizar empresa:", company);
-          // Implementar visualização
+          onView(company);
         },
       },
       ...(role?.toUpperCase() === "ADMIN"

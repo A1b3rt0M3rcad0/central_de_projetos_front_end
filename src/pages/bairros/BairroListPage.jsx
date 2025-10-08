@@ -113,6 +113,10 @@ export default function BairroListPage() {
     navigate("/bairroform");
   };
 
+  const handleView = (bairro) => {
+    navigate("/bairroview", { state: { item: bairro } });
+  };
+
   const handleEdit = (bairro) => {
     navigate(`/bairroform`, { state: { initial_date: bairro } });
   };
@@ -154,6 +158,7 @@ export default function BairroListPage() {
         <BairroListContent
           bairros={bairrosToShow}
           onCreate={handleCreate}
+          onView={handleView}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onBack={() => navigate(-1)}

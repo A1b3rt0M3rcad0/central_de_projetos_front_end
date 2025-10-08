@@ -121,6 +121,10 @@ export default function StatusListPage() {
     navigate("/statusform");
   };
 
+  const handleView = (st) => {
+    navigate("/statusview", { state: { item: st } });
+  };
+
   const handleEdit = (st) => {
     navigate(`/statusform`, { state: { initial_date: st } });
   };
@@ -163,6 +167,7 @@ export default function StatusListPage() {
         <StatusListContent
           status={statusToShow}
           onCreate={handleCreate}
+          onView={handleView}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onBack={() => navigate(-1)}
