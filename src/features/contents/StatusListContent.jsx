@@ -11,6 +11,7 @@ import {
   Search,
 } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
+import { usePermissions } from "../../hooks/usePermissions";
 
 export default function StatusListContent({
   status,
@@ -32,6 +33,8 @@ export default function StatusListContent({
   const [role, setRole] = useState();
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm || "");
   const [isSearching, setIsSearching] = useState(false);
+
+  const permissions = usePermissions(role);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -140,7 +143,7 @@ export default function StatusListContent({
     showSearch: false, // Desabilitado pois usamos busca global
     showPagination: false, // Desabilitamos a paginação do DataTable pois já temos a nossa própria
     showRefresh: true,
-    showBulkActions: role?.toUpperCase() === "ADMIN",
+    showBulkActions: permissions.canEditStatus,
     showExport: true,
     loading: loading,
   };
@@ -148,7 +151,7 @@ export default function StatusListContent({
   // Ações da tabela
   const actions = {
     bulk:
-      role?.toUpperCase() === "ADMIN"
+      permissions.canEditStatus
         ? [
             {
               label: "Exportar Selecionados",
@@ -169,7 +172,7 @@ export default function StatusListContent({
           onView(status);
         },
       },
-      ...(role?.toUpperCase() === "ADMIN"
+      ...(permissions.canEditStatus
         ? [
             {
               label: "Editar",
@@ -242,7 +245,7 @@ export default function StatusListContent({
             data={status}
             columns={columns}
             config={config}
-            onCreate={onCreate}
+            onCreate={permissions.canCreateStatus ? onCreate : null}
             onRefresh={() => window.location.reload()}
             actions={actions}
           />

@@ -17,6 +17,7 @@ import SideBarItem from "./SideBarItem";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import userAPI from "../services/api/user";
+import { usePermissions, ROLE_DESCRIPTIONS } from "../hooks/usePermissions";
 
 function SideBar() {
   function abreviarNomeCompleto(nomeCompleto) {
@@ -53,6 +54,9 @@ function SideBar() {
 
   const [userName, setUserName] = useState("");
   const [userRole, setUserRole] = useState("");
+
+  // Hook de permissões
+  const permissions = usePermissions(userRole);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -106,6 +110,12 @@ function SideBar() {
 
     fetchUser();
   }, []);
+
+  // Obter informações de exibição do role
+  const roleInfo = ROLE_DESCRIPTIONS[userRole?.toUpperCase()] || {
+    label: userRole,
+    description: '',
+  };
 
   return (
     <>
@@ -163,11 +173,14 @@ function SideBar() {
         {/* Menu */}
         <div className="flex-1 p-4 space-y-2 overflow-y-auto">
           <div className="space-y-1">
+            {/* Dashboard - Todos */}
             <SideBarItem
               icon={<House className="w-5 h-5" />}
               text="Início"
               onClick={() => navigate("/home")}
             />
+
+            {/* Projetos - Todos podem ver */}
             <SideBarItem
               icon={<Hammer className="w-5 h-5" />}
               text="Projetos"
@@ -176,41 +189,57 @@ function SideBar() {
                   text: "Lista de Projetos",
                   onClick: () => navigate("/projectlistpage"),
                 },
-                {
+                ...(permissions.canViewStatus ? [{
                   text: "Status",
                   onClick: () => navigate("/statuslist"),
-                },
-                {
+                }] : []),
+                ...(permissions.canViewTipos ? [{
                   text: "Tipos",
                   onClick: () => navigate("/tipolist"),
-                },
+                }] : []),
               ]}
             />
-            <SideBarItem
-              icon={<Building className="w-5 h-5" />}
-              text="Empresas"
-              onClick={() => navigate("/empresalistpage")}
-            />
-            <SideBarItem
-              icon={<NotebookPen className="w-5 h-5" />}
-              text="Fiscais"
-              onClick={() => navigate("/fiscallist")}
-            />
-            <SideBarItem
-              icon={<MapPin className="w-5 h-5" />}
-              text="Bairros"
-              onClick={() => navigate("/bairrolist")}
-            />
-            <SideBarItem
-              icon={<Users className="w-5 h-5" />}
-              text="Usuários"
-              submenu={[
-                {
-                  text: "Lista de Usuários",
-                  onClick: () => navigate("/userlist"),
-                },
-              ]}
-            />
+
+            {/* Empresas - Todos podem ver */}
+            {permissions.canViewEmpresas && (
+              <SideBarItem
+                icon={<Building className="w-5 h-5" />}
+                text="Empresas"
+                onClick={() => navigate("/empresalistpage")}
+              />
+            )}
+
+            {/* Fiscais - Todos podem ver */}
+            {permissions.canViewFiscais && (
+              <SideBarItem
+                icon={<NotebookPen className="w-5 h-5" />}
+                text="Fiscais"
+                onClick={() => navigate("/fiscallist")}
+              />
+            )}
+
+            {/* Bairros - Todos podem ver */}
+            {permissions.canViewBairros && (
+              <SideBarItem
+                icon={<MapPin className="w-5 h-5" />}
+                text="Bairros"
+                onClick={() => navigate("/bairrolist")}
+              />
+            )}
+
+            {/* Usuários - Apenas ADMIN */}
+            {permissions.canViewUsers && (
+              <SideBarItem
+                icon={<Users className="w-5 h-5" />}
+                text="Usuários"
+                submenu={[
+                  {
+                    text: "Lista de Usuários",
+                    onClick: () => navigate("/userlist"),
+                  },
+                ]}
+              />
+            )}
           </div>
         </div>
 
@@ -225,7 +254,9 @@ function SideBar() {
                 <h4 className="font-semibold text-gray-800 text-sm">
                   {userName}
                 </h4>
-                <span className="text-xs text-gray-600">{userRole}</span>
+                <span className={`text-xs font-medium ${roleInfo.color || 'text-gray-600'}`}>
+                  {roleInfo.label || userRole}
+                </span>
               </div>
               <button
                 onClick={Logout}

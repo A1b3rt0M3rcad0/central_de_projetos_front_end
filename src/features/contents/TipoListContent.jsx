@@ -10,7 +10,8 @@ import {
   Pencil,
   Search,
 } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback} from "react";
+import { usePermissions } from "../../hooks/usePermissions";
 
 export default function TipoListContent({
   tipos,
@@ -32,6 +33,8 @@ export default function TipoListContent({
   const [role, setRole] = useState();
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm || "");
   const [isSearching, setIsSearching] = useState(false);
+
+  const permissions = usePermissions(role);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -140,7 +143,7 @@ export default function TipoListContent({
     showSearch: false, // Desabilitado pois usamos busca global
     showPagination: false, // Desabilitamos a paginação do DataTable pois já temos a nossa própria
     showRefresh: true,
-    showBulkActions: role?.toUpperCase() === "ADMIN",
+    showBulkActions: permissions.canEditTipo,
     showExport: true,
     loading: loading,
   };
@@ -148,7 +151,7 @@ export default function TipoListContent({
   // Ações da tabela
   const actions = {
     bulk:
-      role?.toUpperCase() === "ADMIN"
+      permissions.canEditTipo
         ? [
             {
               label: "Exportar Selecionados",
@@ -169,7 +172,7 @@ export default function TipoListContent({
           onView(tipo);
         },
       },
-      ...(role?.toUpperCase() === "ADMIN"
+      ...(permissions.canEditTipo
         ? [
             {
               label: "Editar",
@@ -242,7 +245,7 @@ export default function TipoListContent({
             data={tipos}
             columns={columns}
             config={config}
-            onCreate={onCreate}
+            onCreate={permissions.canCreateTipo ? onCreate : null}
             onRefresh={() => window.location.reload()}
             actions={actions}
           />

@@ -1,18 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Settings, Search, Menu } from "lucide-react";
 import NotificationBell from "./NotificationBell";
 import { ROUTES } from "../config/constants";
+import { usePermissions } from "../hooks/usePermissions";
 
 export default function Header({ pageTitle }) {
   const navigate = useNavigate();
   const [showSearchMobile, setShowSearchMobile] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchTermMobile, setSearchTermMobile] = useState("");
+  const [userRole, setUserRole] = useState(null);
+
+  // Hook de permissões
+  const permissions = usePermissions(userRole);
+
+  useEffect(() => {
+    const userInfo = localStorage.getItem("user_info");
+    if (userInfo) {
+      try {
+        const parsed = JSON.parse(userInfo);
+        setUserRole(parsed.role);
+      } catch (error) {
+        console.error("Erro ao obter role do usuário:", error);
+      }
+    }
+  }, []);
 
   const handleSearch = (term) => {
     if (term.trim()) {
-      navigate(`${ROUTES.PROJECTS.LIST}?search=${encodeURIComponent(term.trim())}`);
+      navigate(
+        `${ROUTES.PROJECTS.LIST}?search=${encodeURIComponent(term.trim())}`
+      );
     }
   };
 
@@ -50,15 +69,19 @@ export default function Header({ pageTitle }) {
           </div>
 
           <div className="flex items-center gap-2">
-            <NotificationBell />
+            {/* Notificações - Apenas ADMIN e VEREADOR */}
+            {permissions.canViewNotifications && <NotificationBell />}
 
-            <button
-              aria-label="Configurações"
-              onClick={() => navigate("/settings")}
-              className="p-2.5 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group"
-            >
-              <Settings className="w-5 h-5 text-gray-600 group-hover:text-blue-600 group-hover:rotate-90 transition-transform duration-300" />
-            </button>
+            {/* Configurações - Apenas ADMIN */}
+            {permissions.canAccessSettings && (
+              <button
+                aria-label="Configurações"
+                onClick={() => navigate("/settings")}
+                className="p-2.5 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group"
+              >
+                <Settings className="w-5 h-5 text-gray-600 group-hover:text-blue-600 group-hover:rotate-90 transition-transform duration-300" />
+              </button>
+            )}
           </div>
         </div>
 
@@ -72,7 +95,8 @@ export default function Header({ pageTitle }) {
             <Search className="w-5 h-5 text-gray-600" />
           </button>
 
-          <NotificationBell />
+          {/* Notificações Mobile - Apenas ADMIN e VEREADOR */}
+          {permissions.canViewNotifications && <NotificationBell />}
 
           <button
             aria-label="Menu"

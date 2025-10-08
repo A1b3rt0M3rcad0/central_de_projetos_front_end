@@ -11,6 +11,7 @@ import {
   Search,
 } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
+import { usePermissions } from "../../hooks/usePermissions";
 
 export default function EmpresaListContent({
   companies,
@@ -32,6 +33,9 @@ export default function EmpresaListContent({
   const [role, setRole] = useState();
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm || "");
   const [isSearching, setIsSearching] = useState(false);
+
+  // Hook de permissões
+  const permissions = usePermissions(role);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -136,16 +140,15 @@ export default function EmpresaListContent({
     showSearch: false, // Desabilitado pois usamos busca global
     showPagination: false, // Desabilitamos a paginação do DataTable pois já temos a nossa própria
     showRefresh: true,
-    showBulkActions: role?.toUpperCase() === "ADMIN",
+    showBulkActions: permissions.canBulkActions,
     showExport: true,
     loading: loading,
   };
 
   // Ações da tabela
   const actions = {
-    bulk:
-      role?.toUpperCase() === "ADMIN"
-        ? [
+    bulk: permissions.canBulkActions
+      ? [
             {
               label: "Exportar Selecionados",
               icon: <Eye className="w-4 h-4" />,
@@ -165,7 +168,7 @@ export default function EmpresaListContent({
           onView(company);
         },
       },
-      ...(role?.toUpperCase() === "ADMIN"
+      ...(permissions.canEditEmpresa
         ? [
             {
               label: "Editar",
@@ -238,7 +241,7 @@ export default function EmpresaListContent({
             data={companies}
             columns={columns}
             config={config}
-            onCreate={onCreate}
+            onCreate={permissions.canCreateEmpresa ? onCreate : null}
             onRefresh={() => window.location.reload()}
             actions={actions}
           />

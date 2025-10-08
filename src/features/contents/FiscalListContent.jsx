@@ -13,6 +13,7 @@ import {
   Search,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { usePermissions } from "../../hooks/usePermissions";
 
 export default function FiscalListContent({
   fiscais,
@@ -34,6 +35,9 @@ export default function FiscalListContent({
   const [role, setRole] = useState();
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm || "");
   const [isSearching, setIsSearching] = useState(false);
+
+  // Hook de permissões
+  const permissions = usePermissions(role);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -195,16 +199,15 @@ export default function FiscalListContent({
     showSearch: false, // Desabilitado pois usamos busca global
     showPagination: false, // Desabilitamos a paginação do DataTable pois já temos a nossa própria
     showRefresh: true,
-    showBulkActions: role?.toUpperCase() === "ADMIN",
+    showBulkActions: permissions.canBulkActions,
     showExport: true,
     loading: loading,
   };
 
   // Ações da tabela
   const actions = {
-    bulk:
-      role?.toUpperCase() === "ADMIN"
-        ? [
+    bulk: permissions.canBulkActions
+      ? [
             {
               label: "Exportar Selecionados",
               icon: <Eye className="w-4 h-4" />,
@@ -236,7 +239,7 @@ export default function FiscalListContent({
         onClick: handleSendMessage,
         className: "text-green-600 hover:bg-green-50",
       },
-      ...(role?.toUpperCase() === "ADMIN"
+      ...(permissions.canEditFiscal
         ? [
             {
               label: "Editar",
@@ -309,7 +312,7 @@ export default function FiscalListContent({
             data={fiscais}
             columns={columns}
             config={config}
-            onCreate={onCreate}
+            onCreate={permissions.canCreateFiscal ? onCreate : null}
             onRefresh={() => window.location.reload()}
             actions={actions}
           />

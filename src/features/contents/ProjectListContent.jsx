@@ -20,6 +20,7 @@ import {
   Search,
 } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
+import { usePermissions } from "../../hooks/usePermissions";
 
 export default function ProjectListContent({
   projects,
@@ -42,6 +43,9 @@ export default function ProjectListContent({
   const [role, setRole] = useState();
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm || "");
   const [isSearching, setIsSearching] = useState(false);
+
+  // Hook de permissões
+  const permissions = usePermissions(role);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -245,7 +249,7 @@ export default function ProjectListContent({
     showSearch: false, // Desabilitado pois usamos busca global
     showPagination: false, // Desabilitamos a paginação do DataTable pois já temos a nossa própria
     showRefresh: true,
-    showBulkActions: role?.toUpperCase() === "ADMIN",
+    showBulkActions: permissions.canBulkActions,
     showExport: true,
     loading: loading,
     // Configurações para evitar scrollbar lateral
@@ -255,9 +259,8 @@ export default function ProjectListContent({
 
   // Ações simplificadas - apenas visualização e exclusão
   const actions = {
-    bulk:
-      role?.toUpperCase() === "ADMIN"
-        ? [
+    bulk: permissions.canBulkActions
+      ? [
             {
               label: "Ativar Projetos",
               icon: <TrendingUp className="w-4 h-4" />,
@@ -285,7 +288,7 @@ export default function ProjectListContent({
           onSelect(project);
         },
       },
-      ...(role?.toUpperCase() === "ADMIN"
+      ...(permissions.canDeleteProject
         ? [
             {
               label: "Excluir",
@@ -354,7 +357,7 @@ export default function ProjectListContent({
             data={projects}
             columns={columns}
             config={config}
-            onCreate={onCreate}
+            onCreate={permissions.canCreateProject ? onCreate : null}
             onRefresh={() => window.location.reload()}
             actions={actions}
           />

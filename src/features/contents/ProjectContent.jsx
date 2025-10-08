@@ -29,6 +29,7 @@ import { ROUTES } from "../../config/constants";
 import { useEffect, useState } from "react";
 import { formatDate } from "../../utils/dateUtils";
 import { workProjectApi } from "../../services";
+import { usePermissions } from "../../hooks/usePermissions";
 
 export default function ProjectContent({ onBack, project, downloadDocument }) {
   const navigate = useNavigate();
@@ -36,6 +37,9 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
   const [showActions, setShowActions] = useState(false);
   const [latestWorkProject, setLatestWorkProject] = useState(null);
   const [loadingWorkProject, setLoadingWorkProject] = useState(false);
+
+  // Hook de permissões
+  const permissions = usePermissions(userRole);
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -175,7 +179,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
               </div>
 
               {/* Botão de Ações */}
-              {userRole?.toUpperCase() === "ADMIN" && (
+              {permissions.canEditProject && (
                 <div className="relative">
                   <button
                     onClick={() => setShowActions(!showActions)}
@@ -245,7 +249,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                       Orçamento
                     </h3>
                   </div>
-                  {userRole?.toUpperCase() === "ADMIN" && (
+                  {permissions.canEditProject && (
                     <button
                       onClick={handleEditProject}
                       className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
@@ -291,7 +295,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                       Cronograma
                     </h3>
                   </div>
-                  {userRole?.toUpperCase() === "ADMIN" && (
+                  {permissions.canEditProject && (
                     <button
                       onClick={handleEditProject}
                       className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
@@ -393,7 +397,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                     Vínculos
                   </h3>
                 </div>
-                {userRole?.toUpperCase() === "ADMIN" && (
+                {permissions.canEditProject && (
                   <button
                     onClick={handleProjectAssociation}
                     className="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
@@ -575,7 +579,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
               </div>
             </div>
 
-            {/* Última Fiscalização */}
+            {/* Última Fiscalização - Visível para TODOS os roles (ADMIN, VEREADOR, ASSESSOR) */}
             <div className="bg-white p-6 rounded-2xl shadow">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -586,6 +590,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                     Última Fiscalização
                   </h3>
                 </div>
+                {/* Botão Ver Todas - Todos podem visualizar fiscalizações */}
                 <button
                   onClick={handleViewAllWorkProjects}
                   className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 hover:border-blue-300 transition-all duration-200"
@@ -659,7 +664,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                     Documentos
                   </h3>
                 </div>
-                {userRole?.toUpperCase() === "ADMIN" && (
+                {permissions.canEditProject && (
                   <button
                     onClick={handleUploadDocument}
                     className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
@@ -709,7 +714,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                   <p className="text-gray-500 text-sm">
                     Nenhum documento disponível
                   </p>
-                  {userRole?.toUpperCase() === "ADMIN" && (
+                  {permissions.canEditProject && (
                     <button
                       onClick={handleUploadDocument}
                       className="mt-3 flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 hover:border-green-300 transition-all duration-200 mx-auto"

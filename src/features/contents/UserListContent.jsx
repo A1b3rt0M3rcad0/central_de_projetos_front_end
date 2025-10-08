@@ -12,6 +12,7 @@ import {
   Search,
 } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
+import { usePermissions } from "../../hooks/usePermissions";
 
 export default function UserListContent({
   users,
@@ -32,6 +33,8 @@ export default function UserListContent({
   const [role, setRole] = useState();
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm || "");
   const [isSearching, setIsSearching] = useState(false);
+
+  const permissions = usePermissions(role);
 
   useEffect(() => {
     const userInfo = localStorage.getItem("user_info");
@@ -154,7 +157,7 @@ export default function UserListContent({
     showSearch: false, // Desabilitado pois usamos busca global
     showPagination: false,
     showRefresh: true,
-    showBulkActions: role?.toUpperCase() === "ADMIN",
+    showBulkActions: permissions.canEditUser,
     showExport: true,
     loading: loading,
   };
@@ -162,7 +165,7 @@ export default function UserListContent({
   // Ações customizadas
   const actions = {
     bulk:
-      role?.toUpperCase() === "ADMIN"
+      permissions.canEditUser
         ? [
             {
               label: "Ativar Usuários",
@@ -182,7 +185,7 @@ export default function UserListContent({
           console.log("Enviar email para:", user.email);
         },
       },
-      ...(role?.toUpperCase() === "ADMIN"
+      ...(permissions.canEditUser
         ? [
             {
               label: "Editar",
@@ -249,7 +252,7 @@ export default function UserListContent({
             data={users}
             columns={columns}
             config={config}
-            onCreate={onCreate}
+            onCreate={permissions.canCreateUser ? onCreate : null}
             onRefresh={() => window.location.reload()}
             actions={actions}
           />

@@ -11,6 +11,7 @@ import {
   Search,
 } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
+import { usePermissions } from "../../hooks/usePermissions";
 
 export default function BairroListContent({
   bairros,
@@ -32,6 +33,8 @@ export default function BairroListContent({
   const [role, setRole] = useState();
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm || "");
   const [isSearching, setIsSearching] = useState(false);
+
+  const permissions = usePermissions(role);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -135,7 +138,7 @@ export default function BairroListContent({
     showSearch: false, // Desabilitado pois usamos busca global
     showPagination: false, // Desabilitamos a paginação do DataTable pois já temos a nossa própria
     showRefresh: true,
-    showBulkActions: role?.toUpperCase() === "ADMIN",
+    showBulkActions: permissions.canEditBairro,
     showExport: true,
     loading: loading,
   };
@@ -143,7 +146,7 @@ export default function BairroListContent({
   // Ações da tabela
   const actions = {
     bulk:
-      role?.toUpperCase() === "ADMIN"
+      permissions.canEditBairro
         ? [
             {
               label: "Exportar Selecionados",
@@ -164,7 +167,7 @@ export default function BairroListContent({
           onView(bairro);
         },
       },
-      ...(role?.toUpperCase() === "ADMIN"
+      ...(permissions.canEditBairro
         ? [
             {
               label: "Editar",
@@ -237,7 +240,7 @@ export default function BairroListContent({
             data={bairros}
             columns={columns}
             config={config}
-            onCreate={onCreate}
+            onCreate={permissions.canCreateBairro ? onCreate : null}
             onRefresh={() => window.location.reload()}
             actions={actions}
           />
