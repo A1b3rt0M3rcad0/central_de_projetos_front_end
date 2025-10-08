@@ -270,6 +270,20 @@ function Login() {
           </p>
         </form>
 
+        {/* Botão de Login como Fiscal */}
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={() => navigate("/fiscal/login")}
+            className="w-full py-2.5 px-4 rounded-lg font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 hover:border-blue-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-100"
+          >
+            Entrar como Fiscal
+          </button>
+          <p className="text-xs text-gray-500 text-center mt-2">
+            Acesso exclusivo para fiscais de obras
+          </p>
+        </div>
+
         {/* Informações de Segurança */}
         <div className="mt-6 p-3 bg-blue-50 rounded-lg border border-blue-200">
           <h3 className="text-sm font-semibold text-blue-800 mb-1 flex items-center gap-1">

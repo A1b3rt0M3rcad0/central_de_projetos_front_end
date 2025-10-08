@@ -61,6 +61,16 @@ export const ROUTES = {
   NOTIFICATIONS: {
     LIST: "/notifications",
   },
+  FISCAL: {
+    LOGIN: "/fiscal/login",
+    DASHBOARD: "/fiscal/dashboard",
+    PROFILE: "/fiscal/profile",
+    PROJECTS: "/fiscal/projects",
+    WORK_PROJECTS: "/fiscal/work-projects",
+    PROJECT_WORK_PROJECTS: "/fiscal/project/:projectId/work-projects",
+    CREATE_WORK_PROJECT: "/fiscal/project/:projectId/create-work-project",
+    WORK_PROJECT_VIEW: "/fiscal/work-project/:workProjectId",
+  },
 };
 
 // Configurações de autenticação

@@ -61,6 +61,17 @@ import NotificationPage from "../pages/notifications/NotificationPage";
 // Settings Pages
 import SettingsPage from "../pages/settings/SettingsPage";
 
+// Fiscal Pages
+import FiscalAuthGuard from "../dashboard_fiscal/components/FiscalAuthGuard";
+import FiscalLoginPage from "../dashboard_fiscal/pages/FiscalLoginPage";
+import FiscalDashboardPage from "../dashboard_fiscal/pages/FiscalDashboardPage";
+import FiscalProfilePage from "../dashboard_fiscal/pages/FiscalProfilePage";
+import FiscalProjectsPage from "../dashboard_fiscal/pages/FiscalProjectsPage";
+import FiscalWorkProjectsPage from "../dashboard_fiscal/pages/FiscalWorkProjectsPage";
+import CreateWorkProjectPage from "../dashboard_fiscal/pages/CreateWorkProjectPage";
+import FiscalWorkProjectViewPage from "../dashboard_fiscal/pages/WorkProjectViewPage";
+import AllWorkProjectsPage from "../dashboard_fiscal/pages/AllWorkProjectsPage";
+
 const router = createBrowserRouter([
   {
     path: ROUTES.LOGIN,
@@ -369,6 +380,73 @@ const router = createBrowserRouter([
           <SettingsPage />
         </AuthGuard>
       </ErrorBoundary>
+    ),
+  },
+  // Fiscal Routes
+  {
+    path: ROUTES.FISCAL.LOGIN,
+    element: (
+      <FiscalAuthGuard requireAuth={false}>
+        <FiscalLoginPage />
+      </FiscalAuthGuard>
+    ),
+  },
+  {
+    path: ROUTES.FISCAL.DASHBOARD,
+    element: (
+      <ErrorBoundary>
+        <FiscalAuthGuard>
+          <FiscalDashboardPage />
+        </FiscalAuthGuard>
+      </ErrorBoundary>
+    ),
+  },
+  {
+    path: ROUTES.FISCAL.PROFILE,
+    element: (
+      <FiscalAuthGuard>
+        <FiscalProfilePage />
+      </FiscalAuthGuard>
+    ),
+  },
+  {
+    path: ROUTES.FISCAL.PROJECTS,
+    element: (
+      <FiscalAuthGuard>
+        <FiscalProjectsPage />
+      </FiscalAuthGuard>
+    ),
+  },
+  {
+    path: ROUTES.FISCAL.WORK_PROJECTS,
+    element: (
+      <FiscalAuthGuard>
+        <AllWorkProjectsPage />
+      </FiscalAuthGuard>
+    ),
+  },
+  {
+    path: ROUTES.FISCAL.PROJECT_WORK_PROJECTS,
+    element: (
+      <FiscalAuthGuard>
+        <FiscalWorkProjectsPage />
+      </FiscalAuthGuard>
+    ),
+  },
+  {
+    path: ROUTES.FISCAL.CREATE_WORK_PROJECT,
+    element: (
+      <FiscalAuthGuard>
+        <CreateWorkProjectPage />
+      </FiscalAuthGuard>
+    ),
+  },
+  {
+    path: ROUTES.FISCAL.WORK_PROJECT_VIEW,
+    element: (
+      <FiscalAuthGuard>
+        <FiscalWorkProjectViewPage />
+      </FiscalAuthGuard>
     ),
   },
 ]);
