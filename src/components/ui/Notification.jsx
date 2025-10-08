@@ -84,20 +84,20 @@ export function useNotification() {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
-  const showSuccess = (title, message) => {
-    return addNotification({ type: "success", title, message });
+  const showSuccess = (title, message, duration = 5000) => {
+    return addNotification({ type: "success", title, message, duration });
   };
 
-  const showError = (title, message) => {
-    return addNotification({ type: "error", title, message });
+  const showError = (title, message, duration = 5000) => {
+    return addNotification({ type: "error", title, message, duration });
   };
 
-  const showWarning = (title, message) => {
-    return addNotification({ type: "warning", title, message });
+  const showWarning = (title, message, duration = 5000) => {
+    return addNotification({ type: "warning", title, message, duration });
   };
 
-  const showInfo = (title, message) => {
-    return addNotification({ type: "info", title, message });
+  const showInfo = (title, message, duration = 5000) => {
+    return addNotification({ type: "info", title, message, duration });
   };
 
   return {
@@ -117,9 +117,9 @@ export function NotificationContainer({ notifications, onRemove }) {
     <div className="fixed top-4 right-4 z-50 space-y-2">
       {notifications.map((notification) => (
         <Notification
-          key={notification.notification_id}
+          key={notification.id}
           {...notification}
-          onClose={() => onRemove(notification.notification_id)}
+          onClose={() => onRemove(notification.id)}
         />
       ))}
     </div>

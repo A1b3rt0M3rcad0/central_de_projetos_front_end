@@ -52,14 +52,15 @@ export default function HomeContent({
   // Simular refresh dos dados
   const handleRefresh = () => {
     setIsRefreshing(true);
-    showInfo("Atualizando dados", "Buscando informações mais recentes...");
+    showInfo("Atualizando dados", "Buscando informações mais recentes...", 2000);
 
     setTimeout(() => {
       setLastUpdated(new Date());
       setIsRefreshing(false);
       showSuccess(
         "Dados atualizados",
-        "Informações foram atualizadas com sucesso!"
+        "Informações foram atualizadas com sucesso!",
+        2000
       );
     }, 1000);
   };
