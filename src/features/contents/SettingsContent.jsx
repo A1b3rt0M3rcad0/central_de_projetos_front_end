@@ -287,8 +287,7 @@ export default function SettingsContent({ activeTab, onTabChange, onBack }) {
                 {userInfo && (
                   <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <p className="text-sm text-blue-800">
-                      <strong>Perfil:</strong> {userInfo.role} |{" "}
-                      <strong>CPF:</strong> {userInfo.cpf}
+                      <strong>Perfil:</strong> {userInfo.role}
                     </p>
                   </div>
                 )}

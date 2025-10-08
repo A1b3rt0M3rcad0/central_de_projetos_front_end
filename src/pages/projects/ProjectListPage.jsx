@@ -22,7 +22,7 @@ export default function ProjectListPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalProjects, setTotalProjects] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
 
   const pageSize = 10; // Valor constante para simplificar
 
@@ -50,8 +50,12 @@ export default function ProjectListPage() {
       setTotalProjects(totalProjects || 0);
       setHasMore(currentPage < totalPages);
 
-      // Atualizar a URL com a nova página
-      setSearchParams({ page: page.toString() });
+      // Atualizar a URL com a nova página e manter o search se existir
+      const params = { page: page.toString() };
+      if (search) {
+        params.search = search;
+      }
+      setSearchParams(params);
     } catch (error) {
       console.error("Erro ao buscar projetos:", error);
 
@@ -77,8 +81,14 @@ export default function ProjectListPage() {
   // Sincronizar estado interno com URL
   useEffect(() => {
     const urlPage = parseInt(searchParams.get("page") || "1");
+    const urlSearch = searchParams.get("search") || "";
+    
     if (urlPage !== currentPage) {
       setCurrentPage(urlPage);
+    }
+    
+    if (urlSearch !== searchTerm) {
+      setSearchTerm(urlSearch);
     }
   }, [searchParams]);
 
@@ -93,7 +103,11 @@ export default function ProjectListPage() {
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages && !loading) {
       setCurrentPage(newPage);
-      setSearchParams({ page: newPage.toString() });
+      const params = { page: newPage.toString() };
+      if (searchTerm) {
+        params.search = searchTerm;
+      }
+      setSearchParams(params);
     }
   };
 
@@ -101,7 +115,11 @@ export default function ProjectListPage() {
     if (currentPage < totalPages && !loading) {
       const newPage = currentPage + 1;
       setCurrentPage(newPage);
-      setSearchParams({ page: newPage.toString() });
+      const params = { page: newPage.toString() };
+      if (searchTerm) {
+        params.search = searchTerm;
+      }
+      setSearchParams(params);
     }
   };
 
@@ -109,7 +127,11 @@ export default function ProjectListPage() {
     if (currentPage > 1 && !loading) {
       const newPage = currentPage - 1;
       setCurrentPage(newPage);
-      setSearchParams({ page: newPage.toString() });
+      const params = { page: newPage.toString() };
+      if (searchTerm) {
+        params.search = searchTerm;
+      }
+      setSearchParams(params);
     }
   };
 
@@ -152,7 +174,11 @@ export default function ProjectListPage() {
   const handleSearch = (term) => {
     setSearchTerm(term);
     setCurrentPage(1); // Reset para primeira página quando buscar
-    setSearchParams({ page: "1" }); // Atualizar URL para página 1
+    const params = { page: "1" };
+    if (term) {
+      params.search = term;
+    }
+    setSearchParams(params); // Atualizar URL para página 1 com search
   };
 
   return (

@@ -2,10 +2,25 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Settings, Search, Menu } from "lucide-react";
 import NotificationBell from "./NotificationBell";
+import { ROUTES } from "../config/constants";
 
 export default function Header({ pageTitle }) {
   const navigate = useNavigate();
   const [showSearchMobile, setShowSearchMobile] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTermMobile, setSearchTermMobile] = useState("");
+
+  const handleSearch = (term) => {
+    if (term.trim()) {
+      navigate(`${ROUTES.PROJECTS.LIST}?search=${encodeURIComponent(term.trim())}`);
+    }
+  };
+
+  const handleKeyPress = (e, term) => {
+    if (e.key === "Enter") {
+      handleSearch(term);
+    }
+  };
 
   return (
     <header className="sticky top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm z-30">
@@ -25,6 +40,9 @@ export default function Header({ pageTitle }) {
             <input
               type="search"
               placeholder="Buscar projeto..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyPress={(e) => handleKeyPress(e, searchTerm)}
               className="pl-10 pr-4 py-2.5 w-64 border border-gray-200 rounded-xl text-gray-700 placeholder-gray-400 
                        focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 
                        transition-all duration-200 bg-gray-50/50 hover:bg-white"
@@ -73,6 +91,14 @@ export default function Header({ pageTitle }) {
             <input
               type="search"
               placeholder="Buscar projeto..."
+              value={searchTermMobile}
+              onChange={(e) => setSearchTermMobile(e.target.value)}
+              onKeyPress={(e) => {
+                handleKeyPress(e, searchTermMobile);
+                if (e.key === "Enter") {
+                  setShowSearchMobile(false);
+                }
+              }}
               className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-gray-700 placeholder-gray-400 
                        focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 
                        transition-all duration-200 bg-gray-50/50"

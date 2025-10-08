@@ -57,19 +57,22 @@ export default function ProjectListContent({
     setLocalSearchTerm(searchTerm || "");
   }, [searchTerm]);
 
-  // Debounce para busca
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (localSearchTerm !== searchTerm) {
-        setIsSearching(true);
-        onSearch(localSearchTerm);
-        // Reset do indicador após um tempo
-        setTimeout(() => setIsSearching(false), 1000);
-      }
-    }, 500); // 500ms de delay
+  // Função para executar a busca
+  const handleSearch = () => {
+    if (localSearchTerm !== searchTerm) {
+      setIsSearching(true);
+      onSearch(localSearchTerm);
+      // Reset do indicador após um tempo
+      setTimeout(() => setIsSearching(false), 1000);
+    }
+  };
 
-    return () => clearTimeout(timeoutId);
-  }, [localSearchTerm, searchTerm, onSearch]);
+  // Handler para tecla Enter
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
 
   // Função para truncar texto longo
   const truncateText = (text, maxLength = 20) => {
@@ -319,9 +322,10 @@ export default function ProjectListContent({
               </div>
               <input
                 type="text"
-                placeholder="Buscar por nome do projeto ou situação..."
+                placeholder="Buscar por nome do projeto ou situação... (pressione Enter)"
                 value={localSearchTerm}
                 onChange={(e) => setLocalSearchTerm(e.target.value)}
+                onKeyPress={handleKeyPress}
                 className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
               />
               {isSearching && (
@@ -332,7 +336,10 @@ export default function ProjectListContent({
             </div>
             {localSearchTerm && (
               <button
-                onClick={() => setLocalSearchTerm("")}
+                onClick={() => {
+                  setLocalSearchTerm("");
+                  onSearch("");
+                }}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               >
                 Limpar
