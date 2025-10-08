@@ -12,7 +12,11 @@ const fiscalAPI = {
     );
   },
   postFiscal: (data) => api.post("/fiscal", data),
+  postFiscalComplete: (data) => api.post("/fiscal/insert-all", data),
   patchFiscal: (data) => api.patch("/fiscal", data),
+  patchFiscalEmail: (data) => api.patch("/fiscal/update-email", data),
+  patchFiscalPassword: (data) => api.patch("/fiscal/update-password", data),
+  patchFiscalPhone: (data) => api.patch("/fiscal/update-phone", data),
   deleteFiscal: (data) => api.delete("/fiscal", { data }),
   getCountFiscal: () => api.get("/fiscal/fiscal/count/all"),
   getCountProjectByFiscal: () => api.get("/project_fiscal/project/count"),

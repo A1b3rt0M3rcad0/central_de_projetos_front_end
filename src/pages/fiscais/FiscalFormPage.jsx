@@ -8,42 +8,111 @@ export default function FiscalFormPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const initial_data = location?.state?.initial_data;
-  async function onSubmit(fiscal_name) {
+
+  async function onSubmit(fiscalData) {
     try {
-      await fiscalAPI.postFiscal({ fiscal_name: fiscal_name });
-      Swal.fire(
-        "Criado com sucesso!",
-        "O Fiscal foi criada com sucesso.",
-        "success"
-      );
+      await fiscalAPI.postFiscalComplete(fiscalData);
+      Swal.fire({
+        icon: "success",
+        title: "Criado com sucesso!",
+        text: "O Fiscal foi criado com sucesso.",
+        confirmButtonText: "OK",
+      }).then(() => {
+        navigate(-1);
+      });
     } catch (error) {
-      const status = error.response.status;
-      Swal.fire(
-        "Erro!",
-        `${status == 409 ? "Fiscal já existe" : "Erro ao criar fiscal"}`,
-        "error"
-      );
+      const status = error?.response?.status;
+      const errorMessage =
+        status === 409
+          ? "Fiscal já existe"
+          : error?.response?.data?.detail || "Erro ao criar fiscal";
+
+      Swal.fire({
+        icon: "error",
+        title: "Erro!",
+        text: errorMessage,
+        confirmButtonText: "OK",
+      });
     }
   }
 
-  async function onUpdate(fiscalName, oldFiscalName) {
+  async function onUpdate(fiscalData, oldFiscalName) {
     try {
-      await fiscalAPI.patchFiscal({
-        name: oldFiscalName,
-        new_name: fiscalName,
+      const promises = [];
+
+      // Atualizar nome se mudou
+      if (fiscalData.fiscalName !== oldFiscalName) {
+        promises.push(
+          fiscalAPI.patchFiscal({
+            name: oldFiscalName,
+            new_name: fiscalData.fiscalName,
+          })
+        );
+      }
+
+      // Atualizar email se fornecido
+      if (fiscalData.fiscalEmail) {
+        promises.push(
+          fiscalAPI.patchFiscalEmail({
+            name:
+              fiscalData.fiscalName !== oldFiscalName
+                ? fiscalData.fiscalName
+                : oldFiscalName,
+            email: fiscalData.fiscalEmail,
+          })
+        );
+      }
+
+      // Atualizar senha se fornecida
+      if (fiscalData.fiscalPassword) {
+        promises.push(
+          fiscalAPI.patchFiscalPassword({
+            name:
+              fiscalData.fiscalName !== oldFiscalName
+                ? fiscalData.fiscalName
+                : oldFiscalName,
+            password: fiscalData.fiscalPassword,
+          })
+        );
+      }
+
+      // Atualizar telefone se fornecido
+      if (fiscalData.fiscalPhone) {
+        promises.push(
+          fiscalAPI.patchFiscalPhone({
+            name:
+              fiscalData.fiscalName !== oldFiscalName
+                ? fiscalData.fiscalName
+                : oldFiscalName,
+            phone: fiscalData.fiscalPhone.replace(/\D/g, ""),
+          })
+        );
+      }
+
+      // Executar todas as atualizações em paralelo
+      await Promise.all(promises);
+
+      Swal.fire({
+        icon: "success",
+        title: "Atualizado com sucesso!",
+        text: "O Fiscal foi atualizado com sucesso.",
+        confirmButtonText: "OK",
+      }).then(() => {
+        navigate(-1);
       });
-      Swal.fire(
-        "Atualizado com sucesso!",
-        "O Fiscal foi atualizado com sucesso.",
-        "success"
-      );
     } catch (error) {
-      const status = error.response.status;
-      Swal.fire(
-        "Erro!",
-        `${status == 409 ? "Fiscal já existe" : "Erro ao atualizar Fiscal"}`,
-        "error"
-      );
+      const status = error?.response?.status;
+      const errorMessage =
+        status === 409
+          ? "Fiscal já existe"
+          : error?.response?.data?.detail || "Erro ao atualizar Fiscal";
+
+      Swal.fire({
+        icon: "error",
+        title: "Erro!",
+        text: errorMessage,
+        confirmButtonText: "OK",
+      });
     }
   }
 
