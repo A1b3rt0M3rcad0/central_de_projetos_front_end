@@ -11,6 +11,9 @@ const fiscalAPI = {
       `/fiscal/fiscais/pagination-filter/${pageSize}/${page}?${params.toString()}`
     );
   },
+  getProjectsByFiscal: (fiscalId) => api.get(`/project_fiscal/${fiscalId}`),
+  getWorkProjectsByFiscal: (fiscalId, pageSize, page) =>
+    api.post(`/work_project/fiscal/${fiscalId}/pagination/${pageSize}/${page}`),
   postFiscal: (data) => api.post("/fiscal", data),
   postFiscalComplete: (data) => api.post("/fiscal/insert-all", data),
   patchFiscal: (data) => api.patch("/fiscal", data),

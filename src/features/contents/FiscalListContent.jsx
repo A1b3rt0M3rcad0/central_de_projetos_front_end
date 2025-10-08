@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 export default function FiscalListContent({
   fiscais,
   onCreate,
+  onView,
   onEdit,
   onDelete,
   onBack,
@@ -220,8 +221,7 @@ export default function FiscalListContent({
         icon: <Eye className="w-4 h-4" />,
         className: "text-blue-600 hover:bg-blue-50",
         onClick: (fiscal) => {
-          console.log("Visualizar fiscal:", fiscal);
-          // Implementar visualização
+          onView(fiscal);
         },
       },
       {

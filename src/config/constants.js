@@ -27,6 +27,7 @@ export const ROUTES = {
     LIST: "/fiscallist",
     CREATE: "/fiscalform",
     EDIT: "/fiscalform",
+    VIEW: "/fiscalview",
   },
   BAIRROS: {
     LIST: "/bairrolist",

@@ -28,6 +28,7 @@ import EmpresaViewPage from "../pages/empresas/EmpresaViewPage";
 // Fiscal Pages
 import FiscalListPage from "../pages/fiscais/FiscalListPage";
 import FiscalFormPage from "../pages/fiscais/FiscalFormPage";
+import FiscalViewPage from "../pages/fiscais/FiscalViewPage";
 
 // Bairro Pages
 import BairroListPage from "../pages/bairros/BairroListPage";
@@ -195,6 +196,14 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <FiscalFormPage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: ROUTES.FISCAIS.VIEW,
+    element: (
+      <AuthGuard>
+        <FiscalViewPage />
       </AuthGuard>
     ),
   },

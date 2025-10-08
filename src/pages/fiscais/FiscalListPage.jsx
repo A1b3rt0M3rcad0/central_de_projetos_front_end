@@ -113,6 +113,10 @@ export default function FiscalListPage() {
     navigate("/fiscalform");
   };
 
+  const handleView = (fiscal) => {
+    navigate("/fiscalview", { state: { item: fiscal } });
+  };
+
   const handleEdit = (fiscal) => {
     navigate("/fiscalform", { state: { initial_data: fiscal } });
   };
@@ -154,6 +158,7 @@ export default function FiscalListPage() {
         <FiscalListContent
           fiscais={fiscaisToShow}
           onCreate={handleCreate}
+          onView={handleView}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onBack={() => navigate(-1)}
