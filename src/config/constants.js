@@ -61,6 +61,7 @@ export const ROUTES = {
   NOTIFICATIONS: {
     LIST: "/notifications",
   },
+  HELP: "/help",
   FISCAL: {
     LOGIN: "/fiscal/login",
     DASHBOARD: "/fiscal/dashboard",

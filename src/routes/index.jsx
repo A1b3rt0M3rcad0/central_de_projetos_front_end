@@ -61,6 +61,9 @@ import NotificationPage from "../pages/notifications/NotificationPage";
 // Settings Pages
 import SettingsPage from "../pages/settings/SettingsPage";
 
+// Help Pages
+import HelpPage from "../pages/help/HelpPage";
+
 // Fiscal Pages
 import FiscalAuthGuard from "../dashboard_fiscal/components/FiscalAuthGuard";
 import FiscalLoginPage from "../dashboard_fiscal/pages/FiscalLoginPage";
@@ -378,6 +381,17 @@ const router = createBrowserRouter([
       <ErrorBoundary>
         <AuthGuard>
           <SettingsPage />
+        </AuthGuard>
+      </ErrorBoundary>
+    ),
+  },
+  // Help Routes
+  {
+    path: ROUTES.HELP,
+    element: (
+      <ErrorBoundary>
+        <AuthGuard>
+          <HelpPage />
         </AuthGuard>
       </ErrorBoundary>
     ),

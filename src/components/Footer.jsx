@@ -1,6 +1,9 @@
 import { HelpCircle, Heart, Shield } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../config/constants";
 
 export default function Footer() {
+  const navigate = useNavigate();
   let dataAtual = new Date();
   let anoAtual = dataAtual.getFullYear();
 
@@ -25,9 +28,7 @@ export default function Footer() {
             <button
               aria-label="Ajuda"
               className="flex items-center gap-2 px-3 py-2 rounded-lg text-blue-600 hover:bg-blue-50 hover:text-blue-700 transition-all duration-200 group"
-              onClick={() =>
-                alert("Aqui pode abrir a página de ajuda ou suporte")
-              }
+              onClick={() => navigate(ROUTES.HELP)}
             >
               <HelpCircle className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
               <span className="text-sm font-medium">Ajuda</span>
