@@ -717,14 +717,50 @@ export default function HelpPage() {
         },
         {
           title: "DataTable Reutilizável",
+          content: `O DataTable é um componente altamente configurável usado em todas as listas do sistema (Projetos, Bairros, Empresas, etc.). Ele oferece uma experiência completa de navegação, busca e gerenciamento de dados.`,
           features: [
-            "Ordenação por qualquer coluna",
-            "Seleção múltipla com checkboxes",
-            "Ações em lote",
-            "Export de dados",
-            "Refresh automático",
-            "Responsivo para mobile",
+            {
+              name: "Busca Inteligente",
+              description:
+                "Filtre dados instantaneamente digitando qualquer termo. A busca funciona em todas as colunas simultaneamente.",
+            },
+            {
+              name: "Ordenação por Colunas",
+              description:
+                "Clique no cabeçalho de qualquer coluna para ordenar crescente ou decrescente (↑↓).",
+            },
+            {
+              name: "Paginação Flexível",
+              description:
+                "Escolha visualizar 10, 25, 50 ou 100 itens por página conforme sua preferência.",
+            },
+            {
+              name: "Seleção Múltipla",
+              description:
+                "Use checkboxes para selecionar múltiplos itens e executar ações em lote.",
+            },
+            {
+              name: "Ações Individuais",
+              description:
+                "Cada linha possui botões de ação: Visualizar (👁️), Editar (✏️) e Excluir (🗑️).",
+            },
+            {
+              name: "Refresh Automático",
+              description:
+                "Atualize os dados a qualquer momento clicando no botão de atualizar (🔄).",
+            },
+            {
+              name: "Responsivo",
+              description:
+                "A tabela se adapta perfeitamente a diferentes tamanhos de tela (desktop, tablet, mobile).",
+            },
+            {
+              name: "Formatação Inteligente",
+              description:
+                "Diferentes tipos de dados são formatados automaticamente: datas, moeda (R$), status com cores.",
+            },
           ],
+          note: "O DataTable é usado em todo o sistema para garantir consistência e uma experiência de usuário uniforme.",
         },
       ],
     },
