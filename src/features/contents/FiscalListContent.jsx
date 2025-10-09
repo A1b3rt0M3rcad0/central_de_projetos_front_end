@@ -11,9 +11,13 @@ import {
   Trash2,
   Pencil,
   Search,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { usePermissions } from "../../hooks/usePermissions";
+import fiscalAPI from "../../services/api/fiscal";
+import Swal from "sweetalert2";
 
 export default function FiscalListContent({
   fiscais,
@@ -21,6 +25,7 @@ export default function FiscalListContent({
   onView,
   onEdit,
   onDelete,
+  onToggleStatus,
   onBack,
   onPageChange,
   onNextPage,
@@ -129,6 +134,61 @@ export default function FiscalListContent({
     }
   };
 
+  // Função para alternar status do fiscal
+  const handleToggleStatus = async (fiscal) => {
+    const newStatus =
+      fiscal.is_active === 1 || fiscal.is_active === null ? 0 : 1;
+    const statusText = newStatus === 1 ? "ativar" : "desativar";
+
+    const result = await Swal.fire({
+      title: `Confirmar ${
+        statusText === "ativar" ? "ativação" : "desativação"
+      }`,
+      html: `
+        <p>Deseja realmente <strong>${statusText}</strong> o fiscal <strong>${
+        fiscal.name
+      }</strong>?</p>
+        ${
+          newStatus === 0
+            ? '<p class="text-red-600 text-sm mt-2">⚠️ O fiscal não poderá fazer login enquanto estiver inativo.</p>'
+            : ""
+        }
+      `,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: `Sim, ${statusText}`,
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: newStatus === 1 ? "#10b981" : "#ef4444",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await fiscalAPI.patchFiscalStatus(fiscal.id, newStatus);
+
+      // Atualizar o estado local sem recarregar a página
+      onToggleStatus(fiscal.id, newStatus);
+
+      Swal.fire({
+        icon: "success",
+        title: "Status atualizado!",
+        text: `O fiscal foi ${
+          newStatus === 1 ? "ativado" : "desativado"
+        } com sucesso.`,
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Erro!",
+        text:
+          error.response?.data?.message ||
+          "Erro ao atualizar status do fiscal.",
+      });
+    }
+  };
+
   // Configuração das colunas
   const columns = [
     {
@@ -188,6 +248,58 @@ export default function FiscalListContent({
       sortable: true,
       type: "date",
     },
+    {
+      key: "is_active",
+      label: "Status",
+      sortable: true,
+      render: (value, fiscal) => {
+        const isActive = value === 1 || value === null;
+
+        return (
+          <div className="flex items-center gap-3">
+            {/* Indicador visual de status */}
+            <div className="flex items-center gap-2">
+              {isActive ? (
+                <CheckCircle2 className="w-5 h-5 text-green-500" />
+              ) : (
+                <XCircle className="w-5 h-5 text-red-500" />
+              )}
+              <span
+                className={`text-sm font-medium ${
+                  isActive ? "text-green-700" : "text-red-700"
+                }`}
+              >
+                {isActive ? "Ativo" : "Inativo"}
+              </span>
+            </div>
+
+            {/* Toggle Switch - apenas para ADMIN */}
+            {permissions.canEditFiscal && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleToggleStatus(fiscal);
+                }}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 hover:shadow-lg ${
+                  isActive
+                    ? "bg-green-500 focus:ring-green-500 hover:bg-green-600"
+                    : "bg-red-400 focus:ring-red-400 hover:bg-red-500"
+                }`}
+                title={
+                  isActive ? "Clique para desativar" : "Clique para ativar"
+                }
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-all duration-200 ease-in-out ${
+                    isActive ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+            )}
+          </div>
+        );
+      },
+    },
   ];
 
   // Configuração da tabela
@@ -208,16 +320,16 @@ export default function FiscalListContent({
   const actions = {
     bulk: permissions.canBulkActions
       ? [
-            {
-              label: "Exportar Selecionados",
-              icon: <Eye className="w-4 h-4" />,
-              onClick: (selectedItems) => {
-                console.log("Exportar fiscais:", selectedItems);
-                // Implementar exportação
-              },
+          {
+            label: "Exportar Selecionados",
+            icon: <Eye className="w-4 h-4" />,
+            onClick: (selectedItems) => {
+              console.log("Exportar fiscais:", selectedItems);
+              // Implementar exportação
             },
-          ]
-        : [],
+          },
+        ]
+      : [],
     row: [
       {
         label: "Visualizar",

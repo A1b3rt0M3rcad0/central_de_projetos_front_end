@@ -150,6 +150,15 @@ export default function FiscalListPage() {
     }
   };
 
+  const handleToggleStatus = (fiscalId, newStatus) => {
+    // Atualizar o estado local sem recarregar a página
+    setFiscais((prevFiscais) =>
+      prevFiscais.map((fiscal) =>
+        fiscal.id === fiscalId ? { ...fiscal, is_active: newStatus } : fiscal
+      )
+    );
+  };
+
   return (
     <BasePage pageTitle="">
       {loading ? (
@@ -161,6 +170,7 @@ export default function FiscalListPage() {
           onView={handleView}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onToggleStatus={handleToggleStatus}
           onBack={() => navigate(-1)}
           onPageChange={handlePageChange}
           onNextPage={handleNextPage}

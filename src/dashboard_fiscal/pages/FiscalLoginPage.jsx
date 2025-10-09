@@ -10,6 +10,7 @@ import {
   Camera,
   FileText,
   ArrowLeft,
+  CircleAlert,
 } from "lucide-react";
 import footer from "../../assets/footer.png";
 import logo from "../../assets/logo_gov.png";
@@ -58,7 +59,6 @@ function FiscalLoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     // Validação adicional antes de enviar
     if (!isValidEmail) {
       setError("Por favor, insira um email válido");
@@ -74,11 +74,13 @@ function FiscalLoginPage() {
     setError("");
 
     try {
+      // Tentar fazer login
       const response = await fiscalApiService.login(email, password);
+
+      // Se chegou aqui, login foi bem-sucedido (status 200)
       const token = response.data.token;
-      
       localStorage.setItem("fiscal_token", token);
-      
+
       // Buscar informações do fiscal
       const meResponse = await fiscalApiService.getMe();
       const fiscalInfo = {
@@ -88,8 +90,10 @@ function FiscalLoginPage() {
         phone: meResponse.data.content.phone,
         token: token,
       };
-      
+
       localStorage.setItem("fiscal_info", JSON.stringify(fiscalInfo));
+
+      // Apenas redireciona em caso de sucesso
       navigate("/fiscal/dashboard");
     } catch (err) {
       const status = err.response?.status;
@@ -97,21 +101,21 @@ function FiscalLoginPage() {
 
       let errorMessage = "";
 
-      if (status === 500) {
+      // Priorizar mensagens da API (já estão em português)
+      if (errorData?.detail) {
+        errorMessage = errorData.detail;
+      } else if (status === 500) {
         errorMessage = "Erro no servidor. Tente novamente mais tarde.";
-      } else if (status === 403 || status === 404) {
-        errorMessage = "Email ou senha incorretos. Verifique suas credenciais.";
       } else if (status === 429) {
         errorMessage =
           "Muitas tentativas. Aguarde alguns minutos e tente novamente.";
-      } else if (errorData) {
-        errorMessage = `${errorData.title}: ${errorData.detail}`;
-      } else {
+      } else if (!err.response) {
         errorMessage =
           "Erro de conexão. Verifique sua internet e tente novamente.";
+      } else {
+        errorMessage = "Erro ao fazer login. Tente novamente.";
       }
 
-      console.error("Erro no login do fiscal:", errorMessage);
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -129,6 +133,7 @@ function FiscalLoginPage() {
       <div className="bg-white shadow-2xl rounded-3xl p-6 w-full max-w-md border border-gray-100">
         {/* Botão Voltar */}
         <button
+          type="button"
           onClick={() => navigate("/")}
           className="mb-4 flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
         >
@@ -270,9 +275,13 @@ function FiscalLoginPage() {
 
           {/* Mensagem de erro */}
           {error && (
-            <div className="bg-red-50 border-2 border-red-200 rounded-lg p-3 flex items-start gap-2">
-              <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-red-700 font-medium">{error}</p>
+            <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 flex items-start gap-3">
+              <CircleAlert className="w-6 h-6 text-red-600 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-medium leading-relaxed text-red-700">
+                  {error}
+                </p>
+              </div>
             </div>
           )}
 
@@ -338,4 +347,3 @@ function FiscalLoginPage() {
 }
 
 export default FiscalLoginPage;
-

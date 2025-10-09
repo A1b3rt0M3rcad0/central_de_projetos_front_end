@@ -20,6 +20,8 @@ const fiscalAPI = {
   patchFiscalEmail: (data) => api.patch("/fiscal/update-email", data),
   patchFiscalPassword: (data) => api.patch("/fiscal/update-password", data),
   patchFiscalPhone: (data) => api.patch("/fiscal/update-phone", data),
+  patchFiscalStatus: (fiscalId, isActive) =>
+    api.patch(`/fiscal/${fiscalId}/status`, { is_active: isActive }),
   deleteFiscal: (data) => api.delete("/fiscal", { data }),
   getCountFiscal: () => api.get("/fiscal/fiscal/count/all"),
   getCountProjectByFiscal: () => api.get("/project_fiscal/project/count"),
