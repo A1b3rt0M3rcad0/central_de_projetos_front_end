@@ -321,10 +321,24 @@ export default function EAPPage() {
   return (
     <BasePage pageTitle="">
       <BaseContent
-        pageTitle={`📑 EAP - ${eapData.name || project?.name}`}
+        pageTitle={
+          <div className="flex items-center gap-2">
+            <FileText className="w-5 h-5 text-blue-600" />
+            <span>{eapData.name || project?.name}</span>
+          </div>
+        }
         onBack={() =>
           navigate("/projectpage", { state: { initial_date: project } })
         }
+        breadcrumbs={[
+          { label: "Projetos", onClick: () => navigate("/projectlistpage") },
+          {
+            label: project?.name || "Projeto",
+            onClick: () =>
+              navigate("/projectpage", { state: { initial_date: project } }),
+          },
+          { label: "EAP" },
+        ]}
       >
         <div className="space-y-6">
           {/* Header */}
