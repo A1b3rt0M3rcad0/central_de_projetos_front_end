@@ -403,6 +403,9 @@ export default function EAPPage() {
       } else if (errorText.includes("Projeto já possui EAP")) {
         message = "Este projeto já possui uma EAP. Não é possível criar outra.";
         type = "warning";
+      } else if (errorText.includes("Orçamento excedido")) {
+        message = errorText; // A mensagem já vem formatada do backend
+        type = "error";
       } else {
         message = errorText;
       }
