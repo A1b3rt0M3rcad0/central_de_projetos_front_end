@@ -16,6 +16,7 @@ export const ROUTES = {
     HISTORY: "/projecthistory",
     WORK_PROJECTS: "/workprojects",
     WORK_PROJECT_VIEW: "/workproject",
+    EAP: "/project/:id/eap",
   },
   EMPRESAS: {
     LIST: "/empresalistpage",

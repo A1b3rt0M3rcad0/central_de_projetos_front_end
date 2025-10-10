@@ -23,6 +23,7 @@ import {
   MoreHorizontal,
   Eye,
   List,
+  Network,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../config/constants";
@@ -124,6 +125,10 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
     });
   };
 
+  const handleViewEAP = () => {
+    navigate(`/project/${project.id}/eap`, { state: { project } });
+  };
+
   const getStatusIcon = (status) => {
     const statusLower = status?.toLowerCase() || "";
     if (statusLower.includes("aguardando"))
@@ -191,7 +196,7 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
 
                   {/* Dropdown de Ações */}
                   {showActions && (
-                    <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                    <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                       <div className="py-1">
                         <button
                           onClick={() => {
@@ -202,6 +207,16 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                         >
                           <Edit className="w-4 h-4 text-blue-600" />
                           Editar Projeto
+                        </button>
+                        <button
+                          onClick={() => {
+                            handleViewEAP();
+                            setShowActions(false);
+                          }}
+                          className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 transition-colors"
+                        >
+                          <Network className="w-4 h-4 text-indigo-600" />
+                          Gerenciar EAP
                         </button>
                         <button
                           onClick={() => {

@@ -19,6 +19,7 @@ import ProjectViewPage from "../pages/projects/ProjectViewPage";
 import ProjectHistoryPage from "../pages/projects/ProjectHistoryPage";
 import WorkProjectListPage from "../pages/projects/WorkProjectListPage";
 import WorkProjectViewPage from "../pages/projects/WorkProjectViewPage";
+import EAPPage from "../pages/projects/EAPPage";
 
 // Empresa Pages
 import EmpresaListPage from "../pages/empresas/EmpresaListPage";
@@ -152,6 +153,14 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <WorkProjectViewPage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: ROUTES.PROJECTS.EAP,
+    element: (
+      <AuthGuard>
+        <EAPPage />
       </AuthGuard>
     ),
   },
