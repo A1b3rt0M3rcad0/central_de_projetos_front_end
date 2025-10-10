@@ -233,7 +233,11 @@ export default function SettingsContent({ activeTab, onTabChange, onBack }) {
   }
 
   return (
-    <BaseContent pageTitle="Configurações" onBack={onBack}>
+    <BaseContent 
+      pageTitle="Configurações" 
+      onBack={onBack}
+      breadcrumbs={[{ label: "Configurações do Sistema" }]}
+    >
       <div className="space-y-6">
         {/* Tabs */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">

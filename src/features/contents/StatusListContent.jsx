@@ -202,7 +202,11 @@ export default function StatusListContent({
   };
 
   return (
-    <BaseContent pageTitle="Status" onBack={onBack}>
+    <BaseContent 
+      pageTitle="Status" 
+      onBack={onBack}
+      breadcrumbs={[{ label: "Lista de Status" }]}
+    >
       <div className="space-y-6">
         {/* Campo de busca personalizado */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">

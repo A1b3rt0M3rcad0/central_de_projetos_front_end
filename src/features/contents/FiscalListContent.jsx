@@ -381,7 +381,11 @@ export default function FiscalListContent({
   };
 
   return (
-    <BaseContent pageTitle="Fiscais" onBack={onBack}>
+    <BaseContent 
+      pageTitle="Fiscais" 
+      onBack={onBack}
+      breadcrumbs={[{ label: "Lista de Fiscais" }]}
+    >
       <div className="space-y-6">
         {/* Campo de busca personalizado */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">

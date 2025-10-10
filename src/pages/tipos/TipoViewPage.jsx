@@ -66,6 +66,10 @@ export default function TipoViewPage() {
       <BaseContent
         pageTitle={`Tipo: ${tipoData.name || "N/A"}`}
         onBack={() => navigate(-1)}
+        breadcrumbs={[
+          { label: "Tipos", onClick: () => navigate(ROUTES.TIPOS.LIST) },
+          { label: tipoData.name || "Detalhes" },
+        ]}
       >
         <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50 p-4">
           <div className="max-w-7xl mx-auto space-y-6">

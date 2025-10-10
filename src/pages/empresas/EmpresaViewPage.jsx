@@ -65,6 +65,10 @@ export default function EmpresaViewPage() {
       <BaseContent
         pageTitle={`Empresa: ${empresaData.name || "N/A"}`}
         onBack={() => navigate(-1)}
+        breadcrumbs={[
+          { label: "Empresas", onClick: () => navigate(ROUTES.EMPRESAS.LIST) },
+          { label: empresaData.name || "Detalhes" },
+        ]}
       >
         <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50 p-4">
           <div className="max-w-7xl mx-auto space-y-6">

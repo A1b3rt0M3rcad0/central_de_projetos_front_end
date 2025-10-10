@@ -202,7 +202,11 @@ export default function TipoListContent({
   };
 
   return (
-    <BaseContent pageTitle="Tipos" onBack={onBack}>
+    <BaseContent 
+      pageTitle="Tipos" 
+      onBack={onBack}
+      breadcrumbs={[{ label: "Lista de Tipos" }]}
+    >
       <div className="space-y-6">
         {/* Campo de busca personalizado */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">

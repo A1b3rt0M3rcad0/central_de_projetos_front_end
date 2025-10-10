@@ -179,6 +179,10 @@ export default function FiscalViewPage() {
       <BaseContent
         pageTitle={fiscalData.name || "Fiscal"}
         onBack={() => navigate(-1)}
+        breadcrumbs={[
+          { label: "Fiscais", onClick: () => navigate(ROUTES.FISCAIS.LIST) },
+          { label: fiscalData.name || "Detalhes" },
+        ]}
       >
         <div className="space-y-6">
           {/* Header com informações do fiscal */}

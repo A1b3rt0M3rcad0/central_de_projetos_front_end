@@ -197,7 +197,11 @@ export default function BairroListContent({
   };
 
   return (
-    <BaseContent pageTitle="Bairros" onBack={onBack}>
+    <BaseContent 
+      pageTitle="Bairros" 
+      onBack={onBack}
+      breadcrumbs={[{ label: "Lista de Bairros" }]}
+    >
       <div className="space-y-6">
         {/* Campo de busca personalizado */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">

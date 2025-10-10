@@ -1001,7 +1001,11 @@ export default function HelpPage() {
 
   return (
     <BasePage pageTitle="">
-      <BaseContent pageTitle="Central de Ajuda" onBack={() => navigate(-1)}>
+      <BaseContent
+        pageTitle="Central de Ajuda"
+        onBack={() => navigate(-1)}
+        breadcrumbs={[{ label: "Central de Ajuda" }]}
+      >
         <div className="min-h-screen">
           {/* Header com busca */}
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 mb-6 text-white">

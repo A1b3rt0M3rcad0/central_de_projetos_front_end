@@ -194,7 +194,11 @@ export default function HomeContent({
 
   return (
     <>
-      <BaseContent pageTitle="Dashboard" onBack={onBack}>
+      <BaseContent 
+        pageTitle="Dashboard" 
+        onBack={onBack}
+        breadcrumbs={[{ label: "Dashboard" }]}
+      >
         {/* Header com ações rápidas */}
         <div className="mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">

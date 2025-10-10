@@ -65,6 +65,10 @@ export default function StatusViewPage() {
       <BaseContent
         pageTitle={`Status: ${statusData.description || "N/A"}`}
         onBack={() => navigate(-1)}
+        breadcrumbs={[
+          { label: "Status", onClick: () => navigate(ROUTES.STATUS.LIST) },
+          { label: statusData.description || "Detalhes" },
+        ]}
       >
         <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 p-4">
           <div className="max-w-7xl mx-auto space-y-6">

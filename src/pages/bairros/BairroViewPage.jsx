@@ -65,6 +65,10 @@ export default function BairroViewPage() {
       <BaseContent
         pageTitle={`Bairro: ${bairroData.name || "N/A"}`}
         onBack={() => navigate(-1)}
+        breadcrumbs={[
+          { label: "Bairros", onClick: () => navigate(ROUTES.BAIRROS.LIST) },
+          { label: bairroData.name || "Detalhes" },
+        ]}
       >
         <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-white to-sky-50 p-4">
           <div className="max-w-7xl mx-auto space-y-6">
