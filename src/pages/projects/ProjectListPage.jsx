@@ -141,7 +141,7 @@ export default function ProjectListPage() {
   };
 
   const handleSelect = (project) => {
-    navigate(`/projectpage`, { state: { initial_date: project } });
+    navigate(`/project/${project.id}`);
   };
 
   const handleEdit = (project) => {

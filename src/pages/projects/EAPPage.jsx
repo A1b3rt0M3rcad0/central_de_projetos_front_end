@@ -256,7 +256,7 @@ export default function EAPPage() {
           setTimeout(() => setNotification(null), 3000);
 
           // Volta para a página do projeto
-          navigate("/projectpage", { state: { initial_date: project } });
+          navigate(`/project/${id}`);
         } catch (err) {
           handleError(err, "Erro ao excluir EAP");
         }
@@ -496,9 +496,7 @@ export default function EAPPage() {
       <BasePage pageTitle="">
         <BaseContent
           pageTitle={`📑 EAP - ${project?.name || "Carregando..."}`}
-          onBack={() =>
-            navigate("/projectpage", { state: { initial_date: project } })
-          }
+          onBack={() => navigate(`/project/${id}`)}
         >
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
@@ -517,9 +515,7 @@ export default function EAPPage() {
       <BasePage pageTitle="">
         <BaseContent
           pageTitle={`📑 EAP - ${project?.name || ""}`}
-          onBack={() =>
-            navigate("/projectpage", { state: { initial_date: project } })
-          }
+          onBack={() => navigate(`/project/${id}`)}
         >
           <div className="flex items-center justify-center min-h-[500px]">
             <div className="text-center max-w-md">
@@ -564,15 +560,12 @@ export default function EAPPage() {
             <span>{eapData.name || project?.name}</span>
           </div>
         }
-        onBack={() =>
-          navigate("/projectpage", { state: { initial_date: project } })
-        }
+        onBack={() => navigate(`/project/${id}`)}
         breadcrumbs={[
           { label: "Projetos", onClick: () => navigate("/projectlistpage") },
           {
             label: project?.name || "Projeto",
-            onClick: () =>
-              navigate("/projectpage", { state: { initial_date: project } }),
+            onClick: () => navigate(`/project/${id}`),
           },
           { label: "EAP" },
         ]}
@@ -1662,7 +1655,7 @@ function EAPItemModal({
   // Função para verificar se o item tem filhos
   const hasChildren = (item) => {
     if (!item) return false;
-    
+
     // Verifica se o item tem a propriedade children e se ela tem elementos
     return item.children && item.children.length > 0;
   };
@@ -1702,9 +1695,8 @@ function EAPItemModal({
   };
 
   // Calcula o progresso do item atual no formulário
-  const calculatedProgress = item && hasChildren(item) 
-    ? calculateItemProgress(item) 
-    : formData.progress;
+  const calculatedProgress =
+    item && hasChildren(item) ? calculateItemProgress(item) : formData.progress;
 
   // Função para determinar o status baseado no progresso
   const getStatusFromProgress = (progress) => {
@@ -2048,15 +2040,20 @@ function EAPItemModal({
                       Progresso Calculado Automaticamente
                     </h4>
                     <p className="text-xs text-blue-800 mb-3">
-                      Este item tem {item.children.length} filho(s). O progresso é calculado
-                      automaticamente baseado no valor executado dos itens filhos.
+                      Este item tem {item.children.length} filho(s). O progresso
+                      é calculado automaticamente baseado no valor executado dos
+                      itens filhos.
                     </p>
-                    
+
                     {/* Barra de progresso calculado */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-blue-700 font-medium">Progresso Atual:</span>
-                        <span className="text-blue-900 font-bold">{calculatedProgress}%</span>
+                        <span className="text-blue-700 font-medium">
+                          Progresso Atual:
+                        </span>
+                        <span className="text-blue-900 font-bold">
+                          {calculatedProgress}%
+                        </span>
                       </div>
                       <div className="w-full bg-blue-200 rounded-full h-3">
                         <div
@@ -2070,11 +2067,13 @@ function EAPItemModal({
                           )}
                         </div>
                       </div>
-                      
+
                       {/* Detalhes do cálculo */}
                       <div className="mt-3 p-2 bg-blue-100 rounded text-xs space-y-1">
                         <div className="flex justify-between">
-                          <span className="text-blue-700">Orçamento Total:</span>
+                          <span className="text-blue-700">
+                            Orçamento Total:
+                          </span>
                           <span className="text-blue-900 font-medium">
                             {new Intl.NumberFormat("pt-BR", {
                               style: "currency",
@@ -2083,7 +2082,9 @@ function EAPItemModal({
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-blue-700">Valor Executado:</span>
+                          <span className="text-blue-700">
+                            Valor Executado:
+                          </span>
                           <span className="text-blue-900 font-medium">
                             {new Intl.NumberFormat("pt-BR", {
                               style: "currency",
@@ -2092,7 +2093,9 @@ function EAPItemModal({
                           </span>
                         </div>
                         <div className="flex justify-between border-t border-blue-300 pt-1">
-                          <span className="text-blue-700 font-medium">Progresso:</span>
+                          <span className="text-blue-700 font-medium">
+                            Progresso:
+                          </span>
                           <span className="text-blue-900 font-bold">
                             {calculatedProgress}% concluído
                           </span>

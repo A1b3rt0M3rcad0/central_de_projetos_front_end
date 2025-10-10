@@ -126,9 +126,11 @@ const router = createBrowserRouter([
   {
     path: ROUTES.PROJECTS.VIEW,
     element: (
-      <AuthGuard>
-        <ProjectViewPage />
-      </AuthGuard>
+      <ErrorBoundary>
+        <AuthGuard>
+          <ProjectViewPage />
+        </AuthGuard>
+      </ErrorBoundary>
     ),
   },
   {

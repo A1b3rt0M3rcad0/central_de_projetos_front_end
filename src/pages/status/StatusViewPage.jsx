@@ -47,9 +47,7 @@ export default function StatusViewPage() {
   }, [statusData, navigate]);
 
   const handleViewProject = (project) => {
-    navigate(ROUTES.PROJECTS.VIEW, {
-      state: { initial_date: { id: project.id } },
-    });
+    navigate(`/project/${project.id}`);
   };
 
   if (loading) {

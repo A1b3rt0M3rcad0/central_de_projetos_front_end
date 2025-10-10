@@ -12,7 +12,7 @@ export const ROUTES = {
     LIST: "/projectlistpage",
     CREATE: "/projectform",
     EDIT: "/projectform",
-    VIEW: "/projectpage",
+    VIEW: "/project/:id",
     HISTORY: "/projecthistory",
     WORK_PROJECTS: "/workprojects",
     WORK_PROJECT_VIEW: "/workproject",

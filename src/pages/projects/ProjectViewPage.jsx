@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import BasePage from "../../components/layout/BasePage";
 import ProjectContent from "../../features/contents/ProjectContent";
 import LoadingContent from "../../features/contents/LoadingContent";
@@ -9,8 +9,8 @@ import Swal from "sweetalert2";
 
 export default function ProjectPage() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const projectID = location.state?.initial_date.id;
+  const { id } = useParams();
+  const projectID = id;
 
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);

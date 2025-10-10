@@ -144,9 +144,7 @@ export default function FiscalViewPage() {
   };
 
   const handleViewProject = (project) => {
-    navigate(ROUTES.PROJECTS.VIEW, {
-      state: { initial_date: { id: project.id } },
-    });
+    navigate(`/project/${project.id}`);
   };
 
   const handleViewWorkProject = (workProject) => {
