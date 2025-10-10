@@ -291,20 +291,50 @@ export default function EAPPage() {
     }
   };
 
-  // Calcula o progresso real de um item baseado nos filhos
+  // Calcula o valor executado de um item (orçamento × progresso)
+  const calculateExecutedValue = (item) => {
+    const budget = parseFloat(item.budget || 0);
+    const progress = parseFloat(item.progress || 0) / 100;
+    return budget * progress;
+  };
+
+  // Calcula o valor executado total de um item e seus filhos recursivamente
+  const calculateTotalExecutedValue = (item) => {
+    // Se não tem filhos, calcula só o próprio valor executado
+    if (!item.children || item.children.length === 0) {
+      return calculateExecutedValue(item);
+    }
+
+    // Se tem filhos, soma o valor executado de todos os filhos
+    return item.children.reduce((sum, child) => {
+      return sum + calculateTotalExecutedValue(child);
+    }, 0);
+  };
+
+  // Calcula o progresso real de um item baseado no valor executado dos filhos
   const calculateItemProgress = (item) => {
     // Se não tem filhos, usa o progresso próprio
     if (!item.children || item.children.length === 0) {
       return item.progress || 0;
     }
 
-    // Se tem filhos, calcula a média do progresso dos filhos
-    const childrenProgress = item.children.map((child) =>
-      calculateItemProgress(child)
-    );
-    const avgChildrenProgress =
-      childrenProgress.reduce((sum, p) => sum + p, 0) / childrenProgress.length;
-    return Math.round(avgChildrenProgress);
+    // Se tem filhos, calcula o progresso baseado no valor executado
+    const totalBudget = parseFloat(item.budget || 0);
+
+    // Se não tem orçamento definido, não pode calcular progresso
+    if (totalBudget === 0) {
+      return 0;
+    }
+
+    // Soma o valor executado de todos os filhos
+    const totalExecutedValue = item.children.reduce((sum, child) => {
+      return sum + calculateTotalExecutedValue(child);
+    }, 0);
+
+    // Calcula o percentual de execução baseado no orçamento total do pai
+    const progressPercentage = (totalExecutedValue / totalBudget) * 100;
+
+    return Math.round(Math.min(progressPercentage, 100)); // Máximo 100%
   };
 
   const calculateStats = () => {
@@ -1222,20 +1252,48 @@ function EAPTreeItem({
 }) {
   const hasChildren = item.children && item.children.length > 0;
 
-  // Calcula o progresso real do item
+  // Calcula o valor executado (orçamento × progresso)
+  const calculateExecutedValueLocal = (currentItem) => {
+    const budget = parseFloat(currentItem.budget || 0);
+    const progress = parseFloat(currentItem.progress || 0) / 100;
+    return budget * progress;
+  };
+
+  // Calcula o valor executado total recursivamente
+  const calculateTotalExecutedValueLocal = (currentItem) => {
+    if (!currentItem.children || currentItem.children.length === 0) {
+      return calculateExecutedValueLocal(currentItem);
+    }
+    return currentItem.children.reduce((sum, child) => {
+      return sum + calculateTotalExecutedValueLocal(child);
+    }, 0);
+  };
+
+  // Calcula o progresso real do item baseado em valor executado
   const calculateProgress = (currentItem) => {
     if (!currentItem.children || currentItem.children.length === 0) {
       return currentItem.progress || 0;
     }
-    const childrenProgress = currentItem.children.map((child) =>
-      calculateProgress(child)
-    );
-    return Math.round(
-      childrenProgress.reduce((sum, p) => sum + p, 0) / childrenProgress.length
-    );
+
+    const totalBudget = parseFloat(currentItem.budget || 0);
+    if (totalBudget === 0) return 0;
+
+    const totalExecutedValue = currentItem.children.reduce((sum, child) => {
+      return sum + calculateTotalExecutedValueLocal(child);
+    }, 0);
+
+    const progressPercentage = (totalExecutedValue / totalBudget) * 100;
+    return Math.round(Math.min(progressPercentage, 100));
   };
 
   const actualProgress = calculateProgress(item);
+
+  // Calcula o valor executado para mostrar na UI
+  const executedValue = !hasChildren
+    ? calculateExecutedValueLocal(item)
+    : calculateTotalExecutedValueLocal(item); // Para pais, soma dos filhos
+
+  const totalBudget = parseFloat(item.budget || 0);
 
   const typeConfig = {
     fase: { emoji: "📋", color: "bg-blue-50 border-blue-200 text-blue-700" },
@@ -1318,9 +1376,34 @@ function EAPTreeItem({
                 </div>
                 <div className="flex items-center gap-2 text-gray-600">
                   <DollarSign className="w-4 h-4" />
-                  <span className="font-semibold">
-                    {formatCurrency(item.budget)}
-                  </span>
+                  <div className="flex flex-col gap-0.5">
+                    {hasChildren ? (
+                      // Para itens com filhos: mostra formato compacto
+                      <>
+                        <span className="font-semibold text-gray-900">
+                          {formatCurrency(totalBudget)}
+                        </span>
+                        {executedValue > 0 && (
+                          <span className="text-xs text-blue-600 font-medium">
+                            {formatCurrency(executedValue)} utilizado (
+                            {actualProgress}%)
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      // Para itens sem filhos: mostra orçamento e executado
+                      <>
+                        <span className="font-semibold text-gray-900">
+                          {formatCurrency(totalBudget)}
+                        </span>
+                        {executedValue > 0 && (
+                          <span className="text-xs text-green-600">
+                            {formatCurrency(executedValue)} executado
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 bg-gray-200 rounded-full h-2">
