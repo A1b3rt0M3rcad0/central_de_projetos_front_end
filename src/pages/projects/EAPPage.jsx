@@ -1659,6 +1659,53 @@ function EAPItemModal({
 
   const [loading, setLoading] = useState(false);
 
+  // Função para verificar se o item tem filhos
+  const hasChildren = (item) => {
+    if (!item) return false;
+    
+    // Verifica se o item tem a propriedade children e se ela tem elementos
+    return item.children && item.children.length > 0;
+  };
+
+  // Calcula o valor executado (orçamento × progresso)
+  const calculateExecutedValue = (currentItem) => {
+    const budget = parseFloat(currentItem.budget || 0);
+    const progress = parseFloat(currentItem.progress || 0) / 100;
+    return budget * progress;
+  };
+
+  // Calcula o valor executado total recursivamente
+  const calculateTotalExecutedValue = (currentItem) => {
+    if (!currentItem.children || currentItem.children.length === 0) {
+      return calculateExecutedValue(currentItem);
+    }
+    return currentItem.children.reduce((sum, child) => {
+      return sum + calculateTotalExecutedValue(child);
+    }, 0);
+  };
+
+  // Calcula o progresso real do item baseado em valor executado dos filhos
+  const calculateItemProgress = (currentItem) => {
+    if (!currentItem.children || currentItem.children.length === 0) {
+      return currentItem.progress || 0;
+    }
+
+    const totalBudget = parseFloat(currentItem.budget || 0);
+    if (totalBudget === 0) return 0;
+
+    const totalExecutedValue = currentItem.children.reduce((sum, child) => {
+      return sum + calculateTotalExecutedValue(child);
+    }, 0);
+
+    const progressPercentage = (totalExecutedValue / totalBudget) * 100;
+    return Math.round(Math.min(progressPercentage, 100));
+  };
+
+  // Calcula o progresso do item atual no formulário
+  const calculatedProgress = item && hasChildren(item) 
+    ? calculateItemProgress(item) 
+    : formData.progress;
+
   // Função para determinar o status baseado no progresso
   const getStatusFromProgress = (progress) => {
     if (progress === 0) return "nao_iniciado";
@@ -1952,41 +1999,110 @@ function EAPItemModal({
               </div>
             </div>
 
-            {/* Linha 5: Progresso */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Progresso (%)
-              </label>
-              <div className="flex items-center gap-3">
-                <input
-                  type="range"
-                  value={formData.progress}
-                  onChange={handleProgressChange}
-                  className="flex-1"
-                  min="0"
-                  max="100"
-                />
-                <input
-                  type="number"
-                  name="progress"
-                  value={formData.progress}
-                  onChange={handleProgressChange}
-                  className="w-20 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-center font-semibold"
-                  min="0"
-                  max="100"
-                />
-                <div className="w-24 bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-indigo-600 h-2 rounded-full transition-all"
-                    style={{ width: `${formData.progress}%` }}
+            {/* Linha 5: Progresso - Só mostra se não tem filhos */}
+            {!hasChildren(item) && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Progresso (%)
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range"
+                    value={formData.progress}
+                    onChange={handleProgressChange}
+                    className="flex-1"
+                    min="0"
+                    max="100"
                   />
+                  <input
+                    type="number"
+                    name="progress"
+                    value={formData.progress}
+                    onChange={handleProgressChange}
+                    className="w-20 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-center font-semibold"
+                    min="0"
+                    max="100"
+                  />
+                  <div className="w-24 bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-indigo-600 h-2 rounded-full transition-all"
+                      style={{ width: `${formData.progress}%` }}
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Defina o progresso manualmente para este item
+                </p>
+              </div>
+            )}
+
+            {/* Informação sobre progresso automático quando tem filhos */}
+            {hasChildren(item) && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-1 bg-blue-100 rounded-lg">
+                    <Info className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-sm font-medium text-blue-900 mb-1">
+                      Progresso Calculado Automaticamente
+                    </h4>
+                    <p className="text-xs text-blue-800 mb-3">
+                      Este item tem {item.children.length} filho(s). O progresso é calculado
+                      automaticamente baseado no valor executado dos itens filhos.
+                    </p>
+                    
+                    {/* Barra de progresso calculado */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-blue-700 font-medium">Progresso Atual:</span>
+                        <span className="text-blue-900 font-bold">{calculatedProgress}%</span>
+                      </div>
+                      <div className="w-full bg-blue-200 rounded-full h-3">
+                        <div
+                          className="bg-blue-600 h-3 rounded-full transition-all flex items-center justify-end pr-1"
+                          style={{ width: `${calculatedProgress}%` }}
+                        >
+                          {calculatedProgress > 10 && (
+                            <span className="text-[10px] text-white font-bold">
+                              {calculatedProgress}%
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Detalhes do cálculo */}
+                      <div className="mt-3 p-2 bg-blue-100 rounded text-xs space-y-1">
+                        <div className="flex justify-between">
+                          <span className="text-blue-700">Orçamento Total:</span>
+                          <span className="text-blue-900 font-medium">
+                            {new Intl.NumberFormat("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            }).format(parseFloat(item.budget || 0))}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-blue-700">Valor Executado:</span>
+                          <span className="text-blue-900 font-medium">
+                            {new Intl.NumberFormat("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            }).format(calculateTotalExecutedValue(item))}
+                          </span>
+                        </div>
+                        <div className="flex justify-between border-t border-blue-300 pt-1">
+                          <span className="text-blue-700 font-medium">Progresso:</span>
+                          <span className="text-blue-900 font-bold">
+                            {calculatedProgress}% concluído
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                O progresso do pai é calculado automaticamente pela média dos
-                filhos
-              </p>
-            </div>
+            )}
           </div>
 
           {/* Botões */}
