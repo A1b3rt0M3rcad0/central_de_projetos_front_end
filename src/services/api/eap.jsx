@@ -131,6 +131,36 @@ const eapService = {
       throw error;
     }
   },
+
+  /**
+   * Exclui uma EAP
+   * @param {number} eapId - ID da EAP
+   * @returns {Promise} - Confirmação da exclusão
+   */
+  async deleteEAP(eapId) {
+    try {
+      const response = await api.delete(`/eap/${eapId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao excluir EAP:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Exclui um item da EAP
+   * @param {number} itemId - ID do item
+   * @returns {Promise} - Confirmação da exclusão
+   */
+  async deleteItem(itemId) {
+    try {
+      const response = await api.delete(`/eap/items/${itemId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao excluir item da EAP:", error);
+      throw error;
+    }
+  },
 };
 
 export default eapService;

@@ -41,10 +41,13 @@ export default function EAPPage() {
   const [error, setError] = useState(null);
   const [showItemModal, setShowItemModal] = useState(false);
   const [showCreateEAPModal, setShowCreateEAPModal] = useState(false);
+  const [showEditEAPModal, setShowEditEAPModal] = useState(false);
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [parentItem, setParentItem] = useState(null);
   const [expandedItems, setExpandedItems] = useState([]);
   const [notification, setNotification] = useState(null);
+  const [deleteConfirmData, setDeleteConfirmData] = useState(null);
 
   // Carregar dados da EAP do projeto
   useEffect(() => {
@@ -157,6 +160,107 @@ export default function EAPPage() {
     } catch (err) {
       handleError(err, "Erro ao salvar item");
     }
+  };
+
+  const handleDeleteItem = (itemId) => {
+    // Encontrar o item para mostrar informações na confirmação
+    const findItem = (items, id) => {
+      for (const item of items) {
+        if (item.id === id) return item;
+        if (item.children) {
+          const found = findItem(item.children, id);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    const itemToDelete = findItem(eapData?.items || [], itemId);
+    if (!itemToDelete) return;
+
+    const hasChildren =
+      itemToDelete.children && itemToDelete.children.length > 0;
+    const childrenCount = hasChildren ? itemToDelete.children.length : 0;
+
+    setDeleteConfirmData({
+      type: "item",
+      id: itemId,
+      name: itemToDelete.name,
+      hasChildren,
+      childrenCount,
+      onConfirm: async () => {
+        try {
+          await eapService.deleteItem(itemId);
+          await loadProjectEAP();
+
+          setNotification({
+            message: hasChildren
+              ? `Item e ${childrenCount} filho(s) excluído(s) com sucesso!`
+              : "Item excluído com sucesso!",
+            type: "success",
+          });
+          setTimeout(() => setNotification(null), 3000);
+        } catch (err) {
+          handleError(err, "Erro ao excluir item");
+        }
+      },
+    });
+    setShowDeleteConfirmModal(true);
+  };
+
+  const handleUpdateEAP = async (updates) => {
+    try {
+      await eapService.updateEAP(eapData.id, updates);
+      await loadProjectEAP();
+
+      setNotification({
+        message: "EAP atualizada com sucesso!",
+        type: "success",
+      });
+      setTimeout(() => setNotification(null), 3000);
+    } catch (err) {
+      handleError(err, "Erro ao atualizar EAP");
+    }
+  };
+
+  const handleDeleteEAP = () => {
+    // Contar total de itens na EAP
+    const countItems = (items) => {
+      let count = 0;
+      for (const item of items) {
+        count++;
+        if (item.children) {
+          count += countItems(item.children);
+        }
+      }
+      return count;
+    };
+
+    const totalItems = countItems(eapData?.items || []);
+
+    setDeleteConfirmData({
+      type: "eap",
+      id: eapData.id,
+      name: eapData.name,
+      totalItems,
+      onConfirm: async () => {
+        try {
+          await eapService.deleteEAP(eapData.id);
+
+          setNotification({
+            message: `EAP e ${totalItems} item(ns) excluído(s) com sucesso!`,
+            type: "success",
+          });
+          setTimeout(() => setNotification(null), 3000);
+
+          // Volta para a página do projeto
+          navigate("/projectpage", { state: { initial_date: project } });
+        } catch (err) {
+          handleError(err, "Erro ao excluir EAP");
+        }
+      },
+    });
+    setShowDeleteConfirmModal(true);
   };
 
   // Calcula o progresso real de um item baseado nos filhos
@@ -436,6 +540,20 @@ export default function EAPPage() {
                   <Plus className="w-5 h-5" />
                   Nova Fase
                 </button>
+                <button
+                  onClick={() => setShowEditEAPModal(true)}
+                  className="flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-colors font-medium"
+                >
+                  <Edit className="w-5 h-5" />
+                  Editar EAP
+                </button>
+                <button
+                  onClick={handleDeleteEAP}
+                  className="flex items-center gap-2 bg-red-500/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg hover:bg-red-500/30 transition-colors font-medium"
+                >
+                  <Trash2 className="w-5 h-5" />
+                  Excluir EAP
+                </button>
                 <button className="flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-colors font-medium">
                   <Download className="w-5 h-5" />
                   Exportar
@@ -550,7 +668,7 @@ export default function EAPPage() {
                         isExpanded={expandedItems.includes(item.id)}
                         onToggle={() => toggleExpand(item.id)}
                         onEdit={() => handleEditItem(item)}
-                        onDelete={() => alert(`Deletar ${item.name}`)}
+                        onDelete={() => handleDeleteItem(item.id)}
                         onAddChild={() => handleAddItem(item)}
                         handleEditItem={handleEditItem}
                         handleAddItem={handleAddItem}
@@ -637,8 +755,232 @@ export default function EAPPage() {
             onClearNotification={() => setNotification(null)}
           />
         )}
+
+        {showEditEAPModal && (
+          <EditEAPModal
+            eapData={eapData}
+            onClose={() => setShowEditEAPModal(false)}
+            onSave={handleUpdateEAP}
+            notification={notification}
+            onClearNotification={() => setNotification(null)}
+          />
+        )}
+
+        {showDeleteConfirmModal && deleteConfirmData && (
+          <DeleteConfirmModal
+            data={deleteConfirmData}
+            onClose={() => {
+              setShowDeleteConfirmModal(false);
+              setDeleteConfirmData(null);
+            }}
+            onConfirm={async () => {
+              await deleteConfirmData.onConfirm();
+              setShowDeleteConfirmModal(false);
+              setDeleteConfirmData(null);
+            }}
+          />
+        )}
       </BaseContent>
     </BasePage>
+  );
+}
+
+// Modal para editar EAP
+function EditEAPModal({
+  eapData,
+  onClose,
+  onSave,
+  notification,
+  onClearNotification,
+}) {
+  const [name, setName] = useState(eapData?.name || "");
+  const [description, setDescription] = useState(eapData?.description || "");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await onSave({ name, description });
+      onClose();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+        {/* Notificação no topo do modal */}
+        {notification && (
+          <div className="p-4 border-b border-gray-200">
+            <NotificationToast
+              message={notification.message}
+              type={notification.type}
+              onClose={onClearNotification}
+            />
+          </div>
+        )}
+
+        <div className="p-6 border-b border-gray-200">
+          <h2 className="text-2xl font-bold text-gray-900">Editar EAP</h2>
+          <p className="text-gray-600 mt-1">
+            Atualize as informações da estrutura analítica
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Nome da EAP
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Descrição
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              rows={3}
+              required
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              disabled={loading}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-2"
+              disabled={loading}
+            >
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+              Salvar Alterações
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// Modal de Confirmação de Exclusão
+function DeleteConfirmModal({ data, onClose, onConfirm }) {
+  const [loading, setLoading] = useState(false);
+
+  const handleConfirm = async () => {
+    setLoading(true);
+    try {
+      await onConfirm();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const isEAP = data.type === "eap";
+  const isItem = data.type === "item";
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+        <div className="p-6">
+          {/* Ícone de Aviso */}
+          <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full">
+            <AlertTriangle className="w-8 h-8 text-red-600" />
+          </div>
+
+          {/* Título */}
+          <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
+            Confirmar Exclusão
+          </h2>
+
+          {/* Mensagem */}
+          <div className="text-center mb-6">
+            {isEAP && (
+              <div className="space-y-3">
+                <p className="text-gray-600">
+                  Tem certeza que deseja excluir a EAP{" "}
+                  <strong>"{data.name}"</strong>?
+                </p>
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-sm text-red-800 font-medium mb-2">
+                    Esta ação irá excluir:
+                  </p>
+                  <ul className="text-sm text-red-700 space-y-1">
+                    <li>• A EAP completa</li>
+                    <li>• {data.totalItems} item(ns) da estrutura</li>
+                    <li>• Todo o histórico e progresso</li>
+                  </ul>
+                </div>
+                <p className="text-sm text-red-600 font-medium">
+                  Esta ação não pode ser desfeita.
+                </p>
+              </div>
+            )}
+
+            {isItem && (
+              <div className="space-y-3">
+                <p className="text-gray-600">
+                  Tem certeza que deseja excluir o item{" "}
+                  <strong>"{data.name}"</strong>?
+                </p>
+                {data.hasChildren && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <p className="text-sm text-red-800 font-medium mb-2">
+                      Esta ação irá excluir:
+                    </p>
+                    <ul className="text-sm text-red-700 space-y-1">
+                      <li>• Este item</li>
+                      <li>• {data.childrenCount} item(ns) filho(s)</li>
+                    </ul>
+                  </div>
+                )}
+                <p className="text-sm text-red-600 font-medium">
+                  Esta ação não pode ser desfeita.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Botões */}
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              disabled={loading}
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirm}
+              className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 font-medium inline-flex items-center justify-center gap-2"
+              disabled={loading}
+            >
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+              Excluir
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -995,7 +1337,7 @@ function EAPTreeItem({
               isExpanded={expandedItems.includes(child.id)}
               onToggle={() => toggleExpand(child.id)}
               onEdit={() => handleEditItem(child)}
-              onDelete={() => alert(`Deletar ${child.name}`)}
+              onDelete={() => handleDeleteItem(child.id)}
               onAddChild={() => handleAddItem(child)}
               handleEditItem={handleEditItem}
               handleAddItem={handleAddItem}
