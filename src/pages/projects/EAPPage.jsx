@@ -1699,6 +1699,9 @@ function EAPItemModal({
     try {
       const dataToSave = {
         ...formData,
+        // Valores padrão para campos opcionais
+        description: formData.description.trim() || "A definir",
+        responsible: formData.responsible.trim() || "A definir",
         budget: parseFloat(formData.budget) || 0,
         progress: parseInt(formData.progress) || 0,
         // Envia as datas no formato YYYY-MM-DD sem timezone
@@ -1818,7 +1821,7 @@ function EAPItemModal({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Descrição <span className="text-red-500">*</span>
+                  Descrição
                 </label>
                 <textarea
                   name="description"
@@ -1826,14 +1829,13 @@ function EAPItemModal({
                   onChange={handleChange}
                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                   rows={2}
-                  placeholder="Descreva o item"
-                  required
+                  placeholder="Descreva o item (opcional)"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Responsável <span className="text-red-500">*</span>
+                  Responsável
                 </label>
                 <input
                   type="text"
@@ -1841,8 +1843,7 @@ function EAPItemModal({
                   value={formData.responsible}
                   onChange={handleChange}
                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                  placeholder="Nome do responsável"
-                  required
+                  placeholder="Nome do responsável (opcional)"
                 />
               </div>
             </div>
