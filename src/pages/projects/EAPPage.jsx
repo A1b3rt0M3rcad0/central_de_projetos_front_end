@@ -332,7 +332,10 @@ export default function EAPPage() {
     };
     flattenItems(eapData.items);
 
-    const totalBudget = allItems.reduce(
+    // Orçamento total: soma apenas os itens de nível raiz (Fases)
+    // para evitar duplicação (fases já agregam orçamento dos filhos)
+    const rootItems = eapData.items || [];
+    const totalBudget = rootItems.reduce(
       (sum, item) => sum + parseFloat(item.budget || 0),
       0
     );
@@ -348,7 +351,6 @@ export default function EAPPage() {
     ).length;
 
     // Progresso geral baseado apenas nos itens de alto nível (raiz)
-    const rootItems = eapData.items || [];
     const avgProgress =
       rootItems.length > 0
         ? rootItems.reduce(
