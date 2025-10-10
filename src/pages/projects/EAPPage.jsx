@@ -24,6 +24,9 @@ import {
   Clock,
   User,
   X,
+  CheckCircle2,
+  AlertTriangle,
+  Info,
 } from "lucide-react";
 
 export default function EAPPage() {
@@ -41,6 +44,7 @@ export default function EAPPage() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [parentItem, setParentItem] = useState(null);
   const [expandedItems, setExpandedItems] = useState([]);
+  const [notification, setNotification] = useState(null);
 
   // Carregar dados da EAP do projeto
   useEffect(() => {
@@ -80,7 +84,10 @@ export default function EAPPage() {
   const handleCreateEAP = async (eapData) => {
     try {
       if (!user?.cpf) {
-        alert("Erro: Usuário não autenticado");
+        handleError(
+          new Error("Usuário não autenticado"),
+          "Erro de autenticação"
+        );
         return;
       }
 
@@ -96,9 +103,15 @@ export default function EAPPage() {
       setEapData(newEAP.eap);
       setShowCreateEAPModal(false);
       await loadProjectEAP();
+
+      // Mostrar sucesso
+      setNotification({
+        message: "EAP criada com sucesso!",
+        type: "success",
+      });
+      setTimeout(() => setNotification(null), 3000);
     } catch (err) {
-      console.error("Erro ao criar EAP:", err);
-      alert("Erro ao criar EAP: " + (err.response?.data?.error || err.message));
+      handleError(err, "Erro ao criar EAP");
     }
   };
 
@@ -132,11 +145,17 @@ export default function EAPPage() {
       setShowItemModal(false);
       setSelectedItem(null);
       setParentItem(null);
+
+      // Mostrar sucesso
+      setNotification({
+        message: itemData.id
+          ? "Item atualizado com sucesso!"
+          : "Item criado com sucesso!",
+        type: "success",
+      });
+      setTimeout(() => setNotification(null), 3000);
     } catch (err) {
-      console.error("Erro ao salvar item:", err);
-      alert(
-        "Erro ao salvar item: " + (err.response?.data?.error || err.message)
-      );
+      handleError(err, "Erro ao salvar item");
     }
   };
 
@@ -243,6 +262,56 @@ export default function EAPPage() {
       month: "2-digit",
       year: "numeric",
     });
+  };
+
+  // Função para tratar erros de forma amigável
+  const handleError = (error, defaultMessage = "Erro inesperado") => {
+    console.error("Erro:", error);
+
+    let message = defaultMessage;
+    let type = "error";
+
+    if (error.response?.data?.error) {
+      const errorText = error.response.data.error;
+
+      // Mapear erros específicos para mensagens amigáveis
+      if (errorText.includes("Código EAP") && errorText.includes("já existe")) {
+        message =
+          "Este código já está sendo usado. Escolha um código diferente.";
+        type = "warning";
+      } else if (
+        errorText.includes("não é permitido criar") &&
+        errorText.includes("atividade")
+      ) {
+        message =
+          "Não é possível criar uma atividade como item raiz. Atividades devem ser criadas dentro de entregas.";
+        type = "warning";
+      } else if (
+        errorText.includes("não é permitido criar") &&
+        errorText.includes("tarefa")
+      ) {
+        message =
+          "Não é possível criar uma tarefa como item raiz. Tarefas devem ser criadas dentro de atividades.";
+        type = "warning";
+      } else if (errorText.includes("EAP não encontrada")) {
+        message = "EAP não encontrada. Tente recarregar a página.";
+        type = "error";
+      } else if (errorText.includes("Projeto já possui EAP")) {
+        message = "Este projeto já possui uma EAP. Não é possível criar outra.";
+        type = "warning";
+      } else {
+        message = errorText;
+      }
+    } else if (error.message) {
+      message = error.message;
+    }
+
+    setNotification({ message, type });
+
+    // Auto-remover notificação após 5 segundos
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
   };
 
   const toggleExpand = (itemId) => {
@@ -547,12 +616,15 @@ export default function EAPPage() {
           <EAPItemModal
             item={selectedItem}
             parentItem={parentItem}
+            eapData={eapData}
             onClose={() => {
               setShowItemModal(false);
               setSelectedItem(null);
               setParentItem(null);
             }}
             onSave={handleSaveItem}
+            notification={notification}
+            onClearNotification={() => setNotification(null)}
           />
         )}
 
@@ -561,10 +633,58 @@ export default function EAPPage() {
             projectName={project?.name}
             onClose={() => setShowCreateEAPModal(false)}
             onSave={handleCreateEAP}
+            notification={notification}
+            onClearNotification={() => setNotification(null)}
           />
         )}
       </BaseContent>
     </BasePage>
+  );
+}
+
+// Componente de Notificação Toast
+function NotificationToast({ message, type, onClose }) {
+  const getIcon = () => {
+    switch (type) {
+      case "success":
+        return <CheckCircle2 className="w-5 h-5" />;
+      case "warning":
+        return <AlertTriangle className="w-5 h-5" />;
+      case "error":
+        return <AlertCircle className="w-5 h-5" />;
+      default:
+        return <Info className="w-5 h-5" />;
+    }
+  };
+
+  const getStyles = () => {
+    switch (type) {
+      case "success":
+        return "bg-green-50 border-green-200 text-green-800";
+      case "warning":
+        return "bg-yellow-50 border-yellow-200 text-yellow-800";
+      case "error":
+        return "bg-red-50 border-red-200 text-red-800";
+      default:
+        return "bg-blue-50 border-blue-200 text-blue-800";
+    }
+  };
+
+  return (
+    <div
+      className={`${getStyles()} border rounded-lg p-3 shadow-sm flex items-start gap-3`}
+    >
+      <div className="flex-shrink-0 mt-0.5">{getIcon()}</div>
+      <div className="flex-1">
+        <p className="text-sm font-medium">{message}</p>
+      </div>
+      <button
+        onClick={onClose}
+        className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+      >
+        <X className="w-4 h-4" />
+      </button>
+    </div>
   );
 }
 
@@ -892,7 +1012,13 @@ function EAPTreeItem({
 }
 
 // Modal para criar EAP
-function CreateEAPModal({ projectName, onClose, onSave }) {
+function CreateEAPModal({
+  projectName,
+  onClose,
+  onSave,
+  notification,
+  onClearNotification,
+}) {
   const [name, setName] = useState(`EAP - ${projectName}`);
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
@@ -910,6 +1036,17 @@ function CreateEAPModal({ projectName, onClose, onSave }) {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+        {/* Notificação no topo do modal */}
+        {notification && (
+          <div className="p-4 border-b border-gray-200">
+            <NotificationToast
+              message={notification.message}
+              type={notification.type}
+              onClose={onClearNotification}
+            />
+          </div>
+        )}
+
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-2xl font-bold text-gray-900">Criar Nova EAP</h2>
           <p className="text-gray-600 mt-1">
@@ -969,19 +1106,53 @@ function CreateEAPModal({ projectName, onClose, onSave }) {
 }
 
 // Modal para criar/editar Item
-function EAPItemModal({ item, parentItem, onClose, onSave }) {
+function EAPItemModal({
+  item,
+  parentItem,
+  eapData,
+  onClose,
+  onSave,
+  notification,
+  onClearNotification,
+}) {
   const isEditing = !!item && item.id;
   const isAddingChild = !!parentItem;
 
   // Calcular código e tipo automaticamente baseado no pai
   const getDefaultCode = () => {
     if (item) return item.code;
+
     if (parentItem) {
-      // Conta quantos filhos o pai já tem
-      const childrenCount = (parentItem.children?.length || 0) + 1;
-      return `${parentItem.code}.${childrenCount}`;
+      // Para itens filhos, sugere o próximo número sequencial
+      const childrenCodes = (parentItem.children || []).map((child) => {
+        const parts = child.code.split(".");
+        const lastPart = parts[parts.length - 1];
+        return parseInt(lastPart) || 0;
+      });
+
+      // Encontra o próximo número disponível
+      let nextNumber = 1;
+      while (childrenCodes.includes(nextNumber)) {
+        nextNumber++;
+      }
+
+      return `${parentItem.code}.${nextNumber}`;
     }
-    return "1";
+
+    // Para itens raiz, verifica todos os códigos existentes
+    const allRootCodes = (eapData?.items || []).map((rootItem) => {
+      const parts = rootItem.code.split(".");
+      const firstPart = parts[0];
+      return parseInt(firstPart) || 0;
+    });
+
+    // Encontra o próximo número disponível
+    let nextNumber = 1;
+    while (allRootCodes.includes(nextNumber)) {
+      nextNumber++;
+    }
+
+    return nextNumber.toString();
   };
 
   const getDefaultType = () => {
@@ -1056,6 +1227,17 @@ function EAPItemModal({ item, parentItem, onClose, onSave }) {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        {/* Notificação no topo do modal */}
+        {notification && (
+          <div className="p-4 border-b border-gray-200">
+            <NotificationToast
+              message={notification.message}
+              type={notification.type}
+              onClose={onClearNotification}
+            />
+          </div>
+        )}
+
         <div className="sticky top-0 bg-white p-4 md:p-6 border-b border-gray-200 z-10">
           <div className="flex items-center justify-between">
             <div>
@@ -1090,6 +1272,11 @@ function EAPItemModal({ item, parentItem, onClose, onSave }) {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Código <span className="text-red-500">*</span>
+                  {!isEditing && (
+                    <span className="text-xs text-gray-500 ml-1">
+                      (gerado automaticamente)
+                    </span>
+                  )}
                 </label>
                 <input
                   type="text"
@@ -1099,6 +1286,7 @@ function EAPItemModal({ item, parentItem, onClose, onSave }) {
                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                   placeholder="Ex: 1.1"
                   required
+                  readOnly={!isEditing}
                 />
               </div>
 
