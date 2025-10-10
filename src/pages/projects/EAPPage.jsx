@@ -4,6 +4,7 @@ import BasePage from "../../components/layout/BasePage";
 import BaseContent from "../../components/BaseContent";
 import eapService from "../../services/api/eap";
 import { useAuth } from "../../hooks/useAuth";
+import { exportEAPToExcel } from "../../utils/eapExport";
 import {
   Network,
   Plus,
@@ -261,6 +262,33 @@ export default function EAPPage() {
       },
     });
     setShowDeleteConfirmModal(true);
+  };
+
+  const handleExportEAP = () => {
+    try {
+      const stats = calculateStats();
+      const result = exportEAPToExcel(
+        eapData,
+        project?.name || "Projeto",
+        stats
+      );
+
+      if (result.success) {
+        setNotification({
+          message: `${result.message} Arquivo: ${result.fileName}`,
+          type: "success",
+        });
+        setTimeout(() => setNotification(null), 5000);
+      } else {
+        setNotification({
+          message: `Erro ao exportar: ${result.error}`,
+          type: "error",
+        });
+        setTimeout(() => setNotification(null), 5000);
+      }
+    } catch (err) {
+      handleError(err, "Erro ao exportar EAP");
+    }
   };
 
   // Calcula o progresso real de um item baseado nos filhos
@@ -557,7 +585,10 @@ export default function EAPPage() {
                   <Trash2 className="w-5 h-5" />
                   Excluir EAP
                 </button>
-                <button className="flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-colors font-medium">
+                <button
+                  onClick={handleExportEAP}
+                  className="flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-colors font-medium"
+                >
                   <Download className="w-5 h-5" />
                   Exportar
                 </button>
@@ -1550,13 +1581,16 @@ function EAPItemModal({
   const handleProgressChange = (e) => {
     const progress = parseInt(e.target.value);
     const newStatus = getStatusFromProgress(progress);
-    
+
     // Mantém status pausado ou cancelado se já estiver nesses estados
     const currentStatus = formData.status;
-    const finalStatus = (currentStatus === "pausado" || currentStatus === "cancelado") && progress > 0 && progress < 100
-      ? currentStatus
-      : newStatus;
-    
+    const finalStatus =
+      (currentStatus === "pausado" || currentStatus === "cancelado") &&
+      progress > 0 &&
+      progress < 100
+        ? currentStatus
+        : newStatus;
+
     setFormData((prev) => ({
       ...prev,
       progress: progress,
@@ -1813,9 +1847,13 @@ function EAPItemModal({
                   />
                 )}
                 <p className="text-xs text-gray-500 mt-1">
-                  {formData.progress === 0 && "Status é automaticamente 'Não Iniciado' quando progresso = 0%"}
-                  {formData.progress === 100 && "Status é automaticamente 'Concluído' quando progresso = 100%"}
-                  {formData.progress > 0 && formData.progress < 100 && "Você pode definir como 'Em Andamento', 'Pausado' ou 'Cancelado'"}
+                  {formData.progress === 0 &&
+                    "Status é automaticamente 'Não Iniciado' quando progresso = 0%"}
+                  {formData.progress === 100 &&
+                    "Status é automaticamente 'Concluído' quando progresso = 100%"}
+                  {formData.progress > 0 &&
+                    formData.progress < 100 &&
+                    "Você pode definir como 'Em Andamento', 'Pausado' ou 'Cancelado'"}
                 </p>
               </div>
             </div>
@@ -1851,7 +1889,8 @@ function EAPItemModal({
                 </div>
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                O progresso do pai é calculado automaticamente pela média dos filhos
+                O progresso do pai é calculado automaticamente pela média dos
+                filhos
               </p>
             </div>
           </div>
