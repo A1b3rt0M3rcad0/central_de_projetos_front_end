@@ -28,6 +28,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   Info,
+  TreePine,
 } from "lucide-react";
 
 export default function EAPPage() {
@@ -616,6 +617,13 @@ export default function EAPPage() {
                 >
                   <Trash2 className="w-5 h-5" />
                   Excluir EAP
+                </button>
+                <button
+                  onClick={() => navigate(`/project/${id}/eap/tree-view`)}
+                  className="flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-colors font-medium"
+                >
+                  <TreePine className="w-5 h-5" />
+                  Visualizar Árvore
                 </button>
                 <button
                   onClick={handleExportEAP}

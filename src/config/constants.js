@@ -17,6 +17,7 @@ export const ROUTES = {
     WORK_PROJECTS: "/workprojects",
     WORK_PROJECT_VIEW: "/workproject",
     EAP: "/project/:id/eap",
+    EAP_TREE_VIEW: "/project/:id/eap/tree-view",
   },
   EMPRESAS: {
     LIST: "/empresalistpage",
