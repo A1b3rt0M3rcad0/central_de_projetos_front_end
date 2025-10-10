@@ -1535,9 +1535,33 @@ function EAPItemModal({
 
   const [loading, setLoading] = useState(false);
 
+  // Função para determinar o status baseado no progresso
+  const getStatusFromProgress = (progress) => {
+    if (progress === 0) return "nao_iniciado";
+    if (progress === 100) return "concluido";
+    return "em_andamento";
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleProgressChange = (e) => {
+    const progress = parseInt(e.target.value);
+    const newStatus = getStatusFromProgress(progress);
+    
+    // Mantém status pausado ou cancelado se já estiver nesses estados
+    const currentStatus = formData.status;
+    const finalStatus = (currentStatus === "pausado" || currentStatus === "cancelado") && progress > 0 && progress < 100
+      ? currentStatus
+      : newStatus;
+    
+    setFormData((prev) => ({
+      ...prev,
+      progress: progress,
+      status: finalStatus,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -1755,20 +1779,44 @@ function EAPItemModal({
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Status <span className="text-red-500">*</span>
                 </label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                  required
-                >
-                  <option value="nao_iniciado">Não Iniciado</option>
-                  <option value="em_andamento">Em Andamento</option>
-                  <option value="concluido">Concluído</option>
-                  <option value="pausado">Pausado</option>
-                  <option value="cancelado">Cancelado</option>
-                  <option value="bloqueado">Bloqueado</option>
-                </select>
+                {formData.progress > 0 && formData.progress < 100 ? (
+                  <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    required
+                  >
+                    <option value="em_andamento">Em Andamento</option>
+                    <option value="pausado">Pausado</option>
+                    <option value="cancelado">Cancelado</option>
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    value={
+                      formData.status === "nao_iniciado"
+                        ? "Não Iniciado"
+                        : formData.status === "concluido"
+                        ? "Concluído"
+                        : formData.status === "em_andamento"
+                        ? "Em Andamento"
+                        : formData.status === "pausado"
+                        ? "Pausado"
+                        : formData.status === "cancelado"
+                        ? "Cancelado"
+                        : "Bloqueado"
+                    }
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                    disabled
+                    readOnly
+                  />
+                )}
+                <p className="text-xs text-gray-500 mt-1">
+                  {formData.progress === 0 && "Status é automaticamente 'Não Iniciado' quando progresso = 0%"}
+                  {formData.progress === 100 && "Status é automaticamente 'Concluído' quando progresso = 100%"}
+                  {formData.progress > 0 && formData.progress < 100 && "Você pode definir como 'Em Andamento', 'Pausado' ou 'Cancelado'"}
+                </p>
               </div>
             </div>
 
@@ -1781,12 +1829,7 @@ function EAPItemModal({
                 <input
                   type="range"
                   value={formData.progress}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      progress: parseInt(e.target.value),
-                    }))
-                  }
+                  onChange={handleProgressChange}
                   className="flex-1"
                   min="0"
                   max="100"
@@ -1795,7 +1838,7 @@ function EAPItemModal({
                   type="number"
                   name="progress"
                   value={formData.progress}
-                  onChange={handleChange}
+                  onChange={handleProgressChange}
                   className="w-20 px-2 py-1 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-center font-semibold"
                   min="0"
                   max="100"
@@ -1807,6 +1850,9 @@ function EAPItemModal({
                   />
                 </div>
               </div>
+              <p className="text-xs text-gray-500 mt-1">
+                O progresso do pai é calculado automaticamente pela média dos filhos
+              </p>
             </div>
           </div>
 
