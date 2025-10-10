@@ -1558,8 +1558,9 @@ function EAPItemModal({
         ...formData,
         budget: parseFloat(formData.budget) || 0,
         progress: parseInt(formData.progress) || 0,
-        start_date: new Date(formData.start_date + "T00:00:00").toISOString(),
-        end_date: new Date(formData.end_date + "T23:59:59").toISOString(),
+        // Envia as datas no formato YYYY-MM-DD sem timezone
+        start_date: formData.start_date,
+        end_date: formData.end_date,
       };
 
       console.log("Dados a serem salvos:", dataToSave);
