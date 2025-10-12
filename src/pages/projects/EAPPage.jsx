@@ -1710,34 +1710,34 @@ function EAPItemModal({
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Código <span className="text-red-500">*</span>
-                  {!isEditing && (
-                    <span className="text-xs text-gray-500 ml-1">
-                      (gerado automaticamente)
-                    </span>
-                  )}
+                  <span className="text-xs text-gray-500 ml-1">
+                    (gerado automaticamente)
+                  </span>
                 </label>
                 <input
                   type="text"
                   name="code"
                   value={formData.code}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
                   placeholder="Ex: 1.1"
                   required
-                  readOnly={!isEditing}
+                  disabled
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Tipo <span className="text-red-500">*</span>
+                  <span className="text-xs text-gray-500 ml-1">
+                    (definido pela hierarquia)
+                  </span>
                 </label>
                 <select
                   name="type"
                   value={formData.type}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
                   required
+                  disabled
                 >
                   <option value="fase">📋 Fase</option>
                   <option value="entrega">📦 Entrega</option>
