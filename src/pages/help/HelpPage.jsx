@@ -28,6 +28,9 @@ import {
   Link2,
   ClipboardCheck,
   ArrowLeft,
+  Network,
+  Download,
+  Layers,
 } from "lucide-react";
 
 export default function HelpPage() {
@@ -404,6 +407,343 @@ export default function HelpPage() {
             "Visualize histórico de fiscalizações",
           ],
           note: "O Dashboard de Fiscais é otimizado para acesso em tablets e dispositivos móveis",
+        },
+      ],
+    },
+    {
+      id: "eap",
+      title: "EAP - Estrutura Analítica",
+      icon: <Network className="w-5 h-5" />,
+      color: "indigo",
+      topics: [
+        {
+          title: "O que é a EAP?",
+          content: `A EAP (Estrutura Analítica do Projeto) ou WBS (Work Breakdown Structure) é uma ferramenta fundamental de gerenciamento que decompõe o projeto em componentes menores e gerenciáveis, organizados hierarquicamente. Ela facilita o planejamento, controle de custos, acompanhamento de progresso e distribuição de responsabilidades.`,
+        },
+        {
+          title: "Estrutura Hierárquica da EAP",
+          content: `A EAP é organizada em 4 níveis hierárquicos, cada um com sua função específica:`,
+          items: [
+            {
+              type: "📋 Fase (Nível 1)",
+              description:
+                "Agrupamento principal que representa grandes etapas do projeto. Ex: 'Planejamento', 'Execução', 'Finalização'",
+            },
+            {
+              type: "📦 Entrega (Nível 2)",
+              description:
+                "Resultados tangíveis dentro de uma fase. Ex: 'Fundação', 'Estrutura', 'Acabamento'",
+            },
+            {
+              type: "✅ Atividade (Nível 3)",
+              description:
+                "Tarefas executáveis que geram as entregas. Ex: 'Escavação', 'Concretagem', 'Impermeabilização'",
+            },
+            {
+              type: "📝 Tarefa (Nível 4)",
+              description:
+                "Menor unidade de trabalho, subtarefas específicas. Ex: 'Preparar materiais', 'Executar serviço', 'Conferir qualidade'",
+            },
+          ],
+          note: "A hierarquia DEVE ser respeitada: Fases contêm Entregas, Entregas contêm Atividades, Atividades contêm Tarefas",
+        },
+        {
+          title: "Código WBS - Identificação Hierárquica",
+          content: `Cada item da EAP possui um código WBS único que identifica sua posição na hierarquia:`,
+          items: [
+            {
+              name: "Nível 1 (Fase)",
+              description: "Código: 1, 2, 3, 4...",
+            },
+            {
+              name: "Nível 2 (Entrega)",
+              description: "Código: 1.1, 1.2, 2.1, 2.2...",
+            },
+            {
+              name: "Nível 3 (Atividade)",
+              description: "Código: 1.1.1, 1.1.2, 1.2.1...",
+            },
+            {
+              name: "Nível 4 (Tarefa)",
+              description: "Código: 1.1.1.1, 1.1.1.2...",
+            },
+          ],
+          note: "Os códigos são gerados automaticamente ao criar novos itens, mantendo a numeração sequencial correta",
+        },
+        {
+          title: "Criar uma EAP para um Projeto",
+          steps: [
+            "Acesse a página do projeto desejado",
+            'Clique em "EAP" no menu ou card do projeto',
+            'Se o projeto não tiver EAP, clique em "Criar EAP"',
+            "Defina um nome descritivo (Ex: 'EAP - Obra de Pavimentação')",
+            "Adicione uma descrição explicando a estrutura do projeto",
+            'Clique em "Criar EAP"',
+          ],
+          note: "Cada projeto pode ter apenas UMA EAP. Apenas usuários ADMIN podem criar EAPs",
+        },
+        {
+          title: "Adicionar Itens à EAP",
+          steps: [
+            "Na página da EAP, clique em 'Nova Fase' para criar o primeiro nível",
+            "Preencha os campos obrigatórios: Nome, Responsável, Datas, Orçamento",
+            "O código WBS é gerado automaticamente",
+            "Para adicionar subitens, clique no botão '+' ao lado de um item existente",
+            "O tipo do filho é sugerido automaticamente (Fase → Entrega → Atividade → Tarefa)",
+            "Continue estruturando até o nível de detalhe desejado",
+            "Use 'Expandir Tudo' para visualizar a estrutura completa",
+          ],
+          warning:
+            "Não é possível criar uma Atividade diretamente em uma Fase, ou uma Tarefa diretamente em uma Entrega. Respeite a hierarquia!",
+        },
+        {
+          title: "Campos dos Itens da EAP",
+          fields: [
+            {
+              name: "Código WBS",
+              description: "Código hierárquico único (gerado automaticamente)",
+              required: true,
+            },
+            {
+              name: "Nome",
+              description: "Título descritivo do item",
+              required: true,
+            },
+            {
+              name: "Tipo",
+              description: "Fase, Entrega, Atividade ou Tarefa",
+              required: true,
+            },
+            {
+              name: "Descrição",
+              description: "Detalhamento do que será realizado",
+              required: false,
+            },
+            {
+              name: "Responsável",
+              description: "Nome da pessoa ou equipe responsável",
+              required: false,
+            },
+            {
+              name: "Data de Início",
+              description: "Quando o item começa a ser executado",
+              required: true,
+            },
+            {
+              name: "Data de Término",
+              description: "Prazo final para conclusão do item",
+              required: true,
+            },
+            {
+              name: "Orçamento (R$)",
+              description: "Valor alocado para este item específico",
+              required: true,
+            },
+            {
+              name: "Progresso (%)",
+              description: "Percentual de conclusão (0-100%)",
+              required: true,
+            },
+            {
+              name: "Status",
+              description:
+                "Não Iniciado, Em Andamento, Concluído, Pausado, Cancelado ou Bloqueado",
+              required: true,
+            },
+          ],
+        },
+        {
+          title: "Controle de Orçamento Inteligente",
+          content: `O sistema realiza validações automáticas de orçamento para garantir consistência financeira:`,
+          features: [
+            {
+              name: "Validação Hierárquica",
+              description:
+                "A soma dos orçamentos dos itens filhos não pode exceder o orçamento do item pai",
+            },
+            {
+              name: "Alerta de Ultrapassagem",
+              description:
+                "Se tentar alocar mais que o disponível, o sistema exibe mensagem informando o valor excedente",
+            },
+            {
+              name: "Orçamento Total do Projeto",
+              description:
+                "A soma de todas as Fases (nível raiz) é comparada com o orçamento total do projeto",
+            },
+            {
+              name: "Visualização Clara",
+              description:
+                "Cards mostram orçamento alocado vs. disponível com indicadores visuais (verde/vermelho)",
+            },
+          ],
+          note: "O orçamento de um item pai deve comportar a soma dos orçamentos de todos os seus filhos",
+        },
+        {
+          title: "Cálculo Automático de Progresso",
+          content: `O progresso dos itens com filhos é calculado automaticamente baseado no valor executado:`,
+          items: [
+            {
+              name: "Itens sem Filhos",
+              description:
+                "Progresso é definido manualmente (0-100%) pelo usuário",
+            },
+            {
+              name: "Itens com Filhos",
+              description:
+                "Progresso é calculado automaticamente: (Valor Executado dos Filhos ÷ Orçamento Total) × 100",
+            },
+            {
+              name: "Valor Executado",
+              description:
+                "Calculado como: Orçamento do Item × (Progresso / 100). Ex: R$ 10.000 com 50% = R$ 5.000 executado",
+            },
+            {
+              name: "Propagação para Cima",
+              description:
+                "O progresso sobe na hierarquia: uma Fase mostra o progresso agregado de todas suas Entregas",
+            },
+          ],
+          note: "Não é possível editar manualmente o progresso de itens que possuem filhos - ele é sempre calculado",
+        },
+        {
+          title: "Status Automático baseado no Progresso",
+          content: `O status do item é atualizado automaticamente conforme o progresso evolui:`,
+          items: [
+            {
+              name: "Progresso = 0%",
+              description: "Status: Não Iniciado (automático)",
+            },
+            {
+              name: "Progresso entre 1-99%",
+              description:
+                "Status: Em Andamento (pode ser alterado para Pausado ou Cancelado)",
+            },
+            {
+              name: "Progresso = 100%",
+              description: "Status: Concluído (automático)",
+            },
+          ],
+          note: "Enquanto estiver entre 1-99%, você pode mudar para 'Pausado' ou 'Cancelado' conforme necessário",
+        },
+        {
+          title: "Editar e Gerenciar Itens",
+          steps: [
+            "Clique no ícone de lápis (✏️) ao lado do item",
+            "Modifique os campos desejados",
+            "O sistema valida as alterações (datas, orçamento, hierarquia)",
+            'Clique em "Salvar" para confirmar',
+            "Para adicionar subitens, use o botão '+' (Plus)",
+            "Para excluir, clique no ícone de lixeira (🗑️) - isso excluirá também todos os filhos",
+          ],
+          warning:
+            "Ao excluir um item pai, TODOS os seus filhos (subitens) também serão excluídos permanentemente",
+        },
+        {
+          title: "Visualizações da EAP",
+          features: [
+            {
+              name: "Visualização Lista Hierárquica",
+              description:
+                "Estrutura colapsável com indentação visual, orçamento, progresso e ações inline. Ideal para edição rápida",
+            },
+            {
+              name: "Visualização em Árvore",
+              description:
+                "Diagrama gráfico mostrando todas as conexões e relações entre itens. Perfeito para apresentações",
+            },
+            {
+              name: "Expandir/Colapsar",
+              description:
+                "Botões para expandir ou colapsar toda a estrutura de uma vez",
+            },
+            {
+              name: "Indicadores Visuais",
+              description:
+                "Cores diferentes para cada tipo (Fase: azul, Entrega: verde, Atividade: roxo, Tarefa: amarelo)",
+            },
+          ],
+        },
+        {
+          title: "Estatísticas da EAP",
+          content: `O sistema exibe automaticamente estatísticas completas da estrutura:`,
+          items: [
+            {
+              name: "Progresso Geral",
+              description:
+                "Percentual médio de conclusão de todas as fases raiz com barra de progresso visual",
+            },
+            {
+              name: "Orçamento Total",
+              description:
+                "Soma de todos os orçamentos alocados + comparação com orçamento do projeto",
+            },
+            {
+              name: "Estrutura",
+              description:
+                "Contagem de quantas Fases, Entregas, Atividades e Tarefas existem",
+            },
+            {
+              name: "Status",
+              description:
+                "Quantos itens estão: Concluídos, Em Andamento e Não Iniciados",
+            },
+          ],
+        },
+        {
+          title: "Exportar EAP para Excel",
+          steps: [
+            'Na página da EAP, clique em "Exportar"',
+            "O sistema gera um arquivo Excel (.xlsx) com 2 abas:",
+            "• Aba 'Resumo': Informações gerais, estatísticas e orçamento total",
+            "• Aba 'Itens da EAP': Lista completa com hierarquia visual, formatação colorida por tipo",
+            "O arquivo é baixado automaticamente com nome: EAP_[Projeto]_[Data].xlsx",
+            "Abra no Excel/LibreOffice para visualizar, imprimir ou compartilhar",
+          ],
+          note: "A exportação preserva a hierarquia visual com indentação, cores e formatação profissional",
+        },
+        {
+          title: "Editar/Excluir a EAP Completa",
+          steps: [
+            'Use o botão "Editar EAP" para alterar nome e descrição da estrutura',
+            'O botão "Excluir EAP" remove toda a estrutura analítica',
+            "Ao excluir, TODOS os itens (fases, entregas, atividades, tarefas) são removidos",
+            "Uma confirmação será exibida mostrando quantos itens serão excluídos",
+            "Esta ação é IRREVERSÍVEL - não há como desfazer",
+          ],
+          warning:
+            "Apenas ADMIN pode editar ou excluir EAPs. Tenha certeza antes de excluir!",
+        },
+        {
+          title: "Boas Práticas ao Usar EAP",
+          tips: [
+            "Comece com Fases macro e vá detalhando gradualmente",
+            "Use nomes claros e descritivos para facilitar compreensão",
+            "Defina responsáveis para cada item garantindo accountability",
+            "Revise datas periodicamente e ajuste conforme a realidade do projeto",
+            "Atualize o progresso regularmente para manter dados confiáveis",
+            "Use a visualização em árvore para apresentações e reuniões",
+            "Exporte para Excel ao final de cada mês para documentação",
+            "Distribua o orçamento de forma realista entre os itens",
+          ],
+        },
+        {
+          title: "Permissões de Acesso",
+          items: [
+            {
+              role: "ADMIN",
+              permissions:
+                "Criar EAP, Criar/Editar/Excluir itens, Editar/Excluir EAP, Exportar",
+            },
+            {
+              role: "VEREADOR",
+              permissions: "Visualizar EAP e seus itens, Exportar",
+            },
+            {
+              role: "ASSESSOR",
+              permissions: "Visualizar EAP e seus itens, Exportar",
+            },
+          ],
         },
       ],
     },
