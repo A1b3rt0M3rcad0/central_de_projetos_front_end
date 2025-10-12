@@ -748,6 +748,324 @@ export default function HelpPage() {
       ],
     },
     {
+      id: "gantt",
+      title: "Cronograma de Gantt",
+      icon: <BarChart3 className="w-5 h-5" />,
+      color: "purple",
+      topics: [
+        {
+          title: "O que é o Cronograma de Gantt?",
+          content: `O Cronograma de Gantt é uma ferramenta visual de gerenciamento de projetos que exibe as tarefas em uma linha do tempo horizontal. Ele é gerado AUTOMATICAMENTE a partir da EAP do projeto, mostrando as barras de progresso, durações, datas e responsáveis de forma gráfica e interativa.`,
+        },
+        {
+          title: "Como Funciona no Sistema",
+          content: `O Gantt está diretamente integrado com a EAP. Quando você cria ou modifica itens na EAP, o cronograma é atualizado automaticamente. Ele organiza visualmente todas as fases, entregas, atividades e tarefas do projeto em um gráfico de barras horizontais ao longo do tempo.`,
+        },
+        {
+          title: "Acessar o Cronograma de Gantt",
+          steps: [
+            'Na página do projeto, clique no botão "Cronograma" ou no menu lateral',
+            "O sistema carrega automaticamente a EAP e gera o gráfico Gantt",
+            "Se o projeto não tiver EAP criada, você verá uma mensagem orientando a criar primeiro",
+            "O Gantt exibe TODAS as tarefas da EAP organizadas hierarquicamente",
+          ],
+          note: "O Gantt só funciona se o projeto tiver uma EAP criada. Sem EAP, não há cronograma.",
+        },
+        {
+          title: "Componentes do Gantt",
+          features: [
+            {
+              name: "Grid de Tarefas (Esquerda)",
+              description:
+                "Lista hierárquica mostrando código, nome, datas, duração, responsável, progresso, orçamento e status de cada tarefa",
+            },
+            {
+              name: "Linha do Tempo (Direita)",
+              description:
+                "Barras coloridas representando a duração de cada tarefa ao longo do tempo (dias, semanas ou meses)",
+            },
+            {
+              name: "Barras de Progresso",
+              description:
+                "Dentro de cada barra, uma área preenchida mostra o percentual de conclusão (0-100%)",
+            },
+            {
+              name: "Linha 'Hoje'",
+              description:
+                "Uma linha vertical vermelha marca a data atual no cronograma, facilitando identificar atrasos",
+            },
+            {
+              name: "Cards de Estatísticas",
+              description:
+                "No topo: Total de Tarefas, Concluídas, Em Andamento, Não Iniciadas e Atrasadas",
+            },
+          ],
+        },
+        {
+          title: "Cores das Barras (Por Tipo)",
+          items: [
+            {
+              type: "🔵 Azul",
+              description: "Fase - Agrupamento principal do projeto",
+            },
+            {
+              type: "🟢 Verde",
+              description: "Entrega - Resultado tangível esperado",
+            },
+            {
+              type: "🟣 Roxo",
+              description: "Atividade - Trabalho executável específico",
+            },
+            {
+              type: "🟠 Laranja",
+              description: "Tarefa - Menor unidade de trabalho",
+            },
+            {
+              type: "🔴 Vermelho",
+              description:
+                "Atrasada - Tarefa que passou da data de término e não está 100% concluída",
+            },
+          ],
+        },
+        {
+          title: "Controles de Visualização",
+          features: [
+            {
+              name: "Zoom de Escala de Tempo",
+              description:
+                "Botões 'Dia', 'Semana' e 'Mês' para ajustar o nível de detalhe do cronograma. Dia = mais detalhe, Mês = visão macro",
+            },
+            {
+              name: "Filtro por Status",
+              description:
+                "Filtre para ver apenas: Não Iniciados, Em Andamento, Concluídos, Pausados ou Atrasados. Clique no badge 'Filtro ativo' para limpar",
+            },
+            {
+              name: "Botão Tela Cheia",
+              description:
+                "Expande o Gantt para tela inteira, ideal para apresentações ou análise detalhada. Pressione ESC ou clique 'Sair' para voltar",
+            },
+            {
+              name: "Botão Atualizar",
+              description:
+                "Recarrega os dados mais recentes da EAP e recalcula o cronograma",
+            },
+            {
+              name: "Visualização Alternativa",
+              description:
+                "Alterne entre 'Gantt' (gráfico) e 'Lista' (tabela expandível) usando os botões no topo",
+            },
+          ],
+        },
+        {
+          title: "Como Interpretar o Gantt",
+          tips: [
+            "Barras LONGAS = tarefas de longa duração. Barras CURTAS = tarefas rápidas",
+            "Barras que se SOBREPÕEM = tarefas acontecendo ao mesmo tempo",
+            "Barras à ESQUERDA da linha 'Hoje' = tarefas passadas. À DIREITA = futuras",
+            "Barras VERMELHAS = Atenção! Tarefa atrasada e precisa de ação",
+            "Progresso VERDE (100%) = Tarefa concluída com sucesso",
+            "Progresso AMARELO (<50%) = Tarefa no início, acompanhar evolução",
+          ],
+        },
+        {
+          title: "Tooltip Interativo",
+          content: `Passe o mouse sobre qualquer barra do Gantt para ver um tooltip com informações detalhadas: Nome completo, Tipo, Responsável, Status, Progresso, Duração em dias, Datas de início e fim, Orçamento e Descrição (se houver).`,
+        },
+        {
+          title: "Filtros de Status - Como Usar",
+          steps: [
+            'Selecione um status no dropdown "Filtrar Status"',
+            "O Gantt exibe APENAS as tarefas que correspondem ao filtro",
+            "A hierarquia é mantida: pais das tarefas filtradas também aparecem",
+            "Um badge azul 'Filtro ativo' aparece. Clique no × para limpar",
+            "Útil para focar em tarefas específicas sem distrações",
+          ],
+          examples: [
+            "Filtrar 'Atrasados' → Identifica rapidamente o que precisa de atenção",
+            "Filtrar 'Em Andamento' → Vê o que está sendo trabalhado agora",
+            "Filtrar 'Concluídos' → Revisa o trabalho já finalizado",
+          ],
+        },
+        {
+          title: "Modo Tela Cheia",
+          steps: [
+            'Clique no botão "Tela Cheia" no canto superior direito',
+            "O Gantt expande para ocupar toda a tela",
+            "Ideal para apresentações em reuniões ou análises detalhadas",
+            "Todos os controles continuam funcionando (zoom, filtro, scroll)",
+            "Pressione ESC no teclado ou clique 'Sair' para voltar ao normal",
+          ],
+          note: "Em tela cheia, o Gantt aproveita melhor o espaço da tela, mostrando mais tarefas simultaneamente",
+        },
+        {
+          title: "Visualização em Lista",
+          content: `Além do gráfico Gantt tradicional, há uma visualização alternativa em LISTA HIERÁRQUICA. Clique no botão 'Lista' no topo para alternar.`,
+          features: [
+            {
+              name: "Estrutura Colapsável",
+              description:
+                "Expanda/colapse itens clicando nas setas para navegar pela hierarquia",
+            },
+            {
+              name: "Colunas Completas",
+              description:
+                "Vê todas as informações em formato tabular: Nome, Responsável, Período, Orçamento, Progresso e Status",
+            },
+            {
+              name: "Indentação Visual",
+              description:
+                "Níveis hierárquicos são diferenciados por indentação e cor de fundo",
+            },
+            {
+              name: "Total no Rodapé",
+              description:
+                "Orçamento total e quantidade de itens raiz são exibidos no final",
+            },
+          ],
+        },
+        {
+          title: "Sincronização com a EAP",
+          content: `O Gantt é 100% sincronizado com a EAP. Qualquer mudança na EAP reflete automaticamente no cronograma:`,
+          items: [
+            {
+              name: "Criar item na EAP",
+              description:
+                "Nova barra aparece no Gantt na posição temporal correspondente",
+            },
+            {
+              name: "Alterar datas na EAP",
+              description:
+                "Barra se move horizontalmente no cronograma para nova posição",
+            },
+            {
+              name: "Atualizar progresso",
+              description: "Barra de progresso dentro da tarefa aumenta",
+            },
+            {
+              name: "Mudar status",
+              description:
+                "Cor e aparência da barra mudam conforme novo status",
+            },
+            {
+              name: "Excluir item da EAP",
+              description: "Barra desaparece do Gantt",
+            },
+          ],
+        },
+        {
+          title: "Estatísticas em Tempo Real",
+          content: `Os cards no topo do Gantt mostram estatísticas calculadas automaticamente:`,
+          items: [
+            {
+              name: "Total de Tarefas",
+              description:
+                "Contagem de todos os itens da EAP (fases + entregas + atividades + tarefas)",
+            },
+            {
+              name: "Concluídas",
+              description:
+                "Tarefas com status 'Concluído' e progresso 100% (card verde)",
+            },
+            {
+              name: "Em Andamento",
+              description: "Tarefas sendo executadas atualmente (card azul)",
+            },
+            {
+              name: "Não Iniciadas",
+              description:
+                "Tarefas com status 'Não Iniciado' e progresso 0% (card cinza)",
+            },
+            {
+              name: "Atrasadas",
+              description:
+                "Tarefas que ultrapassaram a data de término e progresso < 100% (card vermelho)",
+            },
+          ],
+        },
+        {
+          title: "Identificar Tarefas Atrasadas",
+          steps: [
+            "Olhe para a linha vermelha vertical 'Hoje' no cronograma",
+            "Barras que terminam À ESQUERDA dessa linha e não estão 100% concluídas = ATRASADAS",
+            "Essas barras ficam VERMELHAS automaticamente",
+            "Use o filtro 'Atrasados' para ver apenas essas tarefas",
+            "Priorize ações para colocar essas tarefas em dia",
+          ],
+          warning:
+            "Tarefas atrasadas impactam o cronograma geral do projeto. Acompanhe o card 'Atrasadas' no topo!",
+        },
+        {
+          title: "Quando Usar o Gantt",
+          tips: [
+            "Planejamento: Visualize o cronograma completo antes de iniciar o projeto",
+            "Reuniões: Apresente o andamento visual para stakeholders",
+            "Acompanhamento: Monitore progresso comparando barras com a linha 'Hoje'",
+            "Identificação de problemas: Encontre rapidamente tarefas atrasadas",
+            "Replanejamento: Veja impacto de mudanças de datas",
+            "Comunicação: Compartilhe visão clara do cronograma com a equipe",
+          ],
+        },
+        {
+          title: "Boas Práticas com Gantt",
+          tips: [
+            "Atualize o progresso das tarefas na EAP regularmente (semanal ou quinzenal)",
+            "Use o zoom adequado: 'Dia' para curto prazo, 'Mês' para visão geral",
+            "Identifique tarefas atrasadas semanalmente e tome ações corretivas",
+            "Apresente o Gantt em modo tela cheia em reuniões de acompanhamento",
+            "Exporte a visualização (screenshot) para documentar o status do projeto",
+            "Combine Gantt + EAP: use o Gantt para visão temporal e a EAP para detalhes",
+          ],
+        },
+        {
+          title: "Limitações e Observações",
+          items: [
+            {
+              name: "Somente Visualização",
+              description:
+                "O Gantt é READ-ONLY. Para editar tarefas, use a página da EAP",
+            },
+            {
+              name: "Sem Dependências (ainda)",
+              description:
+                "Não há setas conectando tarefas dependentes. Isso será adicionado em versão futura",
+            },
+            {
+              name: "Requer EAP",
+              description:
+                "Sem EAP criada, o Gantt não pode ser gerado. Crie a EAP primeiro",
+            },
+            {
+              name: "Performance",
+              description:
+                "Projetos com muitas tarefas (>200) podem demorar alguns segundos para carregar",
+            },
+          ],
+        },
+        {
+          title: "Permissões de Acesso",
+          items: [
+            {
+              role: "ADMIN",
+              permissions:
+                "Visualizar Gantt, usar todos os controles, tela cheia, filtros",
+            },
+            {
+              role: "VEREADOR",
+              permissions:
+                "Visualizar Gantt, usar todos os controles, tela cheia, filtros",
+            },
+            {
+              role: "ASSESSOR",
+              permissions:
+                "Visualizar Gantt, usar todos os controles, tela cheia, filtros",
+            },
+          ],
+          note: "Todos os usuários podem visualizar o Gantt. Apenas ADMIN pode editar itens (via EAP).",
+        },
+      ],
+    },
+    {
       id: "documentos",
       title: "Documentos",
       icon: <FileText className="w-5 h-5" />,
