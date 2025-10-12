@@ -21,6 +21,7 @@ import WorkProjectListPage from "../pages/projects/WorkProjectListPage";
 import WorkProjectViewPage from "../pages/projects/WorkProjectViewPage";
 import EAPPage from "../pages/projects/EAPPage";
 import EAPTreeViewPage from "../pages/projects/EAPTreeViewPage";
+import ProjectGanttPage from "../pages/projects/ProjectGanttPage";
 
 // Empresa Pages
 import EmpresaListPage from "../pages/empresas/EmpresaListPage";
@@ -172,6 +173,14 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <EAPTreeViewPage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: "/projects/:projectId/gantt",
+    element: (
+      <AuthGuard>
+        <ProjectGanttPage />
       </AuthGuard>
     ),
   },

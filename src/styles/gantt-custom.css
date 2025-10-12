@@ -1,0 +1,214 @@
+/* Custom styles for Gantt Chart */
+
+/* Customizar cores das barras baseado no tipo */
+.gantt-task-fase {
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%) !important;
+  border-color: #1d4ed8 !important;
+}
+
+.gantt-task-entrega {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%) !important;
+  border-color: #047857 !important;
+}
+
+.gantt-task-atividade {
+  background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%) !important;
+  border-color: #6d28d9 !important;
+}
+
+.gantt-task-tarefa {
+  background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%) !important;
+  border-color: #b45309 !important;
+}
+
+/* Tarefas atrasadas */
+.gantt-task-overdue {
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%) !important;
+  border-color: #b91c1c !important;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5) !important;
+}
+
+/* Tarefas críticas */
+.gantt-task-critical {
+  border: 2px solid #dc2626 !important;
+  box-shadow: 0 0 15px rgba(220, 38, 38, 0.4) !important;
+}
+
+/* Marker "Hoje" */
+.gantt_marker.today {
+  background: #ef4444;
+  opacity: 0.3;
+  width: 2px;
+}
+
+.gantt_marker.today .gantt_marker_content {
+  background: #ef4444;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Estilizar grid */
+.gantt_grid_scale,
+.gantt_task_scale {
+  background: linear-gradient(180deg, #f9fafb 0%, #f3f4f6 100%);
+  border-bottom: 2px solid #e5e7eb;
+  font-weight: 600;
+  color: #374151;
+}
+
+.gantt_grid_head_cell,
+.gantt_scale_cell {
+  border-right: 1px solid #e5e7eb;
+  color: #374151;
+  font-size: 13px;
+}
+
+.gantt_cell {
+  border-right: 1px solid #f3f4f6;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.gantt_row.odd {
+  background-color: #fafafa;
+}
+
+.gantt_row:hover {
+  background-color: #eff6ff !important;
+}
+
+/* Barras de progresso */
+.gantt_task_progress {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+/* Links (dependências) */
+.gantt_link_line {
+  background-color: #6b7280;
+}
+
+.gantt_link_arrow {
+  border-color: #6b7280;
+}
+
+.gantt_link_control {
+  background-color: #3b82f6;
+  border: 2px solid white;
+  width: 12px;
+  height: 12px;
+}
+
+/* Tooltip customizado */
+.gantt_tooltip {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Scrollbars customizadas */
+.gantt_task::-webkit-scrollbar,
+.gantt_grid::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.gantt_task::-webkit-scrollbar-track,
+.gantt_grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.gantt_task::-webkit-scrollbar-thumb,
+.gantt_grid::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.gantt_task::-webkit-scrollbar-thumb:hover,
+.gantt_grid::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Hover effects */
+.gantt_task_line:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+/* Task text styling */
+.gantt_task_content {
+  font-size: 12px;
+  font-weight: 500;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Weekend styling */
+.gantt_task_cell.week_end {
+  background-color: #f9fafb;
+}
+
+/* Selected task */
+.gantt_selected .gantt_task_line {
+  box-shadow: 0 0 0 2px #3b82f6, 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .gantt_grid_scale,
+  .gantt_task_scale {
+    font-size: 11px;
+  }
+  
+  .gantt_cell {
+    font-size: 11px;
+  }
+}
+
+/* Animações suaves */
+.gantt_task_line {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Melhorar visibilidade das linhas de grade */
+.gantt_task_row {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.gantt_task_cell {
+  border-right: 1px solid #f9fafb;
+}
+
+/* Estilo para milestones (se implementado) */
+.gantt_task_line.milestone {
+  width: 20px !important;
+  height: 20px !important;
+  transform: rotate(45deg);
+  border-radius: 0 !important;
+  background: #f59e0b !important;
+  border: 2px solid #d97706 !important;
+}
+
+/* Caminho crítico destacado */
+.gantt_critical_task {
+  border: 3px solid #dc2626 !important;
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.3) !important;
+}
+
+.gantt_critical_link .gantt_link_line {
+  background-color: #dc2626;
+  box-shadow: 0 0 5px rgba(220, 38, 38, 0.5);
+}
+
+.gantt_critical_link .gantt_link_arrow {
+  border-color: #dc2626;
+}
+

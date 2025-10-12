@@ -24,6 +24,7 @@ import {
   Eye,
   List,
   Network,
+  BarChart3,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../config/constants";
@@ -127,6 +128,10 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
 
   const handleViewEAP = () => {
     navigate(`/project/${project.id}/eap`, { state: { project } });
+  };
+
+  const handleViewGantt = () => {
+    navigate(`/projects/${project.id}/gantt`);
   };
 
   const getStatusIcon = (status) => {
@@ -340,6 +345,15 @@ export default function ProjectContent({ onBack, project, downloadDocument }) {
                     </span>
                   </div>
                 </div>
+
+                {/* Botão Gantt Chart */}
+                <button
+                  onClick={handleViewGantt}
+                  className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-lg hover:from-purple-600 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg"
+                >
+                  <Calendar className="w-5 h-5" />
+                  <span className="font-semibold">Ver Cronograma Gantt</span>
+                </button>
               </div>
             </div>
 

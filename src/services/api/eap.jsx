@@ -161,6 +161,21 @@ const eapService = {
       throw error;
     }
   },
+
+  /**
+   * Busca dados otimizados para Gantt Chart de um projeto
+   * @param {number} projectId - ID do projeto
+   * @returns {Promise} - Dados formatados para Gantt (projeto, EAP, tasks, estatísticas)
+   */
+  async getGanttData(projectId) {
+    try {
+      const response = await api.get(`/eap/gantt/project/${projectId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao buscar dados do Gantt:", error);
+      throw error;
+    }
+  },
 };
 
 export default eapService;
