@@ -3,7 +3,6 @@ import { gantt } from "dhtmlx-gantt";
 import "dhtmlx-gantt/codebase/dhtmlxgantt.css";
 import {
   Calendar,
-  Download,
   ZoomIn,
   ZoomOut,
   Maximize2,
@@ -433,16 +432,6 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
     gantt.render();
   };
 
-  const exportToPDF = () => {
-    gantt.exportToPDF({
-      name: `gantt_projeto_${projectId}.pdf`,
-      header: `<h3>Cronograma do Projeto - EAP ${eapId}</h3>`,
-      footer: `<div style="text-align: center;">Gerado em ${new Date().toLocaleDateString(
-        "pt-BR"
-      )}</div>`,
-    });
-  };
-
   const handleRefresh = () => {
     loadGanttData();
   };
@@ -469,15 +458,6 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
             >
               <RefreshCw className="w-4 h-4" />
               <span className="text-sm font-medium">Atualizar</span>
-            </button>
-
-            <button
-              onClick={exportToPDF}
-              className="px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
-              title="Exportar para PDF"
-            >
-              <Download className="w-4 h-4" />
-              <span className="text-sm font-medium">Exportar PDF</span>
             </button>
           </div>
         </div>
