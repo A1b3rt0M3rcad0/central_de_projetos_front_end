@@ -156,8 +156,12 @@
   scroll-behavior: smooth;
 }
 
-.gantt_task,
-.gantt_grid {
+/* Grid de tarefas SEM scroll próprio */
+.gantt_grid_data {
+  overflow: hidden !important;
+}
+
+.gantt_task {
   overflow: auto !important;
   scroll-behavior: smooth;
 }
