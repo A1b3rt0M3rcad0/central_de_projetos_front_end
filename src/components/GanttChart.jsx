@@ -18,7 +18,6 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
   const ganttContainer = useRef(null);
   const [loading, setLoading] = useState(true);
   const [zoomLevel, setZoomLevel] = useState("day");
-  const [showCriticalPath, setShowCriticalPath] = useState(false);
   const [filterStatus, setFilterStatus] = useState("all");
   const [stats, setStats] = useState({
     totalTasks: 0,
@@ -444,12 +443,6 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
     });
   };
 
-  const toggleCriticalPath = () => {
-    setShowCriticalPath(!showCriticalPath);
-    gantt.config.highlight_critical_path = !showCriticalPath;
-    gantt.render();
-  };
-
   const handleRefresh = () => {
     loadGanttData();
   };
@@ -485,19 +478,6 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
             >
               <Download className="w-4 h-4" />
               <span className="text-sm font-medium">Exportar PDF</span>
-            </button>
-
-            <button
-              onClick={toggleCriticalPath}
-              className={`px-3 py-2 border rounded-lg transition-colors flex items-center gap-2 ${
-                showCriticalPath
-                  ? "bg-red-500 text-white border-red-600"
-                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-              }`}
-              title="Mostrar caminho crítico"
-            >
-              <Eye className="w-4 h-4" />
-              <span className="text-sm font-medium">Caminho Crítico</span>
             </button>
           </div>
         </div>
