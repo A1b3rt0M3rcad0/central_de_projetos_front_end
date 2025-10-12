@@ -100,7 +100,7 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
       },
     };
 
-    // Colunas da grid
+    // Configurar colunas da grid
     gantt.config.columns = [
       {
         name: "text",
@@ -153,14 +153,22 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
         width: 90,
         align: "center",
         template: function (task) {
-          const percent = Math.round(task.progress * 100);
+          // Usar calculated_progress se disponível, senão usa o progress normal
+          const percent =
+            task.calculated_progress !== undefined
+              ? task.calculated_progress
+              : Math.round(task.progress * 100);
           const color =
             percent === 100 ? "#10b981" : percent >= 50 ? "#3b82f6" : "#f59e0b";
-          return `<div class="flex items-center gap-2">
-                    <div class="w-12 h-2 bg-gray-200 rounded-full overflow-hidden">
+          return `<div class="flex items-center justify-center relative">
+                    <div class="w-16 h-4 bg-gray-200 rounded-full overflow-hidden relative">
                       <div class="h-full rounded-full" style="width: ${percent}%; background-color: ${color}"></div>
+                      <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="text-xs font-bold text-gray-700" style="color: ${
+                          percent > 30 ? "white" : "black"
+                        }">${percent}%</span>
+                      </div>
                     </div>
-                    <span class="text-xs font-medium">${percent}%</span>
                   </div>`;
         },
       },
@@ -223,18 +231,14 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
       return classes.join(" ");
     };
 
-    // Template da barra de progresso - apenas porcentagem
+    // Template da barra de progresso - vazio (sem porcentagem)
     gantt.templates.progress_text = function (start, end, task) {
-      return `<span style="color: white; font-size: 11px; font-weight: bold;">${Math.round(
-        task.progress * 100
-      )}%</span>`;
+      return "";
     };
 
-    // Template do texto da tarefa na barra - mostrar apenas porcentagem
+    // Template do texto da tarefa na barra - vazio para não duplicar
     gantt.templates.task_text = function (start, end, task) {
-      return `<span style="color: white; font-size: 11px; font-weight: bold;">${Math.round(
-        task.progress * 100
-      )}%</span>`;
+      return "";
     };
 
     // Tooltip customizado
@@ -301,8 +305,8 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
     const today = new Date();
     gantt.addMarker({
       start_date: today,
-      css: "today",
-      text: "Hoje",
+      css: "today-thick",
+      text: "",
       title: "Hoje: " + dateToStr(today),
     });
 
@@ -324,11 +328,12 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
 
       // Buscar dados otimizados do Gantt (já vem formatado do backend)
       const ganttResponse = await eapAPI.getGanttData(projectId);
-      
+
       console.log("📊 Gantt Response:", ganttResponse);
 
       // Extrair dados
-      const ganttData = ganttResponse?.content || ganttResponse?.data || ganttResponse;
+      const ganttData =
+        ganttResponse?.content || ganttResponse?.data || ganttResponse;
 
       if (!ganttData || !ganttData.tasks) {
         console.error("❌ Dados do Gantt inválidos:", ganttData);
@@ -339,12 +344,12 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
       // Preparar dados para o Gantt Chart
       const chartData = {
         data: ganttData.tasks,
-        links: ganttData.links || []
+        links: ganttData.links || [],
       };
 
       console.log("✅ Dados do Gantt carregados:", chartData);
       console.log("📊 Estatísticas:", ganttData.statistics);
-      
+
       // Atualizar estatísticas com dados do backend
       if (ganttData.statistics) {
         setStats({
@@ -352,10 +357,10 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
           completed: ganttData.statistics.completed || 0,
           inProgress: ganttData.statistics.in_progress || 0,
           notStarted: ganttData.statistics.not_started || 0,
-          overdue: ganttData.statistics.overdue || 0
+          overdue: ganttData.statistics.overdue || 0,
         });
       }
-      
+
       gantt.parse(chartData);
 
       setLoading(false);

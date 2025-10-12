@@ -185,17 +185,19 @@ export default function ProjectGanttPage() {
               <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div
                   className={`h-full rounded-full ${
-                    item.progress === 100
+                    (item.calculated_progress || item.progress) === 100
                       ? "bg-green-500"
-                      : item.progress >= 50
+                      : (item.calculated_progress || item.progress) >= 50
                       ? "bg-blue-500"
                       : "bg-yellow-500"
                   }`}
-                  style={{ width: `${item.progress}%` }}
+                  style={{
+                    width: `${item.calculated_progress || item.progress}%`,
+                  }}
                 />
               </div>
               <span className="text-xs font-medium text-gray-600 w-10 text-right">
-                {item.progress}%
+                {item.calculated_progress || item.progress}%
               </span>
             </div>
           </div>
