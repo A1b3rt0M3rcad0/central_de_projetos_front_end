@@ -292,50 +292,16 @@ export default function EAPPage() {
     }
   };
 
-  // Calcula o valor executado de um item (orçamento × progresso)
-  const calculateExecutedValue = (item) => {
-    const budget = parseFloat(item.budget || 0);
-    const progress = parseFloat(item.progress || 0) / 100;
-    return budget * progress;
+  // Os valores executados e progresso calculado já vêm do backend
+  // Mantém as funções como fallback para compatibilidade, mas usa os valores do backend quando disponíveis
+  const getExecutedValue = (item) => {
+    return item.executed_value || 0;
   };
 
-  // Calcula o valor executado total de um item e seus filhos recursivamente
-  const calculateTotalExecutedValue = (item) => {
-    // Se não tem filhos, calcula só o próprio valor executado
-    if (!item.children || item.children.length === 0) {
-      return calculateExecutedValue(item);
-    }
-
-    // Se tem filhos, soma o valor executado de todos os filhos
-    return item.children.reduce((sum, child) => {
-      return sum + calculateTotalExecutedValue(child);
-    }, 0);
-  };
-
-  // Calcula o progresso real de um item baseado no valor executado dos filhos
-  const calculateItemProgress = (item) => {
-    // Se não tem filhos, usa o progresso próprio
-    if (!item.children || item.children.length === 0) {
-      return item.progress || 0;
-    }
-
-    // Se tem filhos, calcula o progresso baseado no valor executado
-    const totalBudget = parseFloat(item.budget || 0);
-
-    // Se não tem orçamento definido, não pode calcular progresso
-    if (totalBudget === 0) {
-      return 0;
-    }
-
-    // Soma o valor executado de todos os filhos
-    const totalExecutedValue = item.children.reduce((sum, child) => {
-      return sum + calculateTotalExecutedValue(child);
-    }, 0);
-
-    // Calcula o percentual de execução baseado no orçamento total do pai
-    const progressPercentage = (totalExecutedValue / totalBudget) * 100;
-
-    return Math.round(Math.min(progressPercentage, 100)); // Máximo 100%
+  const getItemProgress = (item) => {
+    return item.calculated_progress !== undefined
+      ? item.calculated_progress
+      : item.progress || 0;
   };
 
   const calculateStats = () => {
@@ -384,10 +350,8 @@ export default function EAPPage() {
     // Progresso geral baseado apenas nos itens de alto nível (raiz)
     const avgProgress =
       rootItems.length > 0
-        ? rootItems.reduce(
-            (sum, item) => sum + calculateItemProgress(item),
-            0
-          ) / rootItems.length
+        ? rootItems.reduce((sum, item) => sum + getItemProgress(item), 0) /
+          rootItems.length
         : 0;
 
     const fases = allItems.filter((item) => item.type === "fase").length;
@@ -1253,47 +1217,10 @@ function EAPTreeItem({
 }) {
   const hasChildren = item.children && item.children.length > 0;
 
-  // Calcula o valor executado (orçamento × progresso)
-  const calculateExecutedValueLocal = (currentItem) => {
-    const budget = parseFloat(currentItem.budget || 0);
-    const progress = parseFloat(currentItem.progress || 0) / 100;
-    return budget * progress;
-  };
-
-  // Calcula o valor executado total recursivamente
-  const calculateTotalExecutedValueLocal = (currentItem) => {
-    if (!currentItem.children || currentItem.children.length === 0) {
-      return calculateExecutedValueLocal(currentItem);
-    }
-    return currentItem.children.reduce((sum, child) => {
-      return sum + calculateTotalExecutedValueLocal(child);
-    }, 0);
-  };
-
-  // Calcula o progresso real do item baseado em valor executado
-  const calculateProgress = (currentItem) => {
-    if (!currentItem.children || currentItem.children.length === 0) {
-      return currentItem.progress || 0;
-    }
-
-    const totalBudget = parseFloat(currentItem.budget || 0);
-    if (totalBudget === 0) return 0;
-
-    const totalExecutedValue = currentItem.children.reduce((sum, child) => {
-      return sum + calculateTotalExecutedValueLocal(child);
-    }, 0);
-
-    const progressPercentage = (totalExecutedValue / totalBudget) * 100;
-    return Math.round(Math.min(progressPercentage, 100));
-  };
-
-  const actualProgress = calculateProgress(item);
-
-  // Calcula o valor executado para mostrar na UI
-  const executedValue = !hasChildren
-    ? calculateExecutedValueLocal(item)
-    : calculateTotalExecutedValueLocal(item); // Para pais, soma dos filhos
-
+  // Usa os valores calculados pelo backend
+  // O backend já calcula executed_value e calculated_progress considerando a hierarquia
+  const actualProgress = item.calculated_progress || item.progress || 0;
+  const executedValue = item.executed_value || 0;
   const totalBudget = parseFloat(item.budget || 0);
 
   const typeConfig = {
@@ -1660,43 +1587,15 @@ function EAPItemModal({
     return item.children && item.children.length > 0;
   };
 
-  // Calcula o valor executado (orçamento × progresso)
-  const calculateExecutedValue = (currentItem) => {
-    const budget = parseFloat(currentItem.budget || 0);
-    const progress = parseFloat(currentItem.progress || 0) / 100;
-    return budget * progress;
-  };
-
-  // Calcula o valor executado total recursivamente
-  const calculateTotalExecutedValue = (currentItem) => {
-    if (!currentItem.children || currentItem.children.length === 0) {
-      return calculateExecutedValue(currentItem);
-    }
-    return currentItem.children.reduce((sum, child) => {
-      return sum + calculateTotalExecutedValue(child);
-    }, 0);
-  };
-
-  // Calcula o progresso real do item baseado em valor executado dos filhos
-  const calculateItemProgress = (currentItem) => {
-    if (!currentItem.children || currentItem.children.length === 0) {
-      return currentItem.progress || 0;
-    }
-
-    const totalBudget = parseFloat(currentItem.budget || 0);
-    if (totalBudget === 0) return 0;
-
-    const totalExecutedValue = currentItem.children.reduce((sum, child) => {
-      return sum + calculateTotalExecutedValue(child);
-    }, 0);
-
-    const progressPercentage = (totalExecutedValue / totalBudget) * 100;
-    return Math.round(Math.min(progressPercentage, 100));
-  };
-
-  // Calcula o progresso do item atual no formulário
+  // Usa os valores calculados pelo backend quando disponíveis
+  // Se o item tem filhos, usa o calculated_progress do backend
+  // Caso contrário, usa o valor do formulário
   const calculatedProgress =
-    item && hasChildren(item) ? calculateItemProgress(item) : formData.progress;
+    item && hasChildren(item)
+      ? item.calculated_progress !== undefined
+        ? item.calculated_progress
+        : item.progress || 0
+      : formData.progress;
 
   // Função para determinar o status baseado no progresso
   const getStatusFromProgress = (progress) => {
