@@ -123,26 +123,43 @@
 
 /* Scrollbars customizadas */
 .gantt_task::-webkit-scrollbar,
-.gantt_grid::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+.gantt_grid::-webkit-scrollbar,
+.gantt_layout_cell::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
 }
 
 .gantt_task::-webkit-scrollbar-track,
-.gantt_grid::-webkit-scrollbar-track {
-  background: #f1f1f1;
+.gantt_grid::-webkit-scrollbar-track,
+.gantt_layout_cell::-webkit-scrollbar-track {
+  background: #f1f5f9;
   border-radius: 10px;
 }
 
 .gantt_task::-webkit-scrollbar-thumb,
-.gantt_grid::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+.gantt_grid::-webkit-scrollbar-thumb,
+.gantt_layout_cell::-webkit-scrollbar-thumb {
+  background: #94a3b8;
   border-radius: 10px;
+  border: 2px solid #f1f5f9;
 }
 
 .gantt_task::-webkit-scrollbar-thumb:hover,
-.gantt_grid::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+.gantt_grid::-webkit-scrollbar-thumb:hover,
+.gantt_layout_cell::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Garantir scroll suave */
+.gantt_layout_cell {
+  overflow: auto !important;
+  scroll-behavior: smooth;
+}
+
+.gantt_task,
+.gantt_grid {
+  overflow: auto !important;
+  scroll-behavior: smooth;
 }
 
 /* Hover effects */
@@ -219,4 +236,44 @@
 
 .gantt_critical_link .gantt_link_arrow {
   border-color: #dc2626;
+}
+
+/* Estilos para modo fullscreen */
+.gantt_container:fullscreen {
+  background: white;
+}
+
+.gantt_container:fullscreen .gantt_layout {
+  height: 100% !important;
+}
+
+/* Melhorar performance de scroll */
+.gantt_task_bg,
+.gantt_task_content {
+  will-change: transform;
+}
+
+/* Evitar quebras de layout em muitas tarefas */
+.gantt_data_area {
+  position: relative;
+  overflow: visible;
+}
+
+/* Altura mínima para grid de tarefas */
+.gantt_grid_data {
+  min-height: 400px;
+}
+
+/* Otimizar renderização de muitas linhas */
+.gantt_row {
+  contain: layout style paint;
+}
+
+/* Scroll sincronizado entre grid e timeline */
+.gantt_grid_scale,
+.gantt_task_scale {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: white;
 }

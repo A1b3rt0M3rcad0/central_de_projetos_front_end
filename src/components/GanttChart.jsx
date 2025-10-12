@@ -15,9 +15,11 @@ import { eapAPI } from "../services";
 
 export default function GanttChart({ eapId, projectId, readonly = false }) {
   const ganttContainer = useRef(null);
+  const fullscreenRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [zoomLevel, setZoomLevel] = useState("day");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [stats, setStats] = useState({
     totalTasks: 0,
     completed: 0,
@@ -43,6 +45,19 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
     };
   }, [eapId, filterStatus]);
 
+  // Detectar mudanças no modo fullscreen
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
+
   const configureGantt = () => {
     // Configurações básicas
     gantt.config.date_format = "%Y-%m-%d";
@@ -52,6 +67,12 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
     gantt.config.auto_scheduling_strict = false;
     gantt.config.work_time = true;
     gantt.config.skip_off_time = false;
+
+    // Configurações de scroll e altura
+    gantt.config.autosize = "xy"; // Ajusta automaticamente largura e altura
+    gantt.config.row_height = 38; // Altura de cada linha
+    gantt.config.scale_height = 60; // Altura do cabeçalho de escala
+    gantt.config.min_column_width = 70; // Largura mínima das colunas de tempo
 
     // Idioma PT-BR
     gantt.config.duration_unit = "day";
@@ -359,13 +380,80 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
         });
       }
 
-      gantt.parse(chartData);
+      // Aplicar filtro de status
+      const filteredData = applyStatusFilter(chartData, filterStatus);
+      gantt.parse(filteredData);
 
       setLoading(false);
     } catch (error) {
       console.error("❌ Erro ao carregar dados do Gantt:", error);
       setLoading(false);
     }
+  };
+
+  const applyStatusFilter = (chartData, status) => {
+    if (status === "all") {
+      return chartData; // Sem filtro, retorna tudo
+    }
+
+    // Função auxiliar para verificar se uma tarefa corresponde ao filtro
+    const matchesFilter = (task) => {
+      if (status === "atrasado") {
+        // Tarefas atrasadas: data de fim passou e progresso < 100%
+        const endDate = new Date(task.start_date);
+        endDate.setDate(endDate.getDate() + task.duration);
+        return endDate < new Date() && task.progress < 1;
+      }
+      // Filtra por status específico
+      return task.status === status;
+    };
+
+    // IDs das tarefas que correspondem ao filtro
+    const matchingIds = new Set();
+    chartData.data.forEach((task) => {
+      if (matchesFilter(task)) {
+        matchingIds.add(task.id);
+      }
+    });
+
+    // Se não encontrou nenhuma tarefa, retorna vazio
+    if (matchingIds.size === 0) {
+      console.log(`⚠️ Nenhuma tarefa encontrada com status: ${status}`);
+      return {
+        data: [],
+        links: [],
+      };
+    }
+
+    // Incluir também todos os ancestrais (pais) das tarefas filtradas
+    // para manter a hierarquia da árvore
+    const tasksToShow = new Set(matchingIds);
+
+    chartData.data.forEach((task) => {
+      if (matchingIds.has(task.id)) {
+        // Adicionar todos os pais desta tarefa
+        let currentParent = task.parent;
+        while (currentParent && currentParent !== 0) {
+          tasksToShow.add(currentParent);
+          // Buscar o pai do pai
+          const parentTask = chartData.data.find((t) => t.id === currentParent);
+          currentParent = parentTask ? parentTask.parent : null;
+        }
+      }
+    });
+
+    const filteredTasks = chartData.data.filter((task) =>
+      tasksToShow.has(task.id)
+    );
+
+    console.log(
+      `✅ Filtro "${status}" aplicado: ${matchingIds.size} tarefas encontradas, ${filteredTasks.length} itens exibidos (com hierarquia)`
+    );
+
+    return {
+      data: filteredTasks,
+      links: chartData.links || [],
+    };
   };
 
   const calculateStats = (tasks) => {
@@ -436,8 +524,27 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
     loadGanttData();
   };
 
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        // Entrar em tela cheia
+        await fullscreenRef.current?.requestFullscreen();
+      } else {
+        // Sair da tela cheia
+        await document.exitFullscreen();
+      }
+    } catch (error) {
+      console.error("Erro ao alternar tela cheia:", error);
+    }
+  };
+
   return (
-    <div className="w-full h-full flex flex-col bg-white rounded-lg shadow-lg">
+    <div
+      ref={fullscreenRef}
+      className={`w-full h-full flex flex-col bg-white rounded-lg shadow-lg ${
+        isFullscreen ? "fixed inset-0 z-50" : ""
+      }`}
+    >
       {/* Header com Controles */}
       <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
         <div className="flex items-center justify-between mb-4">
@@ -451,6 +558,16 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={toggleFullscreen}
+              className="px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+              title={isFullscreen ? "Sair da tela cheia" : "Ver em tela cheia"}
+            >
+              <Maximize2 className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                {isFullscreen ? "Sair" : "Tela Cheia"}
+              </span>
+            </button>
             <button
               onClick={handleRefresh}
               className="px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
@@ -552,12 +669,25 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
               <option value="pausado">Pausados</option>
               <option value="atrasado">Atrasados</option>
             </select>
+
+            {/* Indicador de filtro ativo */}
+            {filterStatus !== "all" && (
+              <button
+                onClick={() => setFilterStatus("all")}
+                className="px-2 py-1 bg-blue-100 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-200 transition-colors flex items-center gap-1"
+                title="Limpar filtro"
+              >
+                <Filter className="w-3 h-3" />
+                Filtro ativo
+                <span className="ml-1 text-blue-900">×</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
 
       {/* Gantt Chart Container */}
-      <div className="flex-1 relative overflow-hidden">
+      <div className="flex-1 relative overflow-auto">
         {loading && (
           <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-10">
             <div className="text-center">
@@ -569,10 +699,29 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
           </div>
         )}
 
+        {/* Mensagem quando filtro não encontra resultados */}
+        {!loading && stats.totalTasks > 0 && filterStatus !== "all" && (
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+            <div className="bg-blue-100 border border-blue-300 rounded-lg px-4 py-2 shadow-lg">
+              <p className="text-sm text-blue-800 font-medium">
+                🔍 Mostrando apenas:{" "}
+                <span className="font-bold">
+                  {filterStatus === "atrasado"
+                    ? "Atrasados"
+                    : filterStatus.replace("_", " ")}
+                </span>
+              </p>
+            </div>
+          </div>
+        )}
+
         <div
           ref={ganttContainer}
           className="w-full h-full"
-          style={{ minHeight: "600px" }}
+          style={{
+            minHeight: isFullscreen ? "calc(100vh - 300px)" : "600px",
+            height: isFullscreen ? "calc(100vh - 300px)" : "auto",
+          }}
         />
       </div>
 
