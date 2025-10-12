@@ -228,8 +228,11 @@ export default function ProjectGanttPage() {
           pageTitle="Cronograma do Projeto"
           onBack={handleGoBack}
           breadcrumbs={[
-            { label: "Projetos", path: "/projectlistpage" },
-            { label: "Detalhes", path: `/project/${projectId}` },
+            { label: "Projetos", onClick: () => navigate("/projectlistpage") },
+            {
+              label: "Detalhes",
+              onClick: () => navigate(`/project/${projectId}`),
+            },
             { label: "Cronograma" },
           ]}
         >
@@ -253,8 +256,11 @@ export default function ProjectGanttPage() {
           pageTitle="Cronograma do Projeto"
           onBack={handleGoBack}
           breadcrumbs={[
-            { label: "Projetos", path: "/projectlistpage" },
-            { label: "Detalhes", path: `/project/${projectId}` },
+            { label: "Projetos", onClick: () => navigate("/projectlistpage") },
+            {
+              label: "Detalhes",
+              onClick: () => navigate(`/project/${projectId}`),
+            },
             { label: "Cronograma" },
           ]}
         >
@@ -305,10 +311,10 @@ export default function ProjectGanttPage() {
         pageTitle={`Cronograma: ${project?.name || "Projeto"}`}
         onBack={handleGoBack}
         breadcrumbs={[
-          { label: "Projetos", path: "/projectlistpage" },
+          { label: "Projetos", onClick: () => navigate("/projectlistpage") },
           {
             label: project?.name || "Detalhes",
-            path: `/project/${projectId}`,
+            onClick: () => navigate(`/project/${projectId}`),
           },
           { label: "Cronograma" },
         ]}
