@@ -199,6 +199,21 @@ const eapService = {
   },
 
   /**
+   * Busca TODAS as dependências de uma EAP de uma vez (OTIMIZADO)
+   * @param {number} eapId - ID da EAP
+   * @returns {Promise} - Objeto com todas as dependências por item
+   */
+  async getAllEAPDependencies(eapId) {
+    try {
+      const response = await api.get(`/eap/${eapId}/all-dependencies`);
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao buscar todas as dependências da EAP:", error);
+      throw error;
+    }
+  },
+
+  /**
    * Busca todas as dependências de um item da EAP
    * @param {number} itemId - ID do item
    * @returns {Promise} - Objeto com predecessors e successors

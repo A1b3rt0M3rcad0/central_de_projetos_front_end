@@ -93,43 +93,26 @@ export default function EAPPage() {
   };
 
   const enrichItemsWithDependencies = async (eap) => {
-    // Função para achatar todos os itens
-    const getAllItems = (items) => {
-      const result = [];
-      items.forEach((item) => {
-        result.push(item);
-        if (item.children) {
-          result.push(...getAllItems(item.children));
-        }
+    // ⚡ OTIMIZADO: Buscar TODAS as dependências de uma vez (1 requisição em vez de N)
+    let depsMap = {};
+
+    try {
+      const response = await eapService.getAllEAPDependencies(eap.id);
+      const allDependencies = response.content || response;
+
+      // Converter para o formato esperado
+      Object.keys(allDependencies).forEach((itemId) => {
+        const deps = allDependencies[itemId];
+        depsMap[itemId] = {
+          predecessors: deps.predecessors || [],
+          successors: deps.successors || [],
+        };
       });
-      return result;
-    };
-
-    const allItems = getAllItems(eap.items);
-
-    // Buscar dependências de todos os itens em paralelo
-    const dependencyPromises = allItems.map(async (item) => {
-      try {
-        const deps = await eapService.getItemDependencies(item.id);
-        return {
-          itemId: item.id,
-          dependencies: deps.content || deps,
-        };
-      } catch (error) {
-        return {
-          itemId: item.id,
-          dependencies: { predecessors: [], successors: [] },
-        };
-      }
-    });
-
-    const dependenciesData = await Promise.all(dependencyPromises);
-
-    // Criar mapa de dependências
-    const depsMap = {};
-    dependenciesData.forEach((data) => {
-      depsMap[data.itemId] = data.dependencies;
-    });
+    } catch (error) {
+      console.error("Erro ao buscar dependências:", error);
+      // Em caso de erro, continua com mapa vazio
+      depsMap = {};
+    }
 
     // Enriquecer itens com as dependências
     const enrichItems = (items) => {
