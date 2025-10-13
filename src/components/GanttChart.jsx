@@ -77,6 +77,9 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
     // Configurações de links (dependências)
     gantt.config.show_links = true; // Mostra setas de dependências
     gantt.config.highlight_critical_path = true; // Destaca caminho crítico
+    gantt.config.link_line_width = 2; // Espessura das linhas de dependência
+    gantt.config.link_arrow_width = 10; // Largura das setas
+    gantt.config.link_arrow_height = 8; // Altura das setas
 
     // Idioma PT-BR
     gantt.config.duration_unit = "day";
@@ -120,6 +123,78 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
           "Sábado",
         ],
         day_short: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+      },
+      labels: {
+        new_task: "Nova Tarefa",
+        icon_save: "Salvar",
+        icon_cancel: "Cancelar",
+        icon_details: "Detalhes",
+        icon_edit: "Editar",
+        icon_delete: "Excluir",
+        confirm_closing: "",
+        confirm_deleting: "Tem certeza que deseja excluir?",
+        section_description: "Descrição",
+        section_time: "Período",
+        section_type: "Tipo",
+        column_text: "Nome da tarefa",
+        column_start_date: "Data inicial",
+        column_duration: "Duração",
+        column_add: "",
+        link: "Dependência",
+        confirm_link_deleting: "Será excluído",
+        link_start: " (início)",
+        link_end: " (fim)",
+        type_task: "Tarefa",
+        type_project: "Projeto",
+        type_milestone: "Marco",
+        minutes: "Minutos",
+        hours: "Horas",
+        days: "Dias",
+        weeks: "Semanas",
+        months: "Meses",
+        years: "Anos",
+        message_ok: "OK",
+        message_cancel: "Cancelar",
+        section_constraint: "Restrição",
+        constraint_type: "Tipo de restrição",
+        constraint_date: "Data da restrição",
+        asap: "O mais cedo possível",
+        alap: "O mais tardar possível",
+        snet: "Não iniciar antes de",
+        snlt: "Não iniciar depois de",
+        fnet: "Não terminar antes de",
+        fnlt: "Não terminar depois de",
+        mso: "Não iniciar antes do início de",
+        mfo: "Não terminar depois do fim de",
+        section_resource: "Recurso",
+        section_notes: "Notas",
+        column_wbs: "EAP",
+        column_level: "Nível",
+        column_duration: "Duração",
+        column_resources: "Recursos",
+        column_dependency: "Dependências",
+        column_progress: "Progresso",
+        column_add: "",
+        link_to: "para",
+        link_from: "de",
+        link_start_to_start: "Início para Início",
+        link_start_to_finish: "Início para Fim",
+        link_finish_to_start: "Fim para Início",
+        link_finish_to_finish: "Fim para Fim",
+        link_lag: "Atraso",
+        link_lead: "Antecipação",
+        link_ss: "II",
+        link_sf: "IF",
+        link_fs: "FI",
+        link_ff: "FF",
+        link_lag_positive: "+",
+        link_lag_negative: "-",
+        confirm_link_deleting: "Será excluído",
+        confirm_link_editing: "Será editado",
+        link_edit: "Editar dependência",
+        link_delete: "Excluir dependência",
+        link_cancel: "Cancelar",
+        link_save: "Salvar",
       },
     };
 
@@ -183,14 +258,12 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
               : Math.round(task.progress * 100);
           const color =
             percent === 100 ? "#10b981" : percent >= 50 ? "#3b82f6" : "#f59e0b";
-          return `<div class="flex items-center justify-center relative">
-                    <div class="w-16 h-4 bg-gray-200 rounded-full overflow-hidden relative">
-                      <div class="h-full rounded-full" style="width: ${percent}%; background-color: ${color}"></div>
-                      <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="text-xs font-bold text-gray-700" style="color: ${
-                          percent > 30 ? "white" : "black"
-                        }">${percent}%</span>
-                      </div>
+          return `<div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                    <div style="width: 64px; height: 16px; background-color: #e5e7eb; border-radius: 8px; overflow: hidden; position: relative;">
+                      <div style="height: 100%; width: ${percent}%; background-color: ${color}; position: absolute; left: 0; top: 0;"></div>
+                      <span style="position: absolute; font-size: 10px; font-weight: bold; color: ${
+                        percent > 30 ? "white" : "black"
+                      }; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 1;">${percent}%</span>
                     </div>
                   </div>`;
         },
@@ -325,7 +398,9 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
         2: "Término → Término (FF)",
         3: "Início → Término (SF)",
       };
-      return `<b>Dependência:</b> ${typeLabels[link.type] || "Desconhecida"}`;
+      return `<b>Dependência:</b> ${
+        typeLabels[link.type] || "Término → Início (FS)"
+      }`;
     };
 
     // Linha "Hoje"
@@ -377,11 +452,19 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
 
       // Preparar dados para o Gantt Chart
       const chartData = {
-        data: ganttData.tasks,
+        data: ganttData.tasks || [],
         links: ganttData.links || [],
       };
 
+      // Validar dados antes de renderizar
+      if (!chartData.data || chartData.data.length === 0) {
+        console.warn("⚠️ Nenhuma tarefa encontrada nos dados do Gantt");
+        setLoading(false);
+        return;
+      }
+
       console.log("✅ Dados do Gantt carregados:", chartData);
+      console.log("🔗 Links/Dependências:", chartData.links);
       console.log("📊 Estatísticas:", ganttData.statistics);
 
       // Atualizar estatísticas com dados do backend
@@ -397,7 +480,15 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
 
       // Aplicar filtro de status
       const filteredData = applyStatusFilter(chartData, filterStatus);
-      gantt.parse(filteredData);
+
+      try {
+        // Parse dos dados no Gantt
+        gantt.parse(filteredData);
+        console.log("✅ Gantt renderizado com sucesso");
+      } catch (parseError) {
+        console.error("❌ Erro ao fazer parse dos dados no Gantt:", parseError);
+        console.error("📊 Dados que causaram erro:", filteredData);
+      }
 
       setLoading(false);
     } catch (error) {

@@ -1730,6 +1730,33 @@ function EAPItemModal({
     return item.children && item.children.length > 0;
   };
 
+  // Calcula o valor total executado de um item (considerando filhos se houver)
+  const calculateTotalExecutedValue = (item) => {
+    if (!item) return 0;
+
+    // Se o item tem executed_value calculado pelo backend, usa ele
+    if (item.executed_value !== undefined) {
+      return parseFloat(item.executed_value);
+    }
+
+    // Se não tem filhos, calcula baseado no orçamento e progresso
+    if (!hasChildren(item)) {
+      const budget = parseFloat(item.budget || 0);
+      const progress = item.progress || 0;
+      return budget * (progress / 100);
+    }
+
+    // Se tem filhos, soma os valores executados dos filhos
+    let totalExecuted = 0;
+    if (item.children && item.children.length > 0) {
+      item.children.forEach((child) => {
+        totalExecuted += calculateTotalExecutedValue(child);
+      });
+    }
+
+    return totalExecuted;
+  };
+
   // Usa os valores calculados pelo backend quando disponíveis
   // Se o item tem filhos, usa o calculated_progress do backend
   // Caso contrário, usa o valor do formulário
