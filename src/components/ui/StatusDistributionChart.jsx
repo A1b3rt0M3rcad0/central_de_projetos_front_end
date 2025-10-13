@@ -120,10 +120,14 @@ const FALLBACK_COLORS = [
   "#3730a3",
 ];
 
-const CustomTooltip = ({ active, payload }) => {
-  if (active && payload && payload.length) {
+const CustomTooltip = ({ active, payload, insights }) => {
+  if (active && payload && payload.length && insights) {
     const data = payload[0];
-    const percentage = ((data.value / data.payload.total) * 100).toFixed(1);
+    // Usar o total geral dos insights, não apenas dos dados visíveis
+    const percentage =
+      insights.totalProjects > 0
+        ? ((data.value / insights.totalProjects) * 100).toFixed(1)
+        : 0;
     const IconComponent = STATUS_ICONS[data.name] || Circle;
 
     return (
@@ -137,16 +141,16 @@ const CustomTooltip = ({ active, payload }) => {
         </div>
 
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <span className="text-sm text-gray-700">Projetos</span>
-            <span className="text-lg font-bold text-gray-900">
+            <span className="text-lg font-bold text-gray-900 min-w-[3rem] text-right">
               {data.value}
             </span>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <span className="text-sm text-gray-700">Participação</span>
-            <span className="text-sm font-semibold text-gray-900">
+            <span className="text-sm font-semibold text-gray-900 min-w-[3rem] text-right">
               {percentage}%
             </span>
           </div>
@@ -209,7 +213,10 @@ export default function StatusDistributionChart({
   const insights = useMemo(() => {
     if (!data || data.length === 0) return null;
 
-    const totalProjects = data.reduce((sum, item) => sum + item.value, 0);
+    const totalProjects = data.reduce(
+      (sum, item) => sum + (item.value || 0),
+      0
+    );
 
     // Função para obter cor para qualquer status
     const getColorForStatus = (statusName) => {
@@ -223,7 +230,9 @@ export default function StatusDistributionChart({
     const enrichedData = data.map((item) => ({
       ...item,
       percentage:
-        totalProjects > 0 ? ((item.value / totalProjects) * 100).toFixed(1) : 0,
+        totalProjects > 0 && item.value
+          ? ((item.value / totalProjects) * 100).toFixed(1)
+          : "0.0",
       color: getColorForStatus(item.name),
       priority: STATUS_PRIORITY[item.name] || 999,
     }));
@@ -260,21 +269,21 @@ export default function StatusDistributionChart({
       .reduce((sum, item) => sum + item.value, 0);
 
     const completionRate =
-      totalProjects > 0
+      totalProjects > 0 && completedProjects > 0
         ? ((completedProjects / totalProjects) * 100).toFixed(1)
-        : 0;
+        : "0.0";
     const activeRate =
-      totalProjects > 0
+      totalProjects > 0 && activeProjects > 0
         ? ((activeProjects / totalProjects) * 100).toFixed(1)
-        : 0;
+        : "0.0";
     const blockedRate =
-      totalProjects > 0
+      totalProjects > 0 && blockedProjects > 0
         ? ((blockedProjects / totalProjects) * 100).toFixed(1)
-        : 0;
+        : "0.0";
     const cancelledRate =
-      totalProjects > 0
+      totalProjects > 0 && cancelledProjects > 0
         ? ((cancelledProjects / totalProjects) * 100).toFixed(1)
-        : 0;
+        : "0.0";
 
     // Identificar status críticos dinamicamente
     const criticalStatuses = sortedData.filter((item) =>
@@ -503,7 +512,7 @@ export default function StatusDistributionChart({
                 />
               ))}
             </Pie>
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<CustomTooltip insights={insights} />} />
           </PieChart>
         ) : (
           <BarChart
@@ -527,7 +536,7 @@ export default function StatusDistributionChart({
               tickLine={false}
               tickFormatter={(value) => value.toLocaleString()}
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<CustomTooltip insights={insights} />} />
             <Bar
               dataKey="value"
               radius={[4, 4, 0, 0]}
