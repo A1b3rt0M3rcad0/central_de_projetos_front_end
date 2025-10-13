@@ -10,6 +10,15 @@ import {
 import { formatDate } from "../../utils/dateUtils";
 
 export default function ProjectHistoryContent({ project, onBack }) {
+  // Função para converter data brasileira (dd/mm/yyyy) para Date
+  const parseBrazilianDate = (dateString) => {
+    if (!dateString) return new Date(0);
+    const parts = dateString.split("/");
+    if (parts.length !== 3) return new Date(0);
+    // Formato: dd/mm/yyyy -> Date(yyyy, mm-1, dd)
+    return new Date(parts[2], parts[1] - 1, parts[0]);
+  };
+
   const getFieldDisplayName = (fieldName) => {
     const fieldMap = {
       name: "Nome do Projeto",
@@ -100,13 +109,22 @@ export default function ProjectHistoryContent({ project, onBack }) {
 
             <div className="space-y-2">
               <p className="text-sm text-gray-600">
-                <strong>Bairro:</strong> {project.bairro?.name || "--"}
+                <strong>Bairro(s):</strong>{" "}
+                {Array.isArray(project.bairro) && project.bairro.length > 0
+                  ? project.bairro.map((b) => b.name).join(", ")
+                  : project.bairro?.name || "--"}
               </p>
               <p className="text-sm text-gray-600">
-                <strong>Tipo:</strong> {project.types?.name || "--"}
+                <strong>Tipo(s):</strong>{" "}
+                {Array.isArray(project.types) && project.types.length > 0
+                  ? project.types.map((t) => t.name).join(", ")
+                  : project.types?.name || "--"}
               </p>
               <p className="text-sm text-gray-600">
-                <strong>Fiscal:</strong> {project.fiscal?.name || "--"}
+                <strong>Fiscal(is):</strong>{" "}
+                {Array.isArray(project.fiscal) && project.fiscal.length > 0
+                  ? project.fiscal.map((f) => f.name).join(", ")
+                  : project.fiscal?.name || "--"}
               </p>
             </div>
           </div>
@@ -160,8 +178,16 @@ export default function ProjectHistoryContent({ project, onBack }) {
 
           {project.history_project && project.history_project.length > 0 ? (
             <div className="space-y-4">
-              {project.history_project
-                .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+              {[...project.history_project]
+                .sort((a, b) => {
+                  const dateA = parseBrazilianDate(
+                    a.updated_at || a.created_at
+                  );
+                  const dateB = parseBrazilianDate(
+                    b.updated_at || b.created_at
+                  );
+                  return dateB - dateA; // Mais recente primeiro
+                })
                 .map((item, index) => (
                   <div
                     key={item.id}
