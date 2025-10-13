@@ -383,8 +383,7 @@ export default function EAPPage() {
     };
     flattenItems(eapData.items);
 
-    // Orçamento total: soma apenas os itens de nível raiz (Fases)
-    // para evitar duplicação (fases já agregam orçamento dos filhos)
+    // Orçamento total: soma dos itens raiz (para exibição)
     const rootItems = eapData.items || [];
     const totalBudget = rootItems.reduce(
       (sum, item) => sum + parseFloat(item.budget || 0),
@@ -401,12 +400,22 @@ export default function EAPPage() {
       (item) => item.status === "nao_iniciado"
     ).length;
 
-    // Progresso geral baseado apenas nos itens de alto nível (raiz)
+    // Progresso geral: calcula como se o PROJETO fosse o pai de todos
+    // Orçamento do "pai" = orçamento do projeto
+    // Valor executado = soma de todos os itens folha (como filhos do projeto)
+    const projectBudget = parseFloat(eapData.project_budget || 0);
+    const leafItems = allItems.filter(
+      (item) => !item.children || item.children.length === 0
+    );
+
+    const totalExecutedValue = leafItems.reduce((sum, item) => {
+      const budget = parseFloat(item.budget || 0);
+      const progress = getItemProgress(item) / 100; // Converter de % para decimal
+      return sum + budget * progress;
+    }, 0);
+
     const avgProgress =
-      rootItems.length > 0
-        ? rootItems.reduce((sum, item) => sum + getItemProgress(item), 0) /
-          rootItems.length
-        : 0;
+      projectBudget > 0 ? (totalExecutedValue / projectBudget) * 100 : 0;
 
     const fases = allItems.filter((item) => item.type === "fase").length;
     const entregas = allItems.filter((item) => item.type === "entrega").length;
