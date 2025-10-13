@@ -6,7 +6,12 @@ import jsPDF from "jspdf";
  * Componente para visualização da EAP em formato de árvore hierárquica
  * Similar ao exemplo da imagem com códigos WBS e cores por nível
  */
-export default function EAPTreeDiagram({ eapData, onExport, onFullscreen, className = "" }) {
+export default function EAPTreeDiagram({
+  eapData,
+  onExport,
+  onFullscreen,
+  className = "",
+}) {
   const svgRef = useRef(null);
   const containerRef = useRef(null);
   const [zoom, setZoom] = useState(1);
@@ -43,6 +48,22 @@ export default function EAPTreeDiagram({ eapData, onExport, onFullscreen, classN
     const positions = [];
     let currentY = startY;
 
+    // Função auxiliar para calcular a altura total de uma subárvore
+    const getSubtreeHeight = (items) => {
+      if (!items || items.length === 0) return 0;
+
+      let maxHeight = 0;
+      items.forEach((item) => {
+        let itemHeight = NODE_CONFIG.spacing.vertical;
+        if (item.children && item.children.length > 0) {
+          itemHeight += getSubtreeHeight(item.children);
+        }
+        maxHeight = Math.max(maxHeight, itemHeight);
+      });
+
+      return maxHeight * items.length;
+    };
+
     items.forEach((item, index) => {
       const nodePosition = {
         id: item.id,
@@ -52,6 +73,9 @@ export default function EAPTreeDiagram({ eapData, onExport, onFullscreen, classN
         item: item,
         children: [],
       };
+
+      // Adiciona o nó atual
+      positions.push(nodePosition);
 
       // Se tem filhos, calcula posições recursivamente
       if (item.children && item.children.length > 0) {
@@ -64,10 +88,18 @@ export default function EAPTreeDiagram({ eapData, onExport, onFullscreen, classN
         );
         nodePosition.children = childPositions;
         positions.push(...childPositions);
-      }
 
-      positions.unshift(nodePosition);
-      currentY += NODE_CONFIG.spacing.vertical;
+        // Move para o próximo item irmão considerando a altura ocupada pelos filhos
+        const maxChildY = Math.max(
+          ...childPositions.map((p) => p.y + NODE_CONFIG.height)
+        );
+        currentY = Math.max(
+          currentY + NODE_CONFIG.spacing.vertical,
+          maxChildY + NODE_CONFIG.spacing.vertical
+        );
+      } else {
+        currentY += NODE_CONFIG.spacing.vertical;
+      }
     });
 
     return positions;
@@ -192,8 +224,9 @@ export default function EAPTreeDiagram({ eapData, onExport, onFullscreen, classN
     ctx.scale(zoom, zoom);
     ctx.translate(position.x, position.y);
 
-    // Calcula posições dos nós
-    const positions = calculateNodePositions(eapData.items);
+    // Calcula posições dos nós apenas para itens raiz
+    const rootItems = eapData.items.filter((item) => !item.parent_id);
+    const positions = calculateNodePositions(rootItems);
 
     // Desenha conexões primeiro (atrás dos nós)
     drawConnections(ctx, positions);
@@ -214,7 +247,16 @@ export default function EAPTreeDiagram({ eapData, onExport, onFullscreen, classN
     const canvas = svgRef.current;
 
     canvas.width = container.offsetWidth;
-    canvas.height = Math.max(container.offsetHeight, 800);
+
+    // Calcula a altura necessária baseada nos nós
+    if (eapData?.items) {
+      const rootItems = eapData.items.filter((item) => !item.parent_id);
+      const positions = calculateNodePositions(rootItems);
+      const maxY = Math.max(...positions.map((p) => p.y + NODE_CONFIG.height));
+      canvas.height = Math.max(container.offsetHeight, maxY + 200); // 200px de margem
+    } else {
+      canvas.height = Math.max(container.offsetHeight, 800);
+    }
 
     renderTree();
   };
@@ -398,7 +440,7 @@ export default function EAPTreeDiagram({ eapData, onExport, onFullscreen, classN
         >
           <Maximize2 className="w-4 h-4" />
         </button>
-        
+
         {onFullscreen && (
           <button
             onClick={onFullscreen}
