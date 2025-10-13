@@ -52,7 +52,7 @@ const CustomTooltip = ({ active, payload, label }) => {
             .map((entry, index) => {
               const percentage = ((entry.value / total) * 100).toFixed(1);
               return (
-                <div key={index} className="flex items-center justify-between">
+                <div key={index} className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-2">
                     <div
                       className="w-3 h-3 rounded-full"
@@ -62,7 +62,7 @@ const CustomTooltip = ({ active, payload, label }) => {
                       {entry.name}
                     </span>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right min-w-[4rem]">
                     <span className="text-sm font-bold text-gray-900">
                       {entry.value}
                     </span>
@@ -75,9 +75,9 @@ const CustomTooltip = ({ active, payload, label }) => {
             })}
 
           <div className="border-t border-gray-100 pt-2 mt-2">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               <span className="text-sm font-bold text-gray-900">Total</span>
-              <span className="text-sm font-bold text-blue-600">{total}</span>
+              <span className="text-sm font-bold text-blue-600 min-w-[3rem] text-right">{total}</span>
             </div>
           </div>
         </div>
@@ -322,17 +322,17 @@ export default function ProjectsByTypeChart({
                   {insights.typeDistribution.slice(0, 3).map((type, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between"
+                      className="flex items-center justify-between gap-4"
                     >
                       <span className="text-gray-700">{type.name}</span>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 min-w-[4rem]">
                         <div className="w-8 h-1 bg-gray-200 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-blue-500 rounded-full"
                             style={{ width: `${type.percentage}%` }}
                           />
                         </div>
-                        <span className="font-semibold text-gray-900">
+                        <span className="font-semibold text-gray-900 text-right">
                           {type.value}
                         </span>
                       </div>
@@ -354,17 +354,17 @@ export default function ProjectsByTypeChart({
                         .map((bairro, index) => (
                           <div
                             key={index}
-                            className="flex items-center justify-between"
+                            className="flex items-center justify-between gap-4"
                           >
                             <span className="text-gray-700">{bairro.name}</span>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 min-w-[4rem]">
                               <div className="w-8 h-1 bg-gray-200 rounded-full overflow-hidden">
                                 <div
                                   className="h-full bg-green-500 rounded-full"
                                   style={{ width: `${bairro.percentage}%` }}
                                 />
                               </div>
-                              <span className="font-semibold text-gray-900">
+                              <span className="font-semibold text-gray-900 text-right">
                                 {bairro.value}
                               </span>
                             </div>

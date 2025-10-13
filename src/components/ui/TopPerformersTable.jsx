@@ -228,7 +228,7 @@ export default function TopPerformersTable({
                   {insights.topPerformers.map((item, index) => (
                     <div
                       key={item[columns[0].key]}
-                      className="flex items-center justify-between"
+                      className="flex items-center justify-between gap-4"
                     >
                       <div className="flex items-center gap-2">
                         <span className="w-4 h-4 bg-yellow-100 text-yellow-700 rounded-full flex items-center justify-center text-xs font-bold">
@@ -238,7 +238,7 @@ export default function TopPerformersTable({
                           {item[columns[0].key]}
                         </span>
                       </div>
-                      <span className="text-green-600 font-semibold">
+                      <span className="text-green-600 font-semibold min-w-[4rem] text-right">
                         {item[columns[1].key]} projetos
                       </span>
                     </div>
@@ -253,30 +253,30 @@ export default function TopPerformersTable({
                   Distribuição por Performance
                 </h5>
                 <div className="space-y-1">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-green-500 rounded"></div>
                       <span>Alta (&gt;150% média)</span>
                     </div>
-                    <span className="font-semibold">
+                    <span className="font-semibold min-w-[3rem] text-right">
                       {insights.performanceRanges.high}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-orange-500 rounded"></div>
                       <span>Média (70-150% média)</span>
                     </div>
-                    <span className="font-semibold">
+                    <span className="font-semibold min-w-[3rem] text-right">
                       {insights.performanceRanges.medium}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-red-500 rounded"></div>
                       <span>Baixa (&lt;70% média)</span>
                     </div>
-                    <span className="font-semibold">
+                    <span className="font-semibold min-w-[3rem] text-right">
                       {insights.performanceRanges.low}
                     </span>
                   </div>
@@ -335,7 +335,7 @@ export default function TopPerformersTable({
                 index
               )}`}
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white shadow-sm border border-gray-100">
                     {getPerformanceIcon(index)}

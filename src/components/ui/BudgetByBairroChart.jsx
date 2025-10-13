@@ -48,23 +48,23 @@ const CustomTooltip = ({ active, payload, label }) => {
         </div>
 
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <span className="text-sm text-gray-700">Orçamento</span>
-            <span className="text-lg font-bold text-green-600">
+            <span className="text-lg font-bold text-green-600 min-w-[4rem] text-right">
               R$ {budget.toLocaleString()}
             </span>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <span className="text-sm text-gray-700">Participação</span>
-            <span className="text-sm font-semibold text-gray-900">
+            <span className="text-sm font-semibold text-gray-900 min-w-[3rem] text-right">
               {percentage.toFixed(1)}%
             </span>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <span className="text-sm text-gray-700">Ranking</span>
-            <span className="text-sm font-semibold text-purple-600">
+            <span className="text-sm font-semibold text-purple-600 min-w-[3rem] text-right">
               #{rank}
             </span>
           </div>
@@ -236,7 +236,7 @@ export default function BudgetByBairroChart({ data }) {
                   {insights.topBairros.map((item, index) => (
                     <div
                       key={item.nome}
-                      className="flex items-center justify-between"
+                      className="flex items-center justify-between gap-4"
                     >
                       <div className="flex items-center gap-2">
                         <span className="w-4 h-4 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-xs font-bold">
@@ -244,7 +244,7 @@ export default function BudgetByBairroChart({ data }) {
                         </span>
                         <span className="font-medium">{item.nome}</span>
                       </div>
-                      <span className="text-green-600 font-semibold">
+                      <span className="text-green-600 font-semibold min-w-[4rem] text-right">
                         R$ {(item.orcamento / 1000).toFixed(0)}k
                       </span>
                     </div>
@@ -259,30 +259,30 @@ export default function BudgetByBairroChart({ data }) {
                   Distribuição por Faixas
                 </h5>
                 <div className="space-y-1">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-red-500 rounded"></div>
                       <span>Alto (&gt;150% média)</span>
                     </div>
-                    <span className="font-semibold">
+                    <span className="font-semibold min-w-[3rem] text-right">
                       {insights.budgetRanges.high}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-orange-500 rounded"></div>
                       <span>Médio (70-150% média)</span>
                     </div>
-                    <span className="font-semibold">
+                    <span className="font-semibold min-w-[3rem] text-right">
                       {insights.budgetRanges.medium}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-green-500 rounded"></div>
                       <span>Baixo (&lt;70% média)</span>
                     </div>
-                    <span className="font-semibold">
+                    <span className="font-semibold min-w-[3rem] text-right">
                       {insights.budgetRanges.low}
                     </span>
                   </div>

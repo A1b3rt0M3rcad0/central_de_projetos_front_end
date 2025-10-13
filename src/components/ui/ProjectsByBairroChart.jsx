@@ -51,14 +51,14 @@ const CustomTooltip = ({ active, payload, label }) => {
         </div>
 
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <span className="text-sm text-gray-700">Projetos</span>
-            <span className="text-lg font-bold text-blue-600">{value}</span>
+            <span className="text-lg font-bold text-blue-600 min-w-[3rem] text-right">{value}</span>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <span className="text-sm text-gray-700">Participação</span>
-            <span className="text-sm font-semibold text-gray-900">
+            <span className="text-sm font-semibold text-gray-900 min-w-[3rem] text-right">
               {percentage}%
             </span>
           </div>
