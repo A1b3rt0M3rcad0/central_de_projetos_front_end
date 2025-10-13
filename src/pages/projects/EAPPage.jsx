@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import BasePage from "../../components/layout/BasePage";
 import BaseContent from "../../components/BaseContent";
+import DependencyModal from "../../components/ui/DependencyModal";
 import eapService from "../../services/api/eap";
 import { useAuth } from "../../hooks/useAuth";
 import { exportEAPToExcel } from "../../utils/eapExport";
@@ -29,6 +30,7 @@ import {
   AlertTriangle,
   Info,
   TreePine,
+  Link2,
 } from "lucide-react";
 
 export default function EAPPage() {
@@ -45,6 +47,7 @@ export default function EAPPage() {
   const [showCreateEAPModal, setShowCreateEAPModal] = useState(false);
   const [showEditEAPModal, setShowEditEAPModal] = useState(false);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+  const [showDependencyModal, setShowDependencyModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [parentItem, setParentItem] = useState(null);
   const [expandedItems, setExpandedItems] = useState([]);
@@ -63,10 +66,13 @@ export default function EAPPage() {
       const response = await eapService.getProjectEAP(id);
 
       if (response.eap) {
-        setEapData(response.eap);
+        // Carregar dependências de todos os itens
+        const enrichedEAP = await enrichItemsWithDependencies(response.eap);
+        setEapData(enrichedEAP);
+
         // Expandir automaticamente os primeiros níveis
-        if (response.eap.items && response.eap.items.length > 0) {
-          const firstLevelIds = response.eap.items
+        if (enrichedEAP.items && enrichedEAP.items.length > 0) {
+          const firstLevelIds = enrichedEAP.items
             .filter((item) => !item.parent_id)
             .map((item) => item.id);
           setExpandedItems(firstLevelIds);
@@ -84,6 +90,66 @@ export default function EAPPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const enrichItemsWithDependencies = async (eap) => {
+    // Função para achatar todos os itens
+    const getAllItems = (items) => {
+      const result = [];
+      items.forEach((item) => {
+        result.push(item);
+        if (item.children) {
+          result.push(...getAllItems(item.children));
+        }
+      });
+      return result;
+    };
+
+    const allItems = getAllItems(eap.items);
+
+    // Buscar dependências de todos os itens em paralelo
+    const dependencyPromises = allItems.map(async (item) => {
+      try {
+        const deps = await eapService.getItemDependencies(item.id);
+        return {
+          itemId: item.id,
+          dependencies: deps.content || deps,
+        };
+      } catch (error) {
+        return {
+          itemId: item.id,
+          dependencies: { predecessors: [], successors: [] },
+        };
+      }
+    });
+
+    const dependenciesData = await Promise.all(dependencyPromises);
+
+    // Criar mapa de dependências
+    const depsMap = {};
+    dependenciesData.forEach((data) => {
+      depsMap[data.itemId] = data.dependencies;
+    });
+
+    // Enriquecer itens com as dependências
+    const enrichItems = (items) => {
+      return items.map((item) => {
+        const deps = depsMap[item.id] || {
+          predecessors: [],
+          successors: [],
+        };
+        return {
+          ...item,
+          dependencies: deps,
+          children: item.children ? enrichItems(item.children) : [],
+        };
+      });
+    };
+
+    return {
+      ...eap,
+      items: enrichItems(eap.items),
+    };
   };
 
   const handleCreateEAP = async (eapData) => {
@@ -130,6 +196,11 @@ export default function EAPPage() {
     setSelectedItem(item);
     setParentItem(null);
     setShowItemModal(true);
+  };
+
+  const handleManageDependencies = (item) => {
+    setSelectedItem(item);
+    setShowDependencyModal(true);
   };
 
   const handleSaveItem = async (itemData) => {
@@ -701,8 +772,12 @@ export default function EAPPage() {
                         onEdit={() => handleEditItem(item)}
                         onDelete={() => handleDeleteItem(item.id)}
                         onAddChild={() => handleAddItem(item)}
+                        onManageDependencies={() =>
+                          handleManageDependencies(item)
+                        }
                         handleEditItem={handleEditItem}
                         handleAddItem={handleAddItem}
+                        handleManageDependencies={handleManageDependencies}
                         expandedItems={expandedItems}
                         toggleExpand={toggleExpand}
                         formatCurrency={formatCurrency}
@@ -809,6 +884,20 @@ export default function EAPPage() {
               setShowDeleteConfirmModal(false);
               setDeleteConfirmData(null);
             }}
+          />
+        )}
+
+        {showDependencyModal && selectedItem && (
+          <DependencyModal
+            item={selectedItem}
+            eapData={eapData}
+            onClose={() => {
+              setShowDependencyModal(false);
+              setSelectedItem(null);
+            }}
+            onReload={loadProjectEAP}
+            notification={notification}
+            setNotification={setNotification}
           />
         )}
       </BaseContent>
@@ -1208,8 +1297,10 @@ function EAPTreeItem({
   onEdit,
   onDelete,
   onAddChild,
+  onManageDependencies,
   handleEditItem,
   handleAddItem,
+  handleManageDependencies,
   expandedItems,
   toggleExpand,
   formatCurrency,
@@ -1345,6 +1436,49 @@ function EAPTreeItem({
                   </span>
                 </div>
               </div>
+
+              {/* Indicadores de dependências */}
+              {item.dependencies && (
+                <div className="mt-3 space-y-1">
+                  {item.dependencies.predecessors &&
+                    item.dependencies.predecessors.length > 0 && (
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="text-blue-600 font-medium">
+                          ⛓️ Depende de:
+                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {item.dependencies.predecessors.map((dep) => (
+                            <span
+                              key={dep.dependency_id}
+                              className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-medium"
+                            >
+                              {dep.predecessor_code}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                  {item.dependencies.successors &&
+                    item.dependencies.successors.length > 0 && (
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="text-orange-600 font-medium">
+                          🔗 Bloqueia:
+                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {item.dependencies.successors.map((dep) => (
+                            <span
+                              key={dep.dependency_id}
+                              className="px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full font-medium"
+                            >
+                              {dep.successor_code}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -1355,6 +1489,13 @@ function EAPTreeItem({
               title="Adicionar filho"
             >
               <Plus className="w-4 h-4" />
+            </button>
+            <button
+              onClick={onManageDependencies}
+              className="p-2 text-purple-600 hover:bg-purple-100 rounded-lg transition-colors"
+              title="Gerenciar Dependências"
+            >
+              <Link2 className="w-4 h-4" />
             </button>
             <button
               onClick={onEdit}
@@ -1386,8 +1527,10 @@ function EAPTreeItem({
               onEdit={() => handleEditItem(child)}
               onDelete={() => handleDeleteItem(child.id)}
               onAddChild={() => handleAddItem(child)}
+              onManageDependencies={() => handleManageDependencies(child)}
               handleEditItem={handleEditItem}
               handleAddItem={handleAddItem}
+              handleManageDependencies={handleManageDependencies}
               expandedItems={expandedItems}
               toggleExpand={toggleExpand}
               formatCurrency={formatCurrency}

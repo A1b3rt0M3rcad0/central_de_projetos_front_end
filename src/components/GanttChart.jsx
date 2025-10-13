@@ -74,6 +74,10 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
     gantt.config.scale_height = 60; // Altura do cabeçalho de escala
     gantt.config.min_column_width = 70; // Largura mínima das colunas de tempo
 
+    // Configurações de links (dependências)
+    gantt.config.show_links = true; // Mostra setas de dependências
+    gantt.config.highlight_critical_path = true; // Destaca caminho crítico
+
     // Idioma PT-BR
     gantt.config.duration_unit = "day";
     gantt.locale = {
@@ -311,6 +315,17 @@ export default function GanttChart({ eapId, projectId, readonly = false }) {
           }
         </div>
       </div>`;
+    };
+
+    // Template de tooltip para links (setas de dependência)
+    gantt.templates.link_description = function (link) {
+      const typeLabels = {
+        0: "Término → Início (FS)",
+        1: "Início → Início (SS)",
+        2: "Término → Término (FF)",
+        3: "Início → Término (SF)",
+      };
+      return `<b>Dependência:</b> ${typeLabels[link.type] || "Desconhecida"}`;
     };
 
     // Linha "Hoje"

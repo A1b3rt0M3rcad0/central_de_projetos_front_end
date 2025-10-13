@@ -165,7 +165,7 @@ const eapService = {
   /**
    * Busca dados otimizados para Gantt Chart de um projeto
    * @param {number} projectId - ID do projeto
-   * @returns {Promise} - Dados formatados para Gantt (projeto, EAP, tasks, estatísticas)
+   * @returns {Promise} - Dados formatados para Gantt (projeto, EAP, tasks, links, estatísticas)
    */
   async getGanttData(projectId) {
     try {
@@ -173,6 +173,57 @@ const eapService = {
       return response.data;
     } catch (error) {
       console.error("Erro ao buscar dados do Gantt:", error);
+      throw error;
+    }
+  },
+
+  // ========== MÉTODOS DE DEPENDÊNCIAS ==========
+
+  /**
+   * Cria uma dependência entre dois itens da EAP
+   * @param {Object} dependencyData - Dados da dependência
+   * @param {number} dependencyData.successor_id - ID do item que depende
+   * @param {number} dependencyData.predecessor_id - ID do item do qual depende
+   * @param {string} [dependencyData.dependency_type] - Tipo: FS, SS, FF, SF (padrão: FS)
+   * @param {number} [dependencyData.lag_days] - Atraso em dias (padrão: 0)
+   * @returns {Promise} - Dependência criada
+   */
+  async createDependency(dependencyData) {
+    try {
+      const response = await api.post("/eap/dependencies", dependencyData);
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao criar dependência:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Busca todas as dependências de um item da EAP
+   * @param {number} itemId - ID do item
+   * @returns {Promise} - Objeto com predecessors e successors
+   */
+  async getItemDependencies(itemId) {
+    try {
+      const response = await api.get(`/eap/items/${itemId}/dependencies`);
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao buscar dependências do item:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Remove uma dependência
+   * @param {number} dependencyId - ID da dependência
+   * @returns {Promise} - Confirmação da exclusão
+   */
+  async deleteDependency(dependencyId) {
+    try {
+      const response = await api.delete(`/eap/dependencies/${dependencyId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao deletar dependência:", error);
       throw error;
     }
   },
