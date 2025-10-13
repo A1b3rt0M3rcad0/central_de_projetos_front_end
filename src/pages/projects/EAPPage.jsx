@@ -417,6 +417,10 @@ export default function EAPPage() {
     const avgProgress =
       projectBudget > 0 ? (totalExecutedValue / projectBudget) * 100 : 0;
 
+    // Detectar superfaturamento
+    const isOverbudgeted = avgProgress > 100;
+    const displayProgress = Math.round(avgProgress);
+
     const fases = allItems.filter((item) => item.type === "fase").length;
     const entregas = allItems.filter((item) => item.type === "entrega").length;
     const atividades = allItems.filter(
@@ -430,7 +434,8 @@ export default function EAPPage() {
       completedItems,
       inProgressItems,
       notStartedItems,
-      avgProgress: Math.round(avgProgress),
+      avgProgress: displayProgress,
+      isOverbudgeted,
       fases,
       entregas,
       atividades,
@@ -662,9 +667,14 @@ export default function EAPPage() {
               title="Progresso Geral"
               value={`${stats.avgProgress}%`}
               icon={<TrendingUp className="w-5 h-5" />}
-              color="blue"
-              subtitle={`${stats.completedItems} de ${stats.totalItems} itens concluídos`}
-              progress={stats.avgProgress}
+              color={stats.isOverbudgeted ? "red" : "blue"}
+              subtitle={
+                stats.isOverbudgeted
+                  ? `${stats.completedItems} de ${stats.totalItems} itens concluídos`
+                  : `${stats.completedItems} de ${stats.totalItems} itens concluídos`
+              }
+              progress={Math.min(stats.avgProgress, 100)}
+              isOverbudgeted={stats.isOverbudgeted}
             />
 
             <BudgetCard
@@ -1204,13 +1214,25 @@ function BudgetCard({ totalBudget, projectBudget, formatCurrency }) {
 }
 
 // Componente de Card de Estatística
-function StatCard({ title, value, icon, color, subtitle, progress, label }) {
+function StatCard({
+  title,
+  value,
+  icon,
+  color,
+  subtitle,
+  progress,
+  label,
+  isOverbudgeted,
+}) {
   const colorClasses = {
     blue: "bg-blue-100 text-blue-600",
     green: "bg-green-100 text-green-600",
     purple: "bg-purple-100 text-purple-600",
     amber: "bg-amber-100 text-amber-600",
+    red: "bg-red-100 text-red-600",
   };
+
+  const progressColor = isOverbudgeted ? "bg-red-500" : "bg-blue-600";
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -1220,15 +1242,28 @@ function StatCard({ title, value, icon, color, subtitle, progress, label }) {
       </div>
       <div className="space-y-2">
         <div className="flex items-baseline gap-2">
-          <div className="text-3xl font-bold text-gray-900">{value}</div>
+          <div
+            className={`text-3xl font-bold ${
+              isOverbudgeted ? "text-red-600" : "text-gray-900"
+            }`}
+          >
+            {value}
+          </div>
           {label && <span className="text-sm text-gray-600">{label}</span>}
         </div>
         {progress !== undefined && (
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-blue-600 h-2 rounded-full transition-all"
-              style={{ width: `${progress}%` }}
-            />
+          <div className="space-y-1">
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className={`${progressColor} h-2 rounded-full transition-all`}
+                style={{ width: `${Math.min(progress, 100)}%` }}
+              />
+            </div>
+            {isOverbudgeted && (
+              <div className="text-xs text-red-600 font-medium">
+                Orçamento excedido
+              </div>
+            )}
           </div>
         )}
         <p className="text-sm text-gray-600">{subtitle}</p>
