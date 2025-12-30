@@ -138,13 +138,33 @@ export default function FiscalListPage() {
       fetchFiscais(currentPage, searchTerm); // Recarregar a página atual após exclusão
       Swal.fire("Excluído!", "O fiscal foi removido com sucesso.", "success");
     } catch (error) {
-      if (error.status != 409) {
-        Swal.fire("Erro!", `Erro ao deletar fiscal.`, "error");
+      const status = error.response?.status || error.status;
+      const errorMessage = error.response?.data?.detail || error.response?.data?.message || error.message || "Erro ao deletar fiscal.";
+      
+      if (status === 409 || status === 400) {
+        // Erro de integridade referencial ou validação
+        Swal.fire(
+          "Não foi possível excluir",
+          errorMessage || "O fiscal possui relacionamentos que impedem sua exclusão.",
+          "warning"
+        );
+      } else if (status === 404) {
+        Swal.fire(
+          "Fiscal não encontrado",
+          "O fiscal que você tentou excluir não existe mais.",
+          "error"
+        );
+      } else if (status === 403) {
+        Swal.fire(
+          "Acesso negado",
+          "Você não tem permissão para excluir fiscais.",
+          "error"
+        );
       } else {
         Swal.fire(
-          "Info!",
-          `Não foi possivel deletar fiscal, pois ele já está associado a um projeto!`,
-          "info"
+          "Erro ao excluir",
+          errorMessage,
+          "error"
         );
       }
     }
