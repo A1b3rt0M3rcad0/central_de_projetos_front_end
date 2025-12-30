@@ -63,6 +63,13 @@ const projectApi = {
     };
     api.delete("/project_empresa", { data });
   },
+  deleteProjectFolderAssociation: (folder_id, project_id) => {
+    const data = {
+      project_id: project_id,
+      folder_id: folder_id,
+    };
+    api.delete("/project_folder", { data });
+  },
   postUserProjectAssociation: (cpf, project_id) =>
     api.post("/user_project", { cpf: cpf, project_id: project_id }),
 
@@ -90,6 +97,14 @@ const projectApi = {
       project_id: project_id,
     });
   },
+  postProjectFolderAssociation: (folder_id, project_id) => {
+    api.post("/project_folder", {
+      project_id: project_id,
+      folder_id: folder_id,
+    });
+  },
+  getFoldersByProject: (project_id) =>
+    api.get(`/project_folder/project/${project_id}`),
   getCountProjects: () => api.get("/project/count/all"),
   getProjectsWithPagination: (pageSize, page) =>
     api.get(`/project/pagination/${pageSize}/${page}`),

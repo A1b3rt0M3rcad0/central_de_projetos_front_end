@@ -47,6 +47,12 @@ export const ROUTES = {
     EDIT: "/bairroform",
     VIEW: "/bairroview",
   },
+  FOLDERS: {
+    LIST: "/folderlist",
+    CREATE: "/folderform",
+    EDIT: "/folderform",
+    VIEW: "/folderview",
+  },
   USUARIOS: {
     LIST: "/userlist",
     CREATE: "/userform",

@@ -38,6 +38,11 @@ import BairroListPage from "../pages/bairros/BairroListPage";
 import BairroFormPage from "../pages/bairros/BairroFormPage";
 import BairroViewPage from "../pages/bairros/BairroViewPage";
 
+// Folder Pages
+import FolderListPage from "../pages/folders/FolderListPage";
+import FolderFormPage from "../pages/folders/FolderFormPage";
+import FolderViewPage from "../pages/folders/FolderViewPage";
+
 // User Pages
 import UserListPage from "../pages/usuarios/UserListPage";
 import UserFormPage from "../pages/usuarios/UserFormPage";
@@ -280,6 +285,39 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <BairroViewPage />
+      </AuthGuard>
+    ),
+  },
+  // Folder Routes
+  {
+    path: ROUTES.FOLDERS.LIST,
+    element: (
+      <AuthGuard>
+        <FolderListPage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: ROUTES.FOLDERS.CREATE,
+    element: (
+      <AuthGuard>
+        <FolderFormPage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: ROUTES.FOLDERS.EDIT,
+    element: (
+      <AuthGuard>
+        <FolderFormPage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: ROUTES.FOLDERS.VIEW,
+    element: (
+      <AuthGuard>
+        <FolderViewPage />
       </AuthGuard>
     ),
   },

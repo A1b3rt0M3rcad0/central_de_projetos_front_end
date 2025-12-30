@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import ProjectAssociationForm from "../../features/forms/ProjectAssociationForm";
 import BasePage from "../../components/layout/BasePage";
 import projectAPI from "../../services/api/project";
+import folderAPI from "../../services/api/folder";
 
 export default function ProjectAssociationFormPage() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export default function ProjectAssociationFormPage() {
     bairros: [],
     empresas: [],
     fiscais: [],
+    folders: [],
   });
 
   useEffect(() => {
@@ -23,15 +25,25 @@ export default function ProjectAssociationFormPage() {
       if (!data?.id) return;
 
       try {
-        const [projRes, possRes] = await Promise.all([
+        const [projRes, possRes, foldersRes] = await Promise.all([
           projectAPI.getProjectWithDetails(data.id),
           projectAPI.getAllPossiblyAssociationsFromProject(),
+          folderAPI.getAllFolders(),
         ]);
 
         const project = projRes.data.content;
         const poss = possRes.data.content;
 
         if (project && poss) {
+          // Buscar pastas do projeto
+          let foldersFromProject = [];
+          try {
+            const foldersRes = await projectAPI.getFoldersByProject(project.id);
+            foldersFromProject = foldersRes.data.content || [];
+          } catch (err) {
+            console.error("Erro ao carregar pastas do projeto:", err);
+          }
+
           const associations = {
             types: project.types
               ? Array.isArray(project.types)
@@ -54,6 +66,7 @@ export default function ProjectAssociationFormPage() {
                 ? project.fiscal.map((f) => f.id)
                 : [project.fiscal.id]
               : [],
+            folders: foldersFromProject.map((f) => f.id),
           };
 
           setInitialData({
@@ -61,12 +74,14 @@ export default function ProjectAssociationFormPage() {
             associations,
           });
 
+          const foldersList = foldersRes.data.content || [];
           setListas({
             types: poss.type || [],
             users: poss.vereador || [],
             bairros: poss.bairro || [],
             empresas: poss.empresa || [],
             fiscais: poss.fiscal || [],
+            folders: foldersList.map((f) => ({ id: f.id, name: f.name })) || [],
           });
         }
       } catch (err) {
@@ -94,6 +109,8 @@ export default function ProjectAssociationFormPage() {
             await projectAPI.postProjectEmpresaAssociation(id, initialData.id),
           fiscais: async (id) =>
             await projectAPI.postProjectFiscalAssociation(id, initialData.id),
+          folders: async (id) =>
+            await projectAPI.postProjectFolderAssociation(id, initialData.id),
         }}
         onDissociate={{
           types: async (id) =>
@@ -109,6 +126,8 @@ export default function ProjectAssociationFormPage() {
             ),
           fiscais: async (id) =>
             await projectAPI.deleteProjectFiscalAssociation(id, initialData.id),
+          folders: async (id) =>
+            await projectAPI.deleteProjectFolderAssociation(id, initialData.id),
         }}
       />
     </BasePage>

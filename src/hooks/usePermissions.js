@@ -25,6 +25,7 @@ export const usePermissions = (userRole) => {
       canViewBairros: true,
       canViewStatus: true,
       canViewTipos: true,
+      canViewFolders: true, // Todos podem ver pastas
       canViewDocuments: true, // Todos podem ver documentos
       canViewFiscalizacoes: true,
       canViewAssociations: role === "ADMIN", // Apenas ADMIN vê associações detalhadas
@@ -100,6 +101,12 @@ export const usePermissions = (userRole) => {
       canCreateTipo: role === "ADMIN",
       canEditTipo: role === "ADMIN",
       canDeleteTipo: role === "ADMIN",
+
+      // ==================== PASTAS (FOLDERS) ====================
+      // Apenas ADMIN pode criar/editar/deletar
+      canCreateFolder: role === "ADMIN",
+      canEditFolder: role === "ADMIN",
+      canDeleteFolder: role === "ADMIN",
 
       // ==================== ASSOCIAÇÕES ====================
       // Apenas ADMIN pode criar/deletar associações

@@ -17,6 +17,7 @@ import {
   ArrowLeft,
   Save,
   RefreshCw,
+  Folder,
 } from "lucide-react";
 
 export default function ProjectAssociationForm({
@@ -34,6 +35,7 @@ export default function ProjectAssociationForm({
     bairros: [],
     empresas: [],
     fiscais: [],
+    folders: [],
   });
 
   const [selectedType, setSelectedType] = useState("");
@@ -41,6 +43,7 @@ export default function ProjectAssociationForm({
   const [selectedBairro, setSelectedBairro] = useState("");
   const [selectedEmpresa, setSelectedEmpresa] = useState("");
   const [selectedFiscal, setSelectedFiscal] = useState("");
+  const [selectedFolder, setSelectedFolder] = useState("");
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("types");
 
@@ -55,6 +58,7 @@ export default function ProjectAssociationForm({
           bairros: [],
           empresas: [],
           fiscais: [],
+          folders: [],
         }
       );
     }
@@ -195,6 +199,15 @@ export default function ProjectAssociationForm({
       setSelected: setSelectedFiscal,
       list: listas.fiscais || [],
     },
+    {
+      key: "folders",
+      label: "Pastas",
+      icon: <Folder className="w-4 h-4" />,
+      color: "teal",
+      selected: selectedFolder,
+      setSelected: setSelectedFolder,
+      list: listas.folders || [],
+    },
   ];
 
   const getColorClasses = (color) => {
@@ -207,6 +220,7 @@ export default function ProjectAssociationForm({
         "bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100",
       indigo:
         "bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100",
+      teal: "bg-teal-50 text-teal-700 border-teal-200 hover:bg-teal-100",
     };
     return colors[color] || colors.blue;
   };
@@ -218,6 +232,7 @@ export default function ProjectAssociationForm({
       green: "text-green-600",
       orange: "text-orange-600",
       indigo: "text-indigo-600",
+      teal: "text-teal-600",
     };
     return colors[color] || colors.blue;
   };

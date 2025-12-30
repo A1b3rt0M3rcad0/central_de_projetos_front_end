@@ -1,0 +1,359 @@
+import BaseContent from "../../components/BaseContent";
+import DataTable from "../../components/ui/DataTable";
+import {
+  Folder,
+  ChevronLeft,
+  ChevronRight,
+  MoreHorizontal,
+  Eye,
+  Trash2,
+  Pencil,
+  Search,
+} from "lucide-react";
+import { useEffect, useState, useCallback } from "react";
+import { usePermissions } from "../../hooks/usePermissions";
+
+export default function FolderListContent({
+  folders,
+  onCreate,
+  onView,
+  onEdit,
+  onDelete,
+  onBack,
+  onPageChange,
+  onNextPage,
+  onPrevPage,
+  onSearch,
+  loading,
+  currentPage,
+  totalPages,
+  totalFolders,
+  searchTerm,
+}) {
+  const [role, setRole] = useState();
+  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm || "");
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Hook de permissões
+  const permissions = usePermissions(role);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const userInfo = localStorage.getItem("user_info");
+      const userInfoParsed = JSON.parse(userInfo);
+      setRole(userInfoParsed.role);
+    };
+    fetchData();
+  }, []);
+
+  // Sincronizar estado local com prop
+  useEffect(() => {
+    setLocalSearchTerm(searchTerm || "");
+  }, [searchTerm]);
+
+  // Função para executar a busca
+  const handleSearch = () => {
+    if (localSearchTerm !== searchTerm) {
+      setIsSearching(true);
+      onSearch(localSearchTerm);
+      // Reset do indicador após um tempo
+      setTimeout(() => setIsSearching(false), 1000);
+    }
+  };
+
+  // Handler para tecla Enter
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  // Função para gerar números de página com ellipsis
+  const generatePageNumbers = () => {
+    const pages = [];
+    const maxVisiblePages = 7;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+
+      if (currentPage <= 4) {
+        for (let i = 2; i <= 5; i++) {
+          pages.push(i);
+        }
+        pages.push("ellipsis");
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 3) {
+        pages.push("ellipsis");
+        for (let i = totalPages - 4; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push("ellipsis");
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pages.push(i);
+        }
+        pages.push("ellipsis");
+        pages.push(totalPages);
+      }
+    }
+    return pages;
+  };
+
+  // Configuração das colunas
+  const columns = [
+    {
+      key: "id",
+      label: "ID",
+      sortable: true,
+      type: "number",
+      className: "w-16",
+    },
+    {
+      key: "name",
+      label: "Nome",
+      sortable: true,
+      render: (value) => (
+        <div className="flex items-center gap-2">
+          <Folder className="w-4 h-4 text-teal-500" />
+          <span className="font-medium">{value || "--"}</span>
+        </div>
+      ),
+    },
+    {
+      key: "created_at",
+      label: "Criado em",
+      sortable: true,
+      type: "date",
+    },
+  ];
+
+  // Configuração da tabela
+  const config = {
+    title: "Pastas",
+    createButtonText: "Criar Pasta",
+    searchPlaceholder: "Buscar por nome...",
+    emptyMessage: "Nenhuma pasta encontrada.",
+    showSearch: false, // Desabilitado pois usamos busca global
+    showPagination: false, // Desabilitamos a paginação do DataTable pois já temos a nossa própria
+    showRefresh: true,
+    showBulkActions: permissions.canBulkActions,
+    showExport: true,
+    loading: loading,
+  };
+
+  // Ações da tabela
+  const actions = {
+    bulk: permissions.canBulkActions
+      ? [
+            {
+              label: "Exportar Selecionados",
+              icon: <Eye className="w-4 h-4" />,
+              onClick: (selectedItems) => {
+                console.log("Exportar pastas:", selectedItems);
+                // Implementar exportação
+              },
+            },
+          ]
+        : [],
+    row: [
+      {
+        label: "Visualizar",
+        icon: <Eye className="w-4 h-4" />,
+        className: "text-blue-600 hover:bg-blue-50",
+        onClick: (folder) => {
+          onView(folder);
+        },
+      },
+      ...(permissions.canEditFolder
+        ? [
+            {
+              label: "Editar",
+              icon: <Pencil className="w-4 h-4" />,
+              className: "text-green-600 hover:bg-green-50",
+              onClick: (folder) => {
+                onEdit(folder);
+              },
+            },
+            {
+              label: "Excluir",
+              icon: <Trash2 className="w-4 h-4" />,
+              className: "text-red-600 hover:bg-red-50",
+              onClick: (folder) => {
+                onDelete(folder);
+              },
+            },
+          ]
+        : []),
+    ],
+    export: {
+      onClick: () => {
+        console.log("Exportar todas as pastas");
+        // Implementar exportação completa
+      },
+    },
+  };
+
+  return (
+    <BaseContent 
+      pageTitle="Pastas" 
+      onBack={onBack}
+      breadcrumbs={[{ label: "Lista de Pastas" }]}
+    >
+      <div className="space-y-6">
+        {/* Campo de busca personalizado */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex-1 relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Buscar por nome da pasta... (pressione Enter)"
+                value={localSearchTerm}
+                onChange={(e) => setLocalSearchTerm(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-teal-500 focus:border-teal-500 text-sm"
+              />
+              {isSearching && (
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                  <div className="w-4 h-4 border-2 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+            </div>
+            {localSearchTerm && (
+              <button
+                onClick={() => {
+                  setLocalSearchTerm("");
+                  onSearch("");
+                }}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              >
+                Limpar
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* DataTable */}
+        <div className="overflow-x-auto">
+          <DataTable
+            data={folders}
+            columns={columns}
+            config={config}
+            onCreate={permissions.canCreateFolder ? onCreate : null}
+            onRefresh={() => window.location.reload()}
+            actions={actions}
+          />
+        </div>
+
+        {/* Paginação customizada - Design melhorado */}
+        {totalPages > 1 && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            {/* Informações da paginação */}
+            <div className="px-6 py-4 bg-gradient-to-r from-gray-50 to-teal-50 border-b border-gray-200">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium text-gray-700">
+                      Resultados
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    Mostrando{" "}
+                    <span className="font-semibold text-gray-900">
+                      {folders.length}
+                    </span>{" "}
+                    de{" "}
+                    <span className="font-semibold text-gray-900">
+                      {totalFolders}
+                    </span>{" "}
+                    pastas
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <span>Página</span>
+                  <span className="font-semibold text-teal-600">
+                    {currentPage}
+                  </span>
+                  <span>de</span>
+                  <span className="font-semibold text-gray-900">
+                    {totalPages}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Controles de paginação */}
+            <div className="px-6 py-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                {/* Botões de navegação */}
+                <div className="flex items-center justify-center sm:justify-start gap-2">
+                  {/* Botão Anterior */}
+                  <button
+                    onClick={onPrevPage}
+                    disabled={currentPage <= 1 || loading}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    Anterior
+                  </button>
+
+                  {/* Números das páginas */}
+                  <div className="flex items-center gap-1">
+                    {generatePageNumbers().map((page, index) => (
+                      <div key={index}>
+                        {page === "ellipsis" ? (
+                          <div className="flex items-center justify-center w-10 h-10 text-gray-400">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => onPageChange(page)}
+                            disabled={loading}
+                            className={`flex items-center justify-center w-10 h-10 text-sm font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 ${
+                              currentPage === page
+                                ? "bg-teal-600 text-white shadow-lg shadow-teal-600/25"
+                                : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:text-teal-600"
+                            } disabled:opacity-50 disabled:cursor-not-allowed`}
+                          >
+                            {page}
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Botão Próxima */}
+                  <button
+                    onClick={onNextPage}
+                    disabled={currentPage >= totalPages || loading}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
+                  >
+                    Próxima
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Indicador de carregamento */}
+                {loading && (
+                  <div className="flex items-center gap-2 text-sm text-teal-600">
+                    <div className="w-4 h-4 border-2 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
+                    Carregando...
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </BaseContent>
+  );
+}
+

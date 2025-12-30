@@ -12,6 +12,7 @@ import {
   Users,
   House,
   ChevronRight,
+  Folder,
 } from "lucide-react";
 import SideBarItem from "./SideBarItem";
 import { useNavigate } from "react-router-dom";
@@ -224,6 +225,15 @@ function SideBar() {
                 icon={<MapPin className="w-5 h-5" />}
                 text="Bairros"
                 onClick={() => navigate("/bairrolist")}
+              />
+            )}
+
+            {/* Pastas - Todos podem ver */}
+            {permissions.canViewFolders && (
+              <SideBarItem
+                icon={<Folder className="w-5 h-5" />}
+                text="Pastas"
+                onClick={() => navigate("/folderlist")}
               />
             )}
 
