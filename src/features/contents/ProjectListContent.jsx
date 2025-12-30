@@ -18,6 +18,7 @@ import {
   ChevronRight,
   MoreHorizontal,
   Search,
+  Folder,
 } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import { usePermissions } from "../../hooks/usePermissions";
@@ -226,6 +227,22 @@ export default function ProjectListContent({
         <div className="flex items-center gap-1 truncate" title={value}>
           <Tag className="w-3 h-3 text-green-500 flex-shrink-0" />
           <span className="truncate text-xs">{truncateText(value, 12)}</span>
+        </div>
+      ),
+    },
+    {
+      key: "folder",
+      label: "Pasta",
+      sortable: true,
+      type: "truncate",
+      className: "hidden xl:table-cell w-24",
+      accessor: (item) => item.folder?.name,
+      render: (value, item) => (
+        <div className="flex items-center gap-1 truncate" title={value || "--"}>
+          <Folder className="w-3 h-3 text-teal-500 flex-shrink-0" />
+          <span className="truncate text-xs">
+            {value ? truncateText(value, 15) : "--"}
+          </span>
         </div>
       ),
     },
