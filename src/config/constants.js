@@ -1,6 +1,16 @@
 // Configurações da API
+const apiUrl = import.meta.env.VITE_API_URL;
+
+if (!apiUrl) {
+  if (import.meta.env.PROD) {
+    throw new Error("VITE_API_URL deve ser definida em produção");
+  }
+  // Apenas em desenvolvimento, usar fallback
+  console.warn("VITE_API_URL não definida, usando localhost (apenas desenvolvimento)");
+}
+
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1",
+  BASE_URL: apiUrl || "http://localhost:8000/api/v1",
   TIMEOUT: 1000000,
 };
 

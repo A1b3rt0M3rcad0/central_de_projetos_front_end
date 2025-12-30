@@ -1,14 +1,14 @@
 import api from "../../config/api";
 
 const statusAPI = {
-  getAllStatus: () => api.get("/status/status/all"),
+  getAllStatus: () => api.get("/status/all"),
   getStatusWithPagination: (pageSize, page) =>
-    api.get(`/status/status/pagination/${pageSize}/${page}`),
+    api.get(`/status/pagination/${pageSize}/${page}`),
   getStatusWithPaginationAndFilter: (pageSize, page, search) => {
     const params = new URLSearchParams();
     if (search) params.append("search", search);
     return api.get(
-      `/status/status/pagination-filter/${pageSize}/${page}?${params.toString()}`
+      `/status/pagination-filter/${pageSize}/${page}?${params.toString()}`
     );
   },
   getProjectsByStatus: (statusId) => api.get(`/status/projects/${statusId}`),

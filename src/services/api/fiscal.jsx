@@ -1,14 +1,14 @@
 import api from "../../config/api";
 
 const fiscalAPI = {
-  getAllFiscais: () => api.get("/fiscal/fiscal/all"),
+  getAllFiscais: () => api.get("/fiscal/all"),
   getFiscaisWithPagination: (pageSize, page) =>
-    api.get(`/fiscal/fiscal/pagination/${pageSize}/${page}`),
+    api.get(`/fiscal/pagination/${pageSize}/${page}`),
   getFiscaisWithPaginationAndFilter: (pageSize, page, search) => {
     const params = new URLSearchParams();
     if (search) params.append("search", search);
     return api.get(
-      `/fiscal/fiscais/pagination-filter/${pageSize}/${page}?${params.toString()}`
+      `/fiscal/pagination-filter/${pageSize}/${page}?${params.toString()}`
     );
   },
   getProjectsByFiscal: (fiscalId) => api.get(`/project_fiscal/${fiscalId}`),
@@ -23,7 +23,7 @@ const fiscalAPI = {
   patchFiscalStatus: (fiscalId, isActive) =>
     api.patch(`/fiscal/${fiscalId}/status`, { is_active: isActive }),
   deleteFiscal: (data) => api.delete("/fiscal", { data }),
-  getCountFiscal: () => api.get("/fiscal/fiscal/count/all"),
+  getCountFiscal: () => api.get("/fiscal/count/all"),
   getCountProjectByFiscal: () => api.get("/project_fiscal/project/count"),
 };
 

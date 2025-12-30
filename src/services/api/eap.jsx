@@ -63,7 +63,7 @@ const eapService = {
    */
   async createEAP(eapData) {
     try {
-      const response = await api.post("/eap/", eapData);
+      const response = await api.post("/eap", eapData);
       return response.data;
     } catch (error) {
       console.error("Erro ao criar EAP:", error);
