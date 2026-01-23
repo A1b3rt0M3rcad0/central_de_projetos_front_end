@@ -10,7 +10,7 @@ if (!apiUrl) {
 }
 
 export const API_CONFIG = {
-  BASE_URL: apiUrl || "http://localhost:8000/api/v1",
+  BASE_URL: apiUrl,
   TIMEOUT: 1000000,
 };
 
