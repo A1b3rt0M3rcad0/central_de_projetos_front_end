@@ -16,6 +16,57 @@ function normalizeDate(dateStr) {
   )}`;
 }
 
+// Função para normalizar valores monetários (string formatada ou número) para número
+function normalizeCurrencyValue(value) {
+  // Se for null, undefined ou vazio, retorna 0
+  if (value === null || value === undefined || value === "") {
+    return 0;
+  }
+
+  // Se já for número, retorna direto
+  if (typeof value === "number") {
+    return isNaN(value) ? 0 : value;
+  }
+
+  // Se for string formatada (ex: "R$ 1.000,00" ou "R$ 1000,00")
+  if (typeof value === "string") {
+    // Remove caracteres não numéricos, mantendo apenas dígitos, vírgula e ponto
+    let cleaned = value.replace(/[^\d,.-]/g, "");
+    
+    // Se não há vírgula nem ponto, é um número inteiro
+    if (!cleaned.includes(",") && !cleaned.includes(".")) {
+      const parsed = parseFloat(cleaned);
+      return isNaN(parsed) ? 0 : parsed;
+    }
+    
+    // Se tem vírgula, assume formato brasileiro (1.000,00)
+    if (cleaned.includes(",")) {
+      // Remove pontos (separadores de milhar) e substitui vírgula por ponto
+      cleaned = cleaned.replace(/\./g, "").replace(",", ".");
+      const parsed = parseFloat(cleaned);
+      return isNaN(parsed) ? 0 : parsed;
+    }
+    
+    // Se tem apenas ponto, pode ser formato americano (1000.00) ou milhar brasileiro (1.000)
+    // Se tem mais de um ponto ou ponto seguido de 2 dígitos, assume decimal
+    const parts = cleaned.split(".");
+    if (parts.length === 2 && parts[1].length <= 2) {
+      // Formato decimal (ex: 1000.50)
+      const parsed = parseFloat(cleaned);
+      return isNaN(parsed) ? 0 : parsed;
+    } else {
+      // Formato milhar (ex: 1.000), remove pontos
+      cleaned = cleaned.replace(/\./g, "");
+      const parsed = parseFloat(cleaned);
+      return isNaN(parsed) ? 0 : parsed;
+    }
+  }
+
+  // Fallback: tenta converter para número
+  const parsed = parseFloat(value);
+  return isNaN(parsed) ? 0 : parsed;
+}
+
 export default function ProjectFormPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -64,10 +115,16 @@ export default function ProjectFormPage() {
         return newValue !== oldValue;
       }
 
-      // Para valores monetários (float), compara com margem de erro
+      // Para valores monetários (float), normaliza e compara com margem de erro
       if (field === "verba_disponivel") {
-        const newFloat = parseFloat(newValue);
-        const oldFloat = parseFloat(oldValue);
+        const newFloat = normalizeCurrencyValue(newValue);
+        const oldFloat = normalizeCurrencyValue(oldValue);
+        
+        // Se algum valor for inválido (NaN), considera como alterado para forçar atualização
+        if (isNaN(newFloat) || isNaN(oldFloat)) {
+          return true;
+        }
+        
         return Math.abs(newFloat - oldFloat) > 0.0001;
       }
 

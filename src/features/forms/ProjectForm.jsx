@@ -82,8 +82,14 @@ export default function ProjectForm({
         end_date: convertDateToISO(initial_date.end_date),
       };
 
+      // Criar oldData com valores numéricos para comparação correta
+      const oldDataForComparison = {
+        ...newForm,
+        verba_disponivel: initial_date.verba_disponivel || 0, // Manter como número
+      };
+
       setForm(newForm);
-      setOldData(newForm);
+      setOldData(oldDataForComparison);
     }
   }, [initial_date, statuses]);
 
